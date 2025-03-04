@@ -14,12 +14,12 @@ class Base64
 
     public static function base64_url_encode(string $input): string
     {
-        return strtr(base64_encode($input), '+/=', '-_.');
+        return strtr(base64_encode($input), '+/', '-_');
     }
 
     /** @throws UrlException */
     public static function base64_url_decode(string $input): string
     {
-        return \Safe\base64_decode(strtr($input, '-_.', '+/='), true);
+        return \Safe\base64_decode(strtr($input, '-_', '+/'), true);
     }
 }

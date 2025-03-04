@@ -29,6 +29,11 @@ class CandidateRepository extends ServiceEntityRepository
             return null;
         }
 
-        return $this->findOneBy(['season' => $season, 'name' => $name]);
+        return $this->createQueryBuilder('c')
+            ->where('c.season = :season')
+            ->andWhere('lower(c.name) = lower(:name)')
+            ->setParameter('season', $season)
+            ->setParameter('name', $name)
+            ->getQuery()->getOneOrNullResult();
     }
 }

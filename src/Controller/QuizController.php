@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Candidate;
 use App\Entity\Season;
+use App\Enum\FlashType;
 use App\Form\EnterNameType;
 use App\Form\SelectSeasonType;
 use App\Helpers\Base64;
-use Safe\Exceptions\UrlException;
+use App\Repository\CandidateRepository;
+use App\Repository\QuestionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,13 +63,23 @@ class QuizController extends AbstractController
         name: 'quiz_page',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
     )]
-    public function quizPage(Season $season, string $nameHash)
-    {
-        try {
-            $name = Base64::base64_url_decode($nameHash);
-        } catch (UrlException $e) {
+    public function quizPage(
+        Season $season,
+        string $nameHash,
+        CandidateRepository $candidateRepository,
+        QuestionRepository $questionRepository,
+    ): Response {
+        $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
+
+        if (!$candidate instanceof Candidate) {
+            // Add option to add new candidate when preregister is disabled
+            $this->addFlash(FlashType::Danger->value, 'Candidate not found');
+
+            return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
         }
 
-        return $this->render('quiz/question.twig', ['season' => $season, 'name' => $name]);
+        $question = $questionRepository->findNextQuestionForCandidate($candidate);
+
+        return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question]);
     }
 }

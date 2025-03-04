@@ -1,6 +1,9 @@
 {% extends "quiz/base.html.twig" %}
 {% block body %}
-    {{ season.name }}
-    {{ name }}
-    <h1>Hello World!</h1>
+    Candiadte: {{ candidate.name }}<br/>
+
+    {{ question.question }}<br/>
+    {% for answer in question.answers %}
+        <input type="radio" name="answer" value="{{ answer.id }}"> {{ answer.text }}
+    {% endfor %}
 {% endblock body %}

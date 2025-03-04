@@ -34,8 +34,10 @@ class KrtekFixtures extends Fixture
             ->addCandidate(new Candidate('Philine'))
             ->addCandidate(new Candidate('Remy'))
             ->addCandidate(new Candidate('Robbert'))
-            ->addCandidate(new Candidate('Tom'))
-            ->addQuiz($this->createQuiz1($season))
+            ->addCandidate(new Candidate('Tom'));
+        $quiz1 = $this->createQuiz1($season);
+        $season->addQuiz($quiz1)
+            ->setActiveQuiz($quiz1)
             ->addQuiz($this->createQuiz2($season));
 
         $manager->flush();
@@ -49,8 +51,8 @@ class KrtekFixtures extends Fixture
 
             ->addQuestion((new Question())
                 ->setQuestion('Is de Krtek een man of een vrouw?')
-                ->addAnswer(new Answer('Ja', true))
-                ->addAnswer(new Answer('Nee'))
+                ->addAnswer(new Answer('Vrouw', true))
+                ->addAnswer(new Answer('Man'))
             )
 
             ->addQuestion((new Question())
