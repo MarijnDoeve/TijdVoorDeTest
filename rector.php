@@ -12,5 +12,20 @@ return RectorConfig::configure()
         __DIR__.'/tests',
     ])
     ->withPhpSets()
-    ->withPreparedSets(deadCode: true, codeQuality: true, codingStyle: true, typeDeclarations: true, privatization: true, instanceOf: true, earlyReturn: true, strictBooleans: true, phpunitCodeQuality: true, doctrineCodeQuality: true, symfonyCodeQuality: true)
-    ->withComposerBased(twig: true, doctrine: true, phpunit: true);
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        codingStyle: true,
+        typeDeclarations: true,
+        privatization: true,
+        instanceOf: true,
+        earlyReturn: true,
+        strictBooleans: true,
+        rectorPreset: true,
+        phpunitCodeQuality: true,
+        doctrineCodeQuality: true,
+        symfonyCodeQuality: true,
+    )
+    ->withComposerBased(twig: true, doctrine: true, phpunit: true)
+    ->withAttributesSets()
+;

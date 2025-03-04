@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
     ->exclude('var')
@@ -9,6 +11,7 @@ return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
+        'declare_strict_types' => true,
         'linebreak_after_opening_tag' => true,
         'mb_str_functions' => true,
         'no_php4_constructor' => true,
@@ -20,8 +23,8 @@ return (new PhpCsFixer\Config())
         'strict_comparison' => true,
         'strict_param' => true,
         'blank_line_between_import_groups' => false,
+        'phpdoc_line_span' => ['const' => 'single', 'method' => 'single', 'property' => 'single'],
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
 ;
-
