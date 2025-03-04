@@ -31,7 +31,7 @@ class Season
     private bool $preregisterCandidates;
 
     /** @var Collection<int, Quiz> */
-    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'season', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
     private Collection $quizzes;
 
     /** @var Collection<int, Candidate> */
