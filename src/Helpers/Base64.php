@@ -14,7 +14,7 @@ class Base64
 
     public static function base64_url_encode(string $input): string
     {
-        return strtr(base64_encode($input), '+/', '-_');
+        return rtrim(strtr(base64_encode($input), '+/', '-_'), '=');
     }
 
     /** @throws UrlException */

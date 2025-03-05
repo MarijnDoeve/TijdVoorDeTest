@@ -3,7 +3,16 @@
     Candiadte: {{ candidate.name }}<br/>
 
     {{ question.question }}<br/>
-    {% for answer in question.answers %}
-        <input type="radio" name="answer" value="{{ answer.id }}"> {{ answer.text }}
-    {% endfor %}
+    <form method="post">
+        {% for answer in question.answers %}
+            <div>
+                <button class="btn btn-outline-success"
+                        type="submit"
+                        name="answer"
+                        value="{{ answer.id }}">{{ answer.text }}</button>
+            </div>
+        {% else %}
+            Weirdly enough this question has no answers...
+        {% endfor %}
+    </form>
 {% endblock body %}

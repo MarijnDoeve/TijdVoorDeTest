@@ -20,13 +20,13 @@ class QuestionRepository extends ServiceEntityRepository
         parent::__construct($registry, Question::class);
     }
 
-    public function findNextQuestionForCandidate(Candidate $candidate): Question
+    public function findNextQuestionForCandidate(Candidate $candidate): ?Question
     {
         $qb = $this->createQueryBuilder('q');
 
         return $qb->join('q.quiz', 'qz')
             ->andWhere($qb->expr()->notIn('q.id', $this->getEntityManager()->createQueryBuilder()
-                ->select('ga.id')
+                ->select('q1')
                 ->from(GivenAnswer::class, 'ga')
                 ->join('ga.answer', 'a')
                 ->join('a.question', 'q1')
@@ -38,6 +38,6 @@ class QuestionRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->setParameter('candidate', $candidate)
             ->setParameter('quiz', $candidate->getSeason()->getActiveQuiz())
-        ->getQuery()->getSingleResult();
+        ->getQuery()->getOneOrNullResult();
     }
 }

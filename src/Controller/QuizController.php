@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Candidate;
+use App\Entity\GivenAnswer;
+use App\Entity\Question;
 use App\Entity\Season;
 use App\Enum\FlashType;
 use App\Form\EnterNameType;
 use App\Form\SelectSeasonType;
 use App\Helpers\Base64;
+use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
+use App\Repository\GivenAnswerRepository;
 use App\Repository\QuestionRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -42,6 +48,7 @@ class QuizController extends AbstractController
     #[Route(path: '/{seasonCode}', name: 'enter_name', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
     public function enterName(
         Request $request,
+        #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
         Season $season,
     ): Response {
         $form = $this->createForm(EnterNameType::class);
@@ -64,21 +71,49 @@ class QuizController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
     )]
     public function quizPage(
+        #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
         Season $season,
         string $nameHash,
         CandidateRepository $candidateRepository,
         QuestionRepository $questionRepository,
+        AnswerRepository $answerRepository,
+        GivenAnswerRepository $givenAnswerRepository,
+        Request $request,
     ): Response {
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
-            // Add option to add new candidate when preregister is disabled
-            $this->addFlash(FlashType::Danger->value, 'Candidate not found');
+            if (false === $season->isPreregisterCandidates()) {
+                $candidate = new Candidate(Base64::base64_url_decode($nameHash));
+                $candidateRepository->save($candidate);
+            } else {
+                $this->addFlash(FlashType::Danger, 'Candidate not found');
 
-            return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
+                return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
+            }
+        }
+
+        if ('POST' === $request->getMethod()) {
+            $answer = $answerRepository->findOneBy(['id' => $request->request->get('answer')]);
+
+            if (!$answer instanceof Answer) {
+                throw new BadRequestException('Invalid Answer ID');
+            }
+
+            $givenAnswer = new GivenAnswer();
+            $givenAnswer->setCandidate($candidate)
+                ->setAnswer($answer)
+                ->setQuiz($answer->getQuestion()->getQuiz());
+            $givenAnswerRepository->save($givenAnswer);
         }
 
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
+
+        if (!$question instanceof Question) {
+            $this->addFlash(FlashType::Success, 'Quiz completed');
+
+            return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
+        }
 
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question]);
     }

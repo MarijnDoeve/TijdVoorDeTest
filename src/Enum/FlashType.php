@@ -12,6 +12,6 @@ enum FlashType: string
     case Danger = 'danger';
     case Warning = 'warning';
     case Info = 'info';
-    case Ligt = 'light';
+    case Light = 'light';
     case Dark = 'dark';
 }
