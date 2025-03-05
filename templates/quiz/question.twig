@@ -1,7 +1,5 @@
-{% extends "quiz/base.html.twig" %}
+{% extends 'quiz/base.html.twig' %}
 {% block body %}
-    Candiadte: {{ candidate.name }}<br/>
-
     {{ question.question }}<br/>
     <form method="post">
         {% for answer in question.answers %}

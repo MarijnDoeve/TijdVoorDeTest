@@ -77,7 +77,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Met de auto'))
             )
             ->addQuestion((new Question())
-                ->setQuestion('Met wie keek de Kretek video bij binnenkomst?')
+                ->setQuestion('Met wie keek de Krtek video bij binnenkomst?')
                 ->addAnswer(new Answer('Claudia'))
                 ->addAnswer(new Answer('Eelco'))
                 ->addAnswer(new Answer('Elise'))

@@ -1,0 +1,20 @@
+version: '3'
+
+tasks:
+  up:
+    cmds:
+      - docker compose up -d
+  down:
+    cmds:
+      - docker compose down
+  stop:
+    cmds:
+      - docker compose stop
+  shell:
+    cmds:
+      - docker compose exec app bash
+  migrate:
+    cmds:
+      - docker compose run php bin/console doctrine:migrations:migrate
+      
+      

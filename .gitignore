@@ -105,3 +105,7 @@ phpstan.neon
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+###> vincentlanglet/twig-cs-fixer ###
+/.twig-cs-fixer.cache
+###< vincentlanglet/twig-cs-fixer ###

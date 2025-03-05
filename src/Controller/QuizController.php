@@ -83,14 +83,14 @@ class QuizController extends AbstractController
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
-            if (false === $season->isPreregisterCandidates()) {
-                $candidate = new Candidate(Base64::base64_url_decode($nameHash));
-                $candidateRepository->save($candidate);
-            } else {
+            if (true === $season->isPreregisterCandidates()) {
                 $this->addFlash(FlashType::Danger, 'Candidate not found');
 
                 return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
             }
+
+            $candidate = new Candidate(Base64::base64_url_decode($nameHash));
+            $candidateRepository->save($candidate);
         }
 
         if ('POST' === $request->getMethod()) {
@@ -100,10 +100,9 @@ class QuizController extends AbstractController
                 throw new BadRequestException('Invalid Answer ID');
             }
 
-            $givenAnswer = new GivenAnswer();
-            $givenAnswer->setCandidate($candidate)
-                ->setAnswer($answer)
-                ->setQuiz($answer->getQuestion()->getQuiz());
+            $givenAnswer = (new GivenAnswer())
+                ->setCandidate($candidate)
+                ->setAnswer($answer);
             $givenAnswerRepository->save($givenAnswer);
         }
 
@@ -115,6 +114,7 @@ class QuizController extends AbstractController
             return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
         }
 
+        // TODO One first question record time
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question]);
     }
 }
