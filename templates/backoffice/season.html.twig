@@ -1,11 +1,11 @@
 {% extends 'backoffice/base.html.twig' %}
 {% block body %}
     <p>
-    <h2>{{ t('Season') }}: {{ season.name }}</h2>
+    <h2>{{ 'Season'|trans }}: {{ season.name }}</h2>
     </p>
     <div class="row">
         <div class="col-md-6 col-12">
-            <h4>{{ t('Quizzes') }}</h4>
+            <h4>{{ 'Quizzes'|trans }}</h4>
             <div class="list-group">
                 {% for quiz in season.quizzes %}
                     <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="col-md-6 col-12">
-            <h4>{{ t('Candidates') }}</h4>
+            <h4>{{ 'Candidates'|trans }}</h4>
             <ul>
                 {% for candidate in season.candidates %}
                     <li>{{ candidate.name }}</li>{% endfor %}

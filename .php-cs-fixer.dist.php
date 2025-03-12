@@ -1,17 +1,20 @@
 <?php
 
 declare(strict_types=1);
+use PhpCsFixer\Config;
+use PhpCsFixer\Finder;
 
-$finder = (new PhpCsFixer\Finder())
+$finder = (new Finder())
     ->in(__DIR__)
     ->exclude('var')
 ;
 
-return (new PhpCsFixer\Config())
+return (new Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
         'declare_strict_types' => true,
+        'fully_qualified_strict_types' => ['import_symbols' => true],
         'linebreak_after_opening_tag' => true,
         'mb_str_functions' => true,
         'no_php4_constructor' => true,
@@ -19,11 +22,11 @@ return (new PhpCsFixer\Config())
         'no_useless_else' => true,
         'no_useless_return' => true,
         'php_unit_strict' => true,
+        'phpdoc_line_span' => ['const' => 'single', 'method' => 'single', 'property' => 'single'],
         'phpdoc_order' => true,
+        'single_line_empty_body' => true,
         'strict_comparison' => true,
         'strict_param' => true,
-        'blank_line_between_import_groups' => false,
-        'phpdoc_line_span' => ['const' => 'single', 'method' => 'single', 'property' => 'single'],
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

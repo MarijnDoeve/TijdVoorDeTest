@@ -18,7 +18,5 @@ class QuizRepository extends ServiceEntityRepository
         parent::__construct($registry, Quiz::class);
     }
 
-    public function quizReault(Quiz $quiz): array
-    {
-    }
+    public function quizReault(Quiz $quiz): array {}
 }

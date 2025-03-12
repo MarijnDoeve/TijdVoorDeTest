@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class QuizController extends AbstractController
 {
     public const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
+
     private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
 
     #[Route(path: '/', name: 'select_season', methods: ['GET', 'POST'])]
@@ -83,7 +84,7 @@ final class QuizController extends AbstractController
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
-            if (true === $season->isPreregisterCandidates()) {
+            if ($season->isPreregisterCandidates()) {
                 $this->addFlash(FlashType::Danger, 'Candidate not found');
 
                 return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);

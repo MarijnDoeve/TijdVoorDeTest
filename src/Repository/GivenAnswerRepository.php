@@ -22,7 +22,7 @@ class GivenAnswerRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->persist($givenAnswer);
 
-        if (true === $flush) {
+        if ($flush) {
             $this->getEntityManager()->flush();
         }
     }

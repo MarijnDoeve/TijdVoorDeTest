@@ -96,4 +96,23 @@ class Question
 
         return $this;
     }
+
+    public function getErrors(): ?string
+    {
+        if (0 === \count($this->answers)) {
+            return 'This question has no answers';
+        }
+
+        $correctAnswers = $this->answers->filter(static fn (Answer $answer): ?bool => $answer->isRightAnswer())->count();
+
+        if (0 === $correctAnswers) {
+            return 'This question has no correct answers';
+        }
+
+        if ($correctAnswers > 1) {
+            return 'This question has multiple correct answers';
+        }
+
+        return null;
+    }
 }

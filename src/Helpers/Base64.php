@@ -8,9 +8,7 @@ use Safe\Exceptions\UrlException;
 
 class Base64
 {
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function base64_url_encode(string $input): string
     {

@@ -9,11 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as AbstractBase
 
 abstract class AbstractController extends AbstractBaseController
 {
+    #[\Override]
     protected function addFlash(FlashType|string $type, mixed $message): void
     {
         if ($type instanceof FlashType) {
             $type = $type->value;
         }
+
         parent::addFlash($type, $message);
     }
 }
