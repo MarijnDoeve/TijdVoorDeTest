@@ -1,0 +1,95 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block body %}
+    <p>
+    <h2>{{ t('Quiz') }}: {{ quiz.season.name }} - {{ quiz.name }}</h2>
+    </p>
+    <div id="questions">
+        <p>
+        <h4>{{ t('Questions') }}</h4>
+        </p>
+        <div class="accordion">
+            {% for question in quiz.questions %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#question-{{ loop.index0 }}"
+                                aria-controls="question-{{ loop.index0 }}">
+                            {# {% with question_error = question.errors %} #}
+                            {# {% if question_error %} #}
+                            {# <span data-bs-toggle="tooltip" #}
+                            {# title="{{ question_error }}" #}
+                            {# class="badge text-bg-danger rounded-pill me-2">!</span> #}
+                            {# {% endif %} #}
+                            {# {% endwith %} #}
+                            {{ loop.index }}. {{ question.question }}
+                        </button>
+                    </h2>
+                    <div id="question-{{ loop.index0 }}"
+                         class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            {% for answer in question.answers %}
+                                <li {% if answer.isRightAnswer %}class="text-decoration-underline"{% endif %}>{{ answer.text }}</li>
+                            {% else %}
+                                {{ t('There are no answers for this question') }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                EMPTY
+            {% endfor %}
+        </div>
+    </div>
+    <div class="scores">
+        <p>
+        <h4>{{ t('Score') }}</h4>
+        </p>
+        <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group btn-group-lg me-2">
+                <a class="btn btn-primary">{{ t('Start Elimination') }}</a>
+            </div>
+            <div class="btn-group btn-group-lg">
+                <a class="btn btn-secondary">{{ t('Prepare Custom Elimination') }}</a>
+                <a class="btn btn-secondary">{{ t('Load Prepared Elimination') }}</a>
+            </div>
+        </div>
+        <p>{{ t('Number of dropouts:') }}  {{ quiz.dropouts }} </p>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">{{ t('Candidate') }}</th>
+                <th scope="col">{{ t('Correct Answers') }}</th>
+                <th scope="col">{{ t('Corrections') }}</th>
+                <th scope="col">{{ t('Score') }}</th>
+                <th scope="col">{{ t('Time') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {# {% with result = quiz.get_score %} #}
+            {# {% for candidate in result %} #}
+            {# <tr class="table-{% if forloop.revcounter > quiz.dropouts %}success{% else %}danger{% endif %}"> #}
+            {# <td>{{ candidate.name }}</td> #}
+            {# <td>{{ candidate.correct }}</td> #}
+            {# <td>{{ candidate.corrections }}</td> #}
+            {# <td>{{ candidate.score }}</td> #}
+            {# <td>{{ candidate.time }}</td> #}
+            {# </tr> #}
+            {# {% empty %} #}
+            {# {% endfor %} #}
+            </tbody>
+        </table>
+        {# {% endwith %} #}
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+{% endblock script %}
+{% block title %}
+
+{% endblock %}

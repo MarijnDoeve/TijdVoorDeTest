@@ -16,5 +16,7 @@ tasks:
   migrate:
     cmds:
       - docker compose run php bin/console doctrine:migrations:migrate
-      
-      
+  
+  translations:
+    cmds:
+      - docker compose exec php bin/console translation:extract --domain=messages --force --format=yaml --sort=asc --clean nl

@@ -34,7 +34,7 @@ class GivenAnswer
     #[ORM\JoinColumn(nullable: true)]
     private ?Answer $answer = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
     private \DateTimeInterface $created;
 
     public function getId(): ?Uuid
@@ -78,7 +78,7 @@ class GivenAnswer
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeInterface
+    public function getCreated(): \DateTimeInterface
     {
         return $this->created;
     }

@@ -36,6 +36,9 @@ class Quiz
     #[ORM\OneToMany(targetEntity: Correction::class, mappedBy: 'quiz', orphanRemoval: true)]
     private Collection $corrections;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $dropouts = null;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
@@ -99,6 +102,18 @@ class Quiz
             $this->corrections->add($correction);
             $correction->setQuiz($this);
         }
+
+        return $this;
+    }
+
+    public function getDropouts(): ?int
+    {
+        return $this->dropouts;
+    }
+
+    public function setDropouts(?int $dropouts): static
+    {
+        $this->dropouts = $dropouts;
 
         return $this;
     }

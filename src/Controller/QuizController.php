@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class QuizController extends AbstractController
+final class QuizController extends AbstractController
 {
     public const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
     private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
@@ -102,7 +102,8 @@ class QuizController extends AbstractController
 
             $givenAnswer = (new GivenAnswer())
                 ->setCandidate($candidate)
-                ->setAnswer($answer);
+                ->setAnswer($answer)
+            ->setQuiz($answer->getQuestion()->getQuiz());
             $givenAnswerRepository->save($givenAnswer);
         }
 

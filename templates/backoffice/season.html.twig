@@ -1,0 +1,26 @@
+{% extends 'backoffice/base.html.twig' %}
+{% block body %}
+    <p>
+    <h2>{{ t('Season') }}: {{ season.name }}</h2>
+    </p>
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <h4>{{ t('Quizzes') }}</h4>
+            <div class="list-group">
+                {% for quiz in season.quizzes %}
+                    <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
+                       href="{{ path('backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
+                {% else %}
+                    No quizzes
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6 col-12">
+            <h4>{{ t('Candidates') }}</h4>
+            <ul>
+                {% for candidate in season.candidates %}
+                    <li>{{ candidate.name }}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock body %}
