@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Helpers;
 
 use Safe\Exceptions\UrlException;
+use function rtrim;
 
 class Base64
 {
@@ -12,14 +13,22 @@ class Base64
     {
     }
 
-    public static function base64_url_encode(string $input): string
+    /**
+     * @param string $name name to hash
+     * @return string hashed name
+     */
+    public static function base64_url_encode(string $name): string
     {
-        return strtr(base64_encode($input), '+/', '-_');
+        return rtrim(strtr(base64_encode($name), '+/', '-_'), '=');
     }
 
-    /** @throws UrlException */
-    public static function base64_url_decode(string $input): string
+    /**
+     * @param string $hash hashed name
+     * @return string plaintext name
+     * @throws UrlException
+     */
+    public static function base64_url_decode(string $hash): string
     {
-        return \Safe\base64_decode(strtr($input, '-_', '+/'), true);
+        return \Safe\base64_decode(strtr($hash, '-_', '+/'), true);
     }
 }
