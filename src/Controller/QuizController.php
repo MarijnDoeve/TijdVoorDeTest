@@ -31,7 +31,7 @@ final class QuizController extends AbstractController
 
     private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
 
-    #[Route(path: '/', name: 'select_season', methods: ['GET', 'POST'])]
+    #[Route(path: '/', name: 'app_quiz_selectseason', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
@@ -40,13 +40,13 @@ final class QuizController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            return $this->redirectToRoute('enter_name', ['seasonCode' => $data['season_code']]);
+            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $data['season_code']]);
         }
 
         return $this->render('quiz/select_season.html.twig', ['form' => $form]);
     }
 
-    #[Route(path: '/{seasonCode}', name: 'enter_name', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
+    #[Route(path: '/{seasonCode}', name: 'app_quiz_entername', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
     public function enterName(
         Request $request,
         #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
@@ -60,7 +60,7 @@ final class QuizController extends AbstractController
             $data = $form->getData();
             $name = $data['name'];
 
-            return $this->redirectToRoute('quiz_page', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64_url_encode($name)]);
+            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64_url_encode($name)]);
         }
 
         return $this->render('quiz/enter_name.twig', ['season' => $season, 'form' => $form]);
@@ -68,7 +68,7 @@ final class QuizController extends AbstractController
 
     #[Route(
         path: '/{seasonCode}/{nameHash}',
-        name: 'quiz_page',
+        name: 'app_quiz_quizpage',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
     )]
     public function quizPage(
@@ -87,7 +87,7 @@ final class QuizController extends AbstractController
             if ($season->isPreregisterCandidates()) {
                 $this->addFlash(FlashType::Danger, 'Candidate not found');
 
-                return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
+                return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
             }
 
             $candidate = new Candidate(Base64::base64_url_decode($nameHash));
@@ -113,7 +113,7 @@ final class QuizController extends AbstractController
         if (!$question instanceof Question) {
             $this->addFlash(FlashType::Success, 'Quiz completed');
 
-            return $this->redirectToRoute('enter_name', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
         }
 
         // TODO One first question record time

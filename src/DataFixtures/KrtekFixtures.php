@@ -20,7 +20,7 @@ class KrtekFixtures extends Fixture
         $manager->persist($season);
 
         $season->setName('Krtek Weekend')
-            ->setSeasonCode('12345')
+            ->setSeasonCode('krtek')
             ->setPreregisterCandidates(true)
             ->addCandidate(new Candidate('Claudia'))
             ->addCandidate(new Candidate('Eelco'))

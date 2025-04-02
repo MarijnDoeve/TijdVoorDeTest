@@ -9,7 +9,7 @@
             <div class="list-group">
                 {% for quiz in season.quizzes %}
                     <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
-                       href="{{ path('backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
+                       href="{{ path('app_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
                 {% else %}
                     No quizzes
                 {% endfor %}

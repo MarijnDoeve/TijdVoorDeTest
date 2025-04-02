@@ -27,7 +27,7 @@ class TestCommand extends Command
     {
         new SymfonyStyle($input, $output);
 
-        dd($this->candidateRepository->getScores($this->quizRepository->find('1effa06a-8aca-6c52-b52b-3974eda7eed7')));
+        dd($this->candidateRepository->getScores($this->quizRepository->find('1f00ff44-6f12-630e-9b87-67e78e97c05e')));
 
         return Command::SUCCESS;
     }

@@ -21,7 +21,7 @@ final class BackofficeController extends AbstractController
         private readonly CandidateRepository $candidateRepository,
     ) {}
 
-    #[Route('/backoffice/', name: 'index')]
+    #[Route('/backoffice/', name: 'app_backoffice_index')]
     public function index(): Response
     {
         $seasons = $this->seasonRepository->findAll();
@@ -31,7 +31,7 @@ final class BackofficeController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/{seasonCode}', name: 'season')]
+    #[Route('/backoffice/{seasonCode}', name: 'app_backoffice_season')]
     public function season(Season $season): Response
     {
         return $this->render('backoffice/season.html.twig', [
@@ -39,7 +39,7 @@ final class BackofficeController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/{seasonCode}/{quiz}', name: 'quiz')]
+    #[Route('/backoffice/{seasonCode}/{quiz}', name: 'app_backoffice_quiz')]
     public function quiz(Season $season, Quiz $quiz): Response
     {
         return $this->render('backoffice/quiz.html.twig', [

@@ -26,7 +26,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a {% if season.activeQuiz %}href="{{ path('enter_name', {seasonCode: season.seasonCode}) }}"
+                    <a {% if season.activeQuiz %}href="{{ path('app_quiz_entername', {seasonCode: season.seasonCode}) }}"
                        {% else %}class="disabled" {% endif %}>{{ season.seasonCode }}</a>
                 </td>
                 <td>
@@ -37,7 +37,7 @@
                            aria-label="Preregister Enabled">
                 </td>
                 <td>
-                    <a href="{{ path('backoffice_season', {seasonCode: season.seasonCode}) }}">{% trans %}Manage{% endtrans %}</a>
+                    <a href="{{ path('app_backoffice_season', {seasonCode: season.seasonCode}) }}">{% trans %}Manage{% endtrans %}</a>
                 </td>
             </tr>
         {% else %}

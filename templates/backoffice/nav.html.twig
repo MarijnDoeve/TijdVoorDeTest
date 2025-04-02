@@ -13,8 +13,8 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link{% if 'backoffice_index' == app.current_route() %} active{% endif %}"
-                       href="{{ path('backoffice_index') }}">{{ 'Seasons'|trans }}</a>
+                    <a class="nav-link{% if 'app_backoffice_index' == app.current_route() %} active{% endif %}"
+                       href="{{ path('app_backoffice_index') }}">{{ 'Seasons'|trans }}</a>
                 </li>
             </ul>
         </div>
