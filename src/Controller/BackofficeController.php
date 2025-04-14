@@ -8,7 +8,6 @@ use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Repository\CandidateRepository;
 use App\Repository\SeasonRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;

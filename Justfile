@@ -22,3 +22,6 @@ fixtures:
 
 translations:
     docker compose exec php bin/console translation:extract --domain=messages --force --format=yaml --sort=asc --clean nl
+
+fix-cs:
+    docker compose exec php vendor/bin/php-cs-fixer fix

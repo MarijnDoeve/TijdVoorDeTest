@@ -30,7 +30,7 @@ class CandidateRepository extends ServiceEntityRepository
     public function getCandidateByHash(Season $season, string $hash): ?Candidate
     {
         try {
-            $name = Base64::base64_url_decode($hash);
+            $name = Base64::base64UrlDecode($hash);
         } catch (UrlException) {
             return null;
         }

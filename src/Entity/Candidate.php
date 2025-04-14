@@ -135,6 +135,6 @@ class Candidate
 
     public function getNameHash(): string
     {
-        return Base64::base64_url_encode($this->name);
+        return Base64::base64UrlEncode($this->name);
     }
 }

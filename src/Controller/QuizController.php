@@ -60,7 +60,7 @@ final class QuizController extends AbstractController
             $data = $form->getData();
             $name = $data['name'];
 
-            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64_url_encode($name)]);
+            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64UrlEncode($name)]);
         }
 
         return $this->render('quiz/enter_name.twig', ['season' => $season, 'form' => $form]);
@@ -90,7 +90,7 @@ final class QuizController extends AbstractController
                 return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
             }
 
-            $candidate = new Candidate(Base64::base64_url_decode($nameHash));
+            $candidate = new Candidate(Base64::base64UrlDecode($nameHash));
             $candidateRepository->save($candidate);
         }
 
