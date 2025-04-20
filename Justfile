@@ -25,3 +25,10 @@ translations:
 
 fix-cs:
     docker compose exec php vendor/bin/php-cs-fixer fix
+    docker compose exec php vendor/bin/twig-cs-fixer fix
+
+rector *args:
+    docker compose exec php vendor/bin/rector {{ args }}
+
+phpstan *args:
+    docker compose exec php vendor/bin/phpstan analyse {{ args }}

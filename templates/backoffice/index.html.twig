@@ -3,26 +3,33 @@
 {% block title %}Hello BackofficeController!{% endblock %}
 
 {% block body %}
-    <h2>{% trans %}Your Seasons{% endtrans %}</h2>
+    <h2>
+        {{ is_granted('ROLE_ADMIN') ? 'All Seasons'|trans : 'Your Seasons'|trans }}
+    </h2>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">{% trans %}Name{% endtrans %}</th>
-            <th scope="col">{% trans %}Active Quiz{% endtrans %}</th>
-            <th scope="col">{% trans %}Season Code{% endtrans %}</th>
-            <th scope="col">{% trans %}Preregister?{% endtrans %}</th>
-            <th scope="col">{% trans %}Manage{% endtrans %}</th>
+            {% if is_granted('ROLE_ADMIN') %}
+                <th scope="col">{{ 'Owner(s)'|trans }}</th>
+            {% endif %}
+            <th scope="col">{{ 'Name'|trans }}</th>
+            <th scope="col">{{ 'Active Quiz'|trans }}</th>
+            <th scope="col">{{ 'Season Code'|trans }}</th>
+            <th scope="col">{{ 'Manage'|trans }}</th>
         </tr>
         </thead>
         <tbody>
         {% for season in seasons %}
             <tr class="align-middle">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>{{ season.owners|map(o => o.email)|join(', ') }}</td>
+                {% endif %}
                 <td>{{ season.name }}</td>
                 <td>
                     {% if season.activeQuiz %}
                         {{ season.activeQuiz.name }}
                     {% else %}
-                        {% trans %} No active quiz {% endtrans %}
+                        {{ ' No active quiz '|trans }}
                     {% endif %}
                 </td>
                 <td>
@@ -30,14 +37,7 @@
                        {% else %}class="disabled" {% endif %}>{{ season.seasonCode }}</a>
                 </td>
                 <td>
-                    <input class="form-check-input"
-                           type="checkbox"
-                           disabled
-                           {% if season.preregisterCandidates %}checked{% endif %}
-                           aria-label="Preregister Enabled">
-                </td>
-                <td>
-                    <a href="{{ path('app_backoffice_season', {seasonCode: season.seasonCode}) }}">{% trans %}Manage{% endtrans %}</a>
+                    <a href="{{ path('app_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ 'Manage'|trans }}</a>
                 </td>
             </tr>
         {% else %}

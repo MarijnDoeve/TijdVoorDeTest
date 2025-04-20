@@ -21,7 +21,6 @@ class KrtekFixtures extends Fixture
 
         $season->setName('Krtek Weekend')
             ->setSeasonCode('krtek')
-            ->setPreregisterCandidates(true)
             ->addCandidate(new Candidate('Claudia'))
             ->addCandidate(new Candidate('Eelco'))
             ->addCandidate(new Candidate('Elise'))

@@ -84,14 +84,9 @@ final class QuizController extends AbstractController
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
-            if ($season->isPreregisterCandidates()) {
-                $this->addFlash(FlashType::Danger, 'Candidate not found');
+            $this->addFlash(FlashType::Danger, 'Candidate not found');
 
-                return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
-            }
-
-            $candidate = new Candidate(Base64::base64UrlDecode($nameHash));
-            $candidateRepository->save($candidate);
+            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
         }
 
         if ('POST' === $request->getMethod()) {

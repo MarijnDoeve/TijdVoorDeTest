@@ -27,9 +27,6 @@ class Season
     #[ORM\Column(length: 5)]
     private string $seasonCode;
 
-    #[ORM\Column]
-    private bool $preregisterCandidates;
-
     /** @var Collection<int, Quiz> */
     #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
     private Collection $quizzes;
@@ -77,18 +74,6 @@ class Season
     public function setSeasonCode(string $seasonCode): static
     {
         $this->seasonCode = $seasonCode;
-
-        return $this;
-    }
-
-    public function isPreregisterCandidates(): bool
-    {
-        return $this->preregisterCandidates;
-    }
-
-    public function setPreregisterCandidates(bool $preregisterCandidates): static
-    {
-        $this->preregisterCandidates = $preregisterCandidates;
 
         return $this;
     }
@@ -157,5 +142,10 @@ class Season
         $this->ActiveQuiz = $ActiveQuiz;
 
         return $this;
+    }
+
+    public function isOwner(User $user): bool
+    {
+        return $this->owners->contains($user);
     }
 }

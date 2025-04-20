@@ -3,6 +3,7 @@
 declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 $finder = (new Finder())
     ->in(__DIR__)
@@ -10,6 +11,7 @@ $finder = (new Finder())
 ;
 
 return (new Config())
+    ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,

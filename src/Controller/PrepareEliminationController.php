@@ -8,10 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/backoffice/elimination')]
 final class PrepareEliminationController extends AbstractController
 {
-    #[Route('/prepare', name: 'app_prepare_elimination')]
+    #[Route('/backoffice/elimination/prepare', name: 'app_prepare_elimination')]
     public function index(): Response
     {
         return $this->render('prepare_elimination/index.html.twig', [

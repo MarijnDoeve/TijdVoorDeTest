@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
@@ -11,6 +12,7 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
+use SymfonyCasts\Bundle\VerifyEmail\SymfonyCastsVerifyEmailBundle;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 return [
@@ -25,4 +27,5 @@ return [
     TwigComponentBundle::class => ['all' => true],
     EasyAdminBundle::class => ['all' => true],
     DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    SymfonyCastsVerifyEmailBundle::class => ['all' => true],
 ];

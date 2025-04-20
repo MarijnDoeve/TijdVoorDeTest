@@ -1,8 +1,12 @@
 'Active Quiz': 'Actieve test'
+'All Seasons': 'Alle seizoenen'
+'Already have an account? Log in': 'Heb je al een account? Log in'
 Candidate: Kandidaat
 Candidates: Kandidaten
 'Correct Answers': 'Goede antwoorden'
 Corrections: Jokers
+'Create an account': 'Maak een account aan'
+Email: E-mail
 'Enter your name': 'Voor je naam in'
 'Load Prepared Elimination': 'Laad voorbereide eliminatie'
 Manage: Beheren
@@ -10,15 +14,21 @@ Name: Naam
 'No active quiz': 'Geen actieve test'
 'No results': 'Geen resultaten'
 'Number of dropouts:': 'Aantal afvallers:'
+Owner(s): Eigenar(en)
+Password: Wachtwoord
+'Please Confirm your Email': messages
+'Please sign in': 'Log in aub'
 'Prepare Custom Elimination': 'Bereid aangepaste eliminatie voor'
-'Preregister?': 'Voorregistreren?'
 Questions: Vragen
 Quiz: Test
 Quizzes: Tests
+Register: Registreren
+'Remember me': 'Onthoud mij'
 Score: Score
 Season: Seizoen
 'Season Code': Seizoenscode
 Seasons: Seizoenen
+'Sign in': 'Log in'
 'Start Elimination': 'Start eliminatie'
 'There are no answers for this question': 'Er zijn geen antwoorden voor deze vraag'
 Time: Tijd
