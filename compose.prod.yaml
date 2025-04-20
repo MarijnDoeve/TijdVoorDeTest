@@ -10,10 +10,11 @@ services:
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.php.rule=Host(`tijdvoordetest.nl`)"
-      - "traefik.http.routers.php.entrypoints=websecure"
-      - "traefik.http.routers.php.tls.certresolver=marijndoeve"
-      - "traefik.http.services.php.loadbalancer.server.port=80"
+      - "traefik.http.routers.tvdt.rule=Host(`tijdvoordetest.nl`)"
+      - "traefik.http.routers.tvdt.entrypoints=websecure"
+      - "traefik.http.routers.tvdt.tls.certresolver=marijndoeve"
+      - "traefik.http.routers.tvdt.service=tvdt"
+      - "traefik.http.services.tvdt.loadbalancer.server.port=80"
     networks:
       - web
       - internal
