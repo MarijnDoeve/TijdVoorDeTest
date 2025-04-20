@@ -17,6 +17,9 @@ services:
     networks:
       - web
       - internal
+  database:
+    networks:
+      - internal
 networks:
   web:
     external: true
