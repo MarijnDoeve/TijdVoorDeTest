@@ -54,5 +54,5 @@ indent_size = 2
 [*.*Dockerfile]
 indent_style = tab
 
-[*.*Caddyfile]
+[{*.*Caddyfile,Caddyfile}]
 indent_style = tab
