@@ -17,30 +17,43 @@ use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
 use App\Repository\GivenAnswerRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\SeasonRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 final class QuizController extends AbstractController
 {
+
     public const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
 
     private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
 
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     #[Route(path: '/', name: 'app_quiz_selectseason', methods: ['GET', 'POST'])]
-    public function selectSeason(Request $request): Response
+    public function selectSeason(Request $request, SeasonRepository $seasonRepository): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $season_code = $data['season_code'];
 
-            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $data['season_code']]);
+            if ($seasonRepository->findBy(['seasonCode' => $season_code]) === []) {
+                $this->addFlash(FlashType::Warning, $this->translator->trans('Invalid season code'));
+                return $this->redirectToRoute('app_quiz_selectseason');
+            }
+
+            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season_code]);
         }
 
         return $this->render('quiz/select_season.html.twig', ['form' => $form]);
