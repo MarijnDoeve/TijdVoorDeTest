@@ -2,6 +2,7 @@
 {% block body %}
     {{ question.question }}<br/>
     <form method="post">
+        <input type="hidden" name="token" value="{{ csrf_token('question') }}">
         {% for answer in question.answers %}
             <div>
                 <button class="btn btn-outline-success"
