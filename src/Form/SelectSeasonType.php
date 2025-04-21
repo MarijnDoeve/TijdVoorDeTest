@@ -9,16 +9,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/** @extends AbstractType<null> */
 class SelectSeasonType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('season_code', TextType::class,
-                ['required' => true, 'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/")],
+                ['required' => true, 'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/"), 'label' => $this->translator->trans('Season Code')]
             )
-//            ->add('submit', SubmitType::class, ['label' => 'Start quiz'])
         ;
     }
 

@@ -9,6 +9,7 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/** @extends Voter<string, Season> */
 final class SeasonVoter extends Voter
 {
     public const string EDIT = 'SEASON_EDIT';

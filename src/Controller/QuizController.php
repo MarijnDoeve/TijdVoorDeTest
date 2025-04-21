@@ -29,14 +29,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class QuizController extends AbstractController
 {
-
     public const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
 
     private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
 
-    public function __construct(private readonly TranslatorInterface $translator)
-    {
-    }
+    public function __construct(private readonly TranslatorInterface $translator) {}
 
     #[Route(path: '/', name: 'app_quiz_selectseason', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request, SeasonRepository $seasonRepository): Response
@@ -48,8 +45,9 @@ final class QuizController extends AbstractController
             $data = $form->getData();
             $season_code = $data['season_code'];
 
-            if ($seasonRepository->findBy(['seasonCode' => $season_code]) === []) {
+            if ([] === $seasonRepository->findBy(['seasonCode' => $season_code])) {
                 $this->addFlash(FlashType::Warning, $this->translator->trans('Invalid season code'));
+
                 return $this->redirectToRoute('app_quiz_selectseason');
             }
 
