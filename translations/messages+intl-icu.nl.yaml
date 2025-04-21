@@ -2,6 +2,7 @@
 'All Seasons': 'Alle seizoenen'
 'Already have an account? Log in': 'Heb je al een account? Log in'
 Candidate: Kandidaat
+'Candidate not found': 'Kandidaat niet gevonden'
 Candidates: Kandidaten
 'Correct Answers': 'Goede antwoorden'
 Corrections: Jokers
@@ -22,6 +23,7 @@ Password: Wachtwoord
 'Prepare Custom Elimination': 'Bereid aangepaste eliminatie voor'
 Questions: Vragen
 Quiz: Test
+'Quiz completed': 'Test voltooid'
 Quizzes: Tests
 Register: Registreren
 'Remember me': 'Onthoud mij'
@@ -34,3 +36,4 @@ Seasons: Seizoenen
 'There are no answers for this question': 'Er zijn geen antwoorden voor deze vraag'
 Time: Tijd
 'Your Seasons': 'Jouw seizoenen'
+'Your email address has been verified.': 'Je e-mailadres is geverifieerd.'

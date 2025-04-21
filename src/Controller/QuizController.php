@@ -95,7 +95,7 @@ final class QuizController extends AbstractController
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
-            $this->addFlash(FlashType::Danger, 'Candidate not found');
+            $this->addFlash(FlashType::Danger, $this->translator->trans('Candidate not found'));
 
             return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
         }
@@ -117,7 +117,7 @@ final class QuizController extends AbstractController
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
 
         if (!$question instanceof Question) {
-            $this->addFlash(FlashType::Success, 'Quiz completed');
+            $this->addFlash(FlashType::Success, $this->translator->trans('Quiz completed'));
 
             return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
         }
