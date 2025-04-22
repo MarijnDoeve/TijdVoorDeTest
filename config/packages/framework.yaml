@@ -10,10 +10,11 @@ framework:
     #esi: true
     #fragments: true
 when@prod:
-  # shortcut for private IP address ranges of your proxy
-  trusted_proxies: 'private_ranges'
-  # or, if your proxy instead uses the "Forwarded" header
-  trusted_headers: [ 'forwarded' ]
+  framework:
+    # shortcut for private IP address ranges of your proxy
+    trusted_proxies: 'private_ranges'
+    # or, if your proxy instead uses the "Forwarded" header
+    trusted_headers: [ 'forwarded' ]
 
 when@test:
   framework:
