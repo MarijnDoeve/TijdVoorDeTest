@@ -42,16 +42,15 @@ final class QuizController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $season_code = $data['season_code'];
+            $seasonCode = $form->get('season_code')->getData();
 
-            if ([] === $seasonRepository->findBy(['seasonCode' => $season_code])) {
+            if ([] === $seasonRepository->findBy(['seasonCode' => $seasonCode])) {
                 $this->addFlash(FlashType::Warning, $this->translator->trans('Invalid season code'));
 
                 return $this->redirectToRoute('app_quiz_selectseason');
             }
 
-            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season_code]);
+            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $seasonCode]);
         }
 
         return $this->render('quiz/select_season.html.twig', ['form' => $form]);
@@ -68,8 +67,7 @@ final class QuizController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $name = $data['name'];
+            $name = $form->get('name')->getData();
 
             return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64UrlEncode($name)]);
         }

@@ -18,14 +18,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class MakeAdminCommand extends Command
 {
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
         parent::__construct();
     }
-
-
-
-
 
     protected function configure(): void
     {

@@ -72,7 +72,7 @@ class Answer
         return $this;
     }
 
-    public function isRightAnswer(): ?bool
+    public function isRightAnswer(): bool
     {
         return $this->isRightAnswer;
     }

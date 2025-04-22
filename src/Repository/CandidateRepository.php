@@ -9,7 +9,6 @@ use App\Entity\Correction;
 use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Helpers\Base64;
-use DateInterval;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,7 +17,8 @@ use Safe\Exceptions\UrlException;
 /**
  * @extends ServiceEntityRepository<Candidate>
  *
- * @phpstan-type ResultArray array<string, array{0: Candidate, correct: int, time: DateInterval, corrections?: float, score: float}>
+ * @phpstan-type Result array{0: Candidate, correct: int, time: \DateInterval, corrections?: float, score: float}
+ * @phpstan-type ResultList list<Result>
  */
 class CandidateRepository extends ServiceEntityRepository
 {
@@ -52,7 +52,7 @@ class CandidateRepository extends ServiceEntityRepository
         }
     }
 
-    /** @return ResultArray */
+    /** @return ResultList */
     public function getScores(Quiz $quiz): array
     {
         $scoreTimeQb = $this->createQueryBuilder('c', 'c.id')
@@ -76,8 +76,8 @@ class CandidateRepository extends ServiceEntityRepository
     /**
      * @param array<string, array{0: Candidate, correct: int, time: \DateInterval, corrections?: float}> $in
      *
-     * @return ResultArray
-     */
+     * @return array<string, Result>
+     * */
     private function calculateScore(array $in): array
     {
         return array_map(static fn ($candidate): array => [
@@ -87,10 +87,10 @@ class CandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param ResultArray $results
+     * @param array<string, Result> $results
      *
-     * @return ResultArray
-     */
+     * @return ResultList
+     * */
     private function sortResults(array $results): array
     {
         usort($results, static fn ($a, $b): int => $b['score'] <=> $a['score']);

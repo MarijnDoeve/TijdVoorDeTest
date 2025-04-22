@@ -18,21 +18,24 @@ class Elimination
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
+    /** @var array<string, mixed> */
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
 
+    /** @return array<string, mixed> */
     public function getData(): array
     {
         return $this->data;
     }
 
+    /** @param array<string, mixed> $data */
     public function setData(array $data): static
     {
         $this->data = $data;

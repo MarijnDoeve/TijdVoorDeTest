@@ -17,17 +17,17 @@ use SymfonyCasts\Bundle\VerifyEmail\SymfonyCastsVerifyEmailBundle;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 return [
-    DoctrineBundle::class => ['all' => true],
-    DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
-    DoctrineMigrationsBundle::class => ['all' => true],
-    EasyAdminBundle::class => ['all' => true],
     FrameworkBundle::class => ['all' => true],
+    DoctrineBundle::class => ['all' => true],
+    DoctrineMigrationsBundle::class => ['all' => true],
     MakerBundle::class => ['dev' => true],
-    SecurityBundle::class => ['all' => true],
-    SentryBundle::class => ['prod' => true],
-    SymfonyCastsVerifyEmailBundle::class => ['all' => true],
     TwigBundle::class => ['all' => true],
-    TwigComponentBundle::class => ['all' => true],
-    TwigExtraBundle::class => ['all' => true],
+    SecurityBundle::class => ['all' => true],
     WebProfilerBundle::class => ['dev' => true, 'test' => true],
+    TwigExtraBundle::class => ['all' => true],
+    TwigComponentBundle::class => ['all' => true],
+    EasyAdminBundle::class => ['all' => true],
+    DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    SymfonyCastsVerifyEmailBundle::class => ['all' => true],
+    SentryBundle::class => ['prod' => true],
 ];

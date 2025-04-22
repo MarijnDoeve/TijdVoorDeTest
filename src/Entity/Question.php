@@ -103,7 +103,7 @@ class Question
             return 'This question has no answers';
         }
 
-        $correctAnswers = $this->answers->filter(static fn (Answer $answer): ?bool => $answer->isRightAnswer())->count();
+        $correctAnswers = $this->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer())->count();
 
         if (0 === $correctAnswers) {
             return 'This question has no correct answers';

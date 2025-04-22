@@ -20,7 +20,7 @@ class GivenAnswer
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
     #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
     #[ORM\JoinColumn(nullable: false)]
@@ -35,7 +35,7 @@ class GivenAnswer
     private ?Answer $answer = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
-    private \DateTimeInterface $created;
+    private \DateTimeImmutable $created;
 
     public function getId(): ?Uuid
     {
@@ -78,7 +78,7 @@ class GivenAnswer
         return $this;
     }
 
-    public function getCreated(): \DateTimeInterface
+    public function getCreated(): \DateTimeImmutable
     {
         return $this->created;
     }

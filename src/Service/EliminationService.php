@@ -7,10 +7,10 @@ namespace App\Service;
 use App\Repository\CandidateRepository;
 
 /**
- * @phpstan-import-type ResultArray from CandidateRepository
+ * @phpstan-import-type ResultList from CandidateRepository
  */
 class EliminationService
 {
-    /** @phpstan-param ResultArray $result */
+    /** @phpstan-param ResultList $result */
     public function createEliminationFromResult(array $result): void {}
 }

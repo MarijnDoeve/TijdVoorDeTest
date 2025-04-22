@@ -76,13 +76,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->email;
+        /** @var non-empty-string $identifier */
+        $identifier = $this->email;
+
+        return $identifier;
     }
 
     /**
      * @see UserInterface
      *
-     * @return non-empty-list<string>
+     * @return non-empty-array<int<0, max>, string>
      */
     public function getRoles(): array
     {
