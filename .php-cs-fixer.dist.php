@@ -8,6 +8,7 @@ use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 $finder = (new Finder())
     ->in(__DIR__)
     ->exclude('var')
+    ->exclude('bin')
 ;
 
 return (new Config())

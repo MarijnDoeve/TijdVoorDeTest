@@ -27,4 +27,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
+    public function makeAdmin(string $email): void
+    {
+        $user = $this->findOneBy(['email' => $email]);
+        if (!$user instanceof User) {
+            throw new \InvalidArgumentException('User not found');
+        }
+
+        $user->setRoles(['ROLE_ADMIN']);
+        $this->getEntityManager()->flush();
+    }
 }

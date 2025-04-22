@@ -12,21 +12,19 @@ use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
+#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
     #[\Override]
     public function index(): Response
     {
-        //        return parent::index();
-
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -64,6 +62,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('User', 'fas fa-list', User::class);
         yield MenuItem::linkToCrud('Given Answer', 'fas fa-list', GivenAnswer::class);
         yield MenuItem::linkToCrud('Answer', 'fas fa-list', Answer::class);
-        yield MenuItem::linkToLogout('Logout', 'fa fa-exit');
+        yield MenuItem::linkToLogout('Logout', 'fas fa-sign-out');
     }
 }

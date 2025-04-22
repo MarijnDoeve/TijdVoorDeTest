@@ -7,8 +7,13 @@ framework:
   form:
     csrf_protection:
       enabled: true
-  #esi: true
-  #fragments: true
+    #esi: true
+    #fragments: true
+  
+  # shortcut for private IP address ranges of your proxy
+  trusted_proxies: 'private_ranges'
+  # or, if your proxy instead uses the "Forwarded" header
+  trusted_headers: [ 'forwarded' ]
 
 when@test:
   framework:
