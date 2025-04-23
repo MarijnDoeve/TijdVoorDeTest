@@ -1,4 +1,5 @@
 'Active Quiz': 'Actieve test'
+'Add Candidate': 'Voeg kandidaat toe'
 'All Seasons': 'Alle seizoenen'
 'Already have an account? Log in': 'Heb je al een account? Log in'
 Candidate: Kandidaat
@@ -12,7 +13,9 @@ Email: E-mail
 'Invalid season code': 'Ongeldige seizoenscode'
 'Load Prepared Elimination': 'Laad voorbereide eliminatie'
 Logout: Uitloggen
+'Make active': 'Maak actief'
 Manage: Beheren
+'Manage Quiz': 'Beheer test'
 Name: Naam
 'No active quiz': 'Geen actieve test'
 'No results': 'Geen resultaten'

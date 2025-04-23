@@ -3,7 +3,7 @@
 {% block title %}Hello BackofficeController!{% endblock %}
 
 {% block body %}
-    <h2>
+    <h2 class="py-2">
         {{ is_granted('ROLE_ADMIN') ? 'All Seasons'|trans : 'Your Seasons'|trans }}
     </h2>
     <table class="table table-hover">
@@ -29,7 +29,7 @@
                     {% if season.activeQuiz %}
                         {{ season.activeQuiz.name }}
                     {% else %}
-                        {{ ' No active quiz '|trans }}
+                        {{ 'No active quiz'|trans }}
                     {% endif %}
                 </td>
                 <td>

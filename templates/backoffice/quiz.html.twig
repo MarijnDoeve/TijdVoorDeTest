@@ -1,13 +1,11 @@
 {% extends 'backoffice/base.html.twig' %}
 
 {% block body %}
-    <p>
-    <h2>{{ 'Quiz'|trans }}: {{ quiz.season.name }} - {{ quiz.name }}</h2>
-    </p>
+    <h2 class="py-2">{{ 'Quiz'|trans }}: {{ quiz.season.name }} - {{ quiz.name }}</h2>
+    <a class="py-2 btn btn-primary {% if quiz is same as(season.activeQuiz) %}disabled{% endif %}"
+       href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
     <div id="questions">
-        <p>
-        <h4>{{ 'Questions'|trans }}</h4>
-        </p>
+        <h4 class="py-2">{{ 'Questions'|trans }}</h4>
         <div class="accordion">
             {% for question in quiz.questions %}
                 <div class="accordion-item">
