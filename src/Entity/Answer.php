@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\AnswerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -20,6 +21,9 @@ class Answer
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private Uuid $id;
+
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
+    private int $ordering;
 
     #[ORM\ManyToOne(inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]
@@ -118,6 +122,18 @@ class Answer
             $this->givenAnswers->add($givenAnswer);
             $givenAnswer->setAnswer($this);
         }
+
+        return $this;
+    }
+
+    public function getOrdering(): int
+    {
+        return $this->ordering;
+    }
+
+    public function setOrdering(int $ordering): self
+    {
+        $this->ordering = $ordering;
 
         return $this;
     }

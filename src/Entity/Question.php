@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\QuestionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -21,7 +22,10 @@ class Question
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
+    private int $ordering;
+
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $question;
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
@@ -33,6 +37,7 @@ class Question
 
     /** @var Collection<int, Answer> */
     #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['ordering' => 'ASC'])]
     private Collection $answers;
 
     public function __construct()
@@ -114,5 +119,17 @@ class Question
         }
 
         return null;
+    }
+
+    public function getOrdering(): int
+    {
+        return $this->ordering;
+    }
+
+    public function setOrdering(int $ordering): static
+    {
+        $this->ordering = $ordering;
+
+        return $this;
     }
 }

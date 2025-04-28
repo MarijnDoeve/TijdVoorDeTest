@@ -30,6 +30,7 @@ class Quiz
 
     /** @var Collection<int, Question> */
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['ordering' => 'ASC'])]
     private Collection $questions;
 
     /** @var Collection<int, Correction> */

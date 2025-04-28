@@ -3,7 +3,11 @@
     <h2 class="py-2">{{ 'Season'|trans }}: {{ season.name }}</h2>
     <div class="row">
         <div class="col-md-6 col-12">
-            <h4 class="py-2">{{ 'Quizzes'|trans }}</h4>
+            <div class="d-flex flex-row align-items-center">
+                <h4 class="py-2 pe-2">{{ 'Quizzes'|trans }}</h4>
+                <a class="link"
+                   href="{{ path('app_backoffice_quiz_add', {seasonCode: season.seasonCode}) }}">{{ 'Add'|trans }}</a>
+            </div>
             <div class="list-group">
                 {% for quiz in season.quizzes %}
                     <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
@@ -14,9 +18,10 @@
             </div>
         </div>
         <div class="col-md-3 col-12">
-            <div style="display: flex ;flex-direction: row; justify-content: space-between">
-                <h4 class="py-2">{{ 'Candidates'|trans }}</h4>
-                <button class="btn btn-outline-primary">{{ 'Add Candidate'|trans }}</button>
+            <div class="d-flex flex-row align-items-center">
+                <h4 class="py-2 pe-2">{{ 'Candidates'|trans }}</h4>
+                <a class="link"
+                   href="{{ path('app_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}</a>
 
             </div>
             <ul>

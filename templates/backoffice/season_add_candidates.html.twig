@@ -1,0 +1,22 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <h2 class="py-2">{{ 'Add Candidates'|trans }}</h2>
+            {{ form_start(form) }}
+            {{ form_row(form.candidates) }}
+            <button type="submit" class="btn btn-primary">{{ 'Submit'|trans }}</button>
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-6 col-12">
+            <p class="pt-5">
+                Hier kan nog tekst komen met wat uitleg
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}

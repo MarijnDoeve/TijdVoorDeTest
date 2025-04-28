@@ -1,0 +1,4 @@
+Error: Fout
+'Please enter a password': 'Voer je wachtwoord in'
+'There is already an account with this email': 'Er is al een account met dit e-mailadres'
+'Your password should be at least {{ limit }} characters': 'Je wachtwoord moet minimaal {{ limit }} karakters lang zijn'
