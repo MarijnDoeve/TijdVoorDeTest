@@ -11,6 +11,8 @@ return RectorConfig::configure()
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
+    ->withSymfonyContainerXml('var/cache/dev/App_KernelDevDebugContainer.xml')
+    ->withParallel()
     ->withPhpSets()
     ->withPreparedSets(
         deadCode: true,

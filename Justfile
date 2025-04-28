@@ -14,6 +14,8 @@ exec *args:
 shell:
     @docker compose exec php bash
 
+bash: shell
+
 migrate: up
     docker compose run --rm php bin/console doctrine:migrations:migrate --no-interaction
 

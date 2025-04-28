@@ -15,6 +15,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
 class Season
 {
+    private const string SEASON_CODE_CHARACTERS = 'bcdfghjklmnpqrstvwxz';
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -147,5 +149,19 @@ class Season
     public function isOwner(User $user): bool
     {
         return $this->owners->contains($user);
+    }
+
+    public function generateSeasonCode(): self
+    {
+        $code = '';
+        $len = mb_strlen(self::SEASON_CODE_CHARACTERS) - 1;
+
+        for ($i = 0; $i < 5; ++$i) {
+            $code .= self::SEASON_CODE_CHARACTERS[random_int(0, $len)];
+        }
+
+        $this->seasonCode = $code;
+
+        return $this;
     }
 }

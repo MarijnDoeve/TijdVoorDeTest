@@ -1,5 +1,7 @@
 'Active Quiz': 'Actieve test'
+Add: Toevoegen
 'Add Candidate': 'Voeg kandidaat toe'
+'Add a quiz to': 'Voeg een test toe aan'
 'All Seasons': 'Alle seizoenen'
 'Already have an account? Log in': 'Heb je al een account? Log in'
 Candidate: Kandidaat
@@ -7,7 +9,9 @@ Candidate: Kandidaat
 Candidates: Kandidaten
 'Correct Answers': 'Goede antwoorden'
 Corrections: Jokers
+'Create a season': 'Maak een seizoen aan'
 'Create an account': 'Maak een account aan'
+'Download Template': 'Download sjabloon'
 Email: E-mail
 'Enter your name': 'Voor je naam in'
 'Invalid season code': 'Ongeldige seizoenscode'
@@ -24,19 +28,25 @@ Owner(s): Eigena(a)r(en)
 Password: Wachtwoord
 'Please Confirm your Email': messages
 'Please sign in': 'Log in aub'
+'Please upload a valid XLSX file': 'Upload een geldig XLSX-bestand'
 'Prepare Custom Elimination': 'Bereid aangepaste eliminatie voor'
 Questions: Vragen
 Quiz: Test
+'Quiz (xlsx)': 'Test (xlsx)'
+'Quiz Added!': 'Test toegevoegd!'
 'Quiz completed': 'Test voltooid'
+'Quiz name': Testnaam
 Quizzes: Tests
 Register: Registreren
 'Remember me': 'Onthoud mij'
 Score: Score
 Season: Seizoen
 'Season Code': Seizoenscode
+'Season Name': 'Seizoensnaam'
 Seasons: Seizoenen
 'Sign in': 'Log in'
 'Start Elimination': 'Start eliminatie'
+Submit: Verstuur
 'There are no answers for this question': 'Er zijn geen antwoorden voor deze vraag'
 Time: Tijd
 'Your Seasons': 'Jouw seizoenen'

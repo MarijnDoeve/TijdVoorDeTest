@@ -52,6 +52,7 @@ class KrtekFixtures extends Fixture
                 ->setQuestion('Is de Krtek een man of een vrouw?')
                 ->addAnswer(new Answer('Vrouw', true))
                 ->addAnswer(new Answer('Man'))
+                ->setOrdering(1)
             )
 
             ->addQuestion((new Question())
@@ -59,6 +60,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Geen', true))
                 ->addAnswer(new Answer('1'))
                 ->addAnswer(new Answer('2'))
+                ->setOrdering(2)
             )
 
             ->addQuestion((new Question())
@@ -68,12 +70,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Koningsdag'))
                 ->addAnswer(new Answer('Kerst', true))
                 ->addAnswer(new Answer('Oud en Nieuw'))
+                ->setOrdering(3)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('Hoe kwam de Krtek naar Kersteren vandaag?')
                 ->addAnswer(new Answer('Met het OV', true))
                 ->addAnswer(new Answer('Met de auto'))
+                ->setOrdering(4)
             )
             ->addQuestion((new Question())
                 ->setQuestion('Met wie keek de Krtek video bij binnenkomst?')
@@ -90,6 +94,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Remy'))
                 ->addAnswer(new Answer('Robbert'))
                 ->addAnswer(new Answer('Tom', true))
+                ->setOrdering(5)
             )
 
             ->addQuestion((new Question())
@@ -102,6 +107,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Probeer ook eens buiten de lijntjes te kleuren', true))
                 ->addAnswer(new Answer('Ga als je groot bent op groepsreis! '))
                 ->addAnswer(new Answer('Trek minder aan van de mening van anderen, het is oké om anders te zijn.'))
+                ->setOrdering(6)
             )
 
             ->addQuestion((new Question())
@@ -112,6 +118,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Pantoffels'))
                 ->addAnswer(new Answer('Hakken'))
                 ->addAnswer(new Answer('Geen schoenen, alleen sokken'))
+                ->setOrdering(7)
             )
 
             ->addQuestion((new Question())
@@ -119,12 +126,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Fiets', true))
                 ->addAnswer(new Answer('Auto'))
                 ->addAnswer(new Answer('Trein'))
+                ->setOrdering(8)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('Heeft de Krtek een eigen auto?')
                 ->addAnswer(new Answer('Ja'))
                 ->addAnswer(new Answer('Nee', true))
+                ->setOrdering(9)
             )
 
             ->addQuestion((new Question())
@@ -144,12 +153,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Pieter'))
                 ->addAnswer(new Answer('Renée Fokker'))
                 ->addAnswer(new Answer('Sam, Davy', true))
+                ->setOrdering(10)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('Zou de Krtek molboekjes, jokers, vrijstellingen of topito’s uit iemands rugzak stelen om te kunnen winnen?')
                 ->addAnswer(new Answer('Ja'))
                 ->addAnswer(new Answer('Nee', true))
+                ->setOrdering(11)
             )
 
             ->addQuestion((new Question())
@@ -157,6 +168,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Éénpersoons, losstaand bed'))
                 ->addAnswer(new Answer('Éénpersoonsbed, tegen een ander bed aan', true))
                 ->addAnswer(new Answer('Tweepersoons bed'))
+                ->setOrdering(12)
             )
 
             ->addQuestion((new Question())
@@ -165,12 +177,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('6', true))
                 ->addAnswer(new Answer('7'))
                 ->addAnswer(new Answer('8'))
+                ->setOrdering(13)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('Waar zat de Krtek aan tafel bij het diner?')
                 ->addAnswer(new Answer('Met de rug naar de accommodatie'))
                 ->addAnswer(new Answer('Met de rug naar de buitenmuur', true))
+                ->setOrdering(14)
             )
 
             ->addQuestion((new Question())
@@ -188,6 +202,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Remy'))
                 ->addAnswer(new Answer('Robbert'))
                 ->addAnswer(new Answer('Tom'))
+                ->setOrdering(15)
             )
         ;
     }
@@ -202,6 +217,7 @@ class KrtekFixtures extends Fixture
                 ->setQuestion('Is de Krtek een man of een vrouw?')
                 ->addAnswer(new Answer('Man'))
                 ->addAnswer(new Answer('Vrouw', true))
+                ->setOrdering(1)
             )
 
             ->addQuestion((new Question())
@@ -213,6 +229,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('De Krtek heeft een intolerantie'))
                 ->addAnswer(new Answer('De Krtek eet geen rundvlees'))
                 ->addAnswer(new Answer('De Krtek eet geen waterdieren'))
+                ->setOrdering(2)
             )
 
             ->addQuestion((new Question())
@@ -224,6 +241,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Tom'))
                 ->addAnswer(new Answer('De huisdieren van de Krtek hebben geen naam'))
                 ->addAnswer(new Answer('De Krtek heeft geen huisdieren', true))
+                ->setOrdering(3)
             )
 
             ->addQuestion((new Question())
@@ -234,6 +252,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Melk'))
                 ->addAnswer(new Answer('Sap'))
                 ->addAnswer(new Answer('Niks'))
+                ->setOrdering(4)
             )
 
             ->addQuestion((new Question())
@@ -245,6 +264,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Oostenrijk'))
                 ->addAnswer(new Answer('Turkije'))
                 ->addAnswer(new Answer('Zweden', true))
+                ->setOrdering(5)
             )
 
             ->addQuestion((new Question())
@@ -254,6 +274,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Het derde groepje'))
                 ->addAnswer(new Answer('Het vierde groepje'))
                 ->addAnswer(new Answer('Het vijfde groepje'))
+                ->setOrdering(6)
             )
 
             ->addQuestion((new Question())
@@ -262,12 +283,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Het universum', true))
                 ->addAnswer(new Answer('Toeval'))
                 ->addAnswer(new Answer('De Krtek is hindoeïstisch'))
+                ->setOrdering(7)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('At de Krtek op vrijdagavond heksenkaas tijdens het diner?')
                 ->addAnswer(new Answer('Ja', true))
                 ->addAnswer(new Answer('Nee'))
+                ->setOrdering(8)
             )
 
             ->addQuestion((new Question())
@@ -276,6 +299,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Tussen 1:00 en 1:59 uur', true))
                 ->addAnswer(new Answer('Tussen 2:00 en 2:59 uur'))
                 ->addAnswer(new Answer('Na 3:00'))
+                ->setOrdering(9)
             )
 
             ->addQuestion((new Question())
@@ -284,6 +308,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('2'))
                 ->addAnswer(new Answer('3'))
                 ->addAnswer(new Answer('geen', true))
+                ->setOrdering(10)
             )
 
             ->addQuestion((new Question())
@@ -294,6 +319,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Sesamstraat'))
                 ->addAnswer(new Answer('Spongebob Squarepants'))
                 ->addAnswer(new Answer('Teletubbies'))
+                ->setOrdering(11)
             )
 
             ->addQuestion((new Question())
@@ -301,6 +327,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('In koffer(s)', true))
                 ->addAnswer(new Answer('In losse tas(sen)'))
                 ->addAnswer(new Answer('In een rugzak'))
+                ->setOrdering(12)
             )
 
             ->addQuestion((new Question())
@@ -313,12 +340,14 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Servies dat tegen elkaar klettert'))
                 ->addAnswer(new Answer('Het geroekoe van een duif', true))
                 ->addAnswer(new Answer('Piepschuim'))
+                ->setOrdering(13)
             )
 
             ->addQuestion((new Question())
                 ->setQuestion('Wilde de Krtek penningmeester worden?')
                 ->addAnswer(new Answer('Ja'))
                 ->addAnswer(new Answer('Nee', true))
+                ->setOrdering(14)
             )
 
             ->addQuestion((new Question())
@@ -336,6 +365,7 @@ class KrtekFixtures extends Fixture
                 ->addAnswer(new Answer('Remy'))
                 ->addAnswer(new Answer('Robbert'))
                 ->addAnswer(new Answer('Tom'))
+                ->setOrdering(15)
             )
         ;
     }
