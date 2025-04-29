@@ -8,6 +8,8 @@ services:
       APP_SECRET: ${APP_SECRET}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
+      MAILER_SENDER: ${MAILER_SENDER}
+      SENTRY_DSN: ${SENTRY_DSN}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tvdt.rule=Host(`tijdvoordetest.nl`)"
