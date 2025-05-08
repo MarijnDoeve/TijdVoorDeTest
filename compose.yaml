@@ -38,6 +38,7 @@ services:
       start_period: 60s
     volumes:
       - database_data:/var/lib/postgresql/data:rw
+    restart: always
   ###< doctrine/doctrine-bundle ###
 
 volumes:
