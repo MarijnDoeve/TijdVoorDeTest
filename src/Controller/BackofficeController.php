@@ -87,6 +87,7 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/{seasonCode}/{quiz}', name: 'app_backoffice_quiz')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function quiz(Season $season, Quiz $quiz): Response
     {
         return $this->render('backoffice/quiz.html.twig', [
@@ -98,7 +99,7 @@ final class BackofficeController extends AbstractController
 
     #[Route('/backoffice/{seasonCode}/{quiz}/enable', name: 'app_backoffice_enable')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
-    public function enableQuiz(Season $season, Quiz $quiz, EntityManagerInterface $em): Response
+    public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): Response
     {
         $season->setActiveQuiz($quiz);
         $em->flush();
@@ -107,6 +108,7 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/{seasonCode}/add_candidate', name: 'app_backoffice_add_candidates', priority: 10)]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addCandidates(Season $season, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(AddCandidatesFormType::class);
@@ -114,9 +116,10 @@ final class BackofficeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $candidates = $form->get('candidates')->getData();
-            foreach (explode("\r\n", $candidates) as $candidate) {
+            foreach (explode("\r\n", (string) $candidates) as $candidate) {
                 $season->addCandidate(new Candidate($candidate));
             }
+
             $em->flush();
 
             return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
@@ -126,6 +129,7 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/{seasonCode}/add', name: 'app_backoffice_quiz_add', priority: 10)]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addQuiz(Request $request, Season $season, QuizSpreadsheetService $quizSpreadsheet, EntityManagerInterface $em): Response
     {
         $quiz = new Quiz();

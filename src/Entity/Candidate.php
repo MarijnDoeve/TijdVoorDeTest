@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
+#[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Candidate
 {
     #[ORM\Id]

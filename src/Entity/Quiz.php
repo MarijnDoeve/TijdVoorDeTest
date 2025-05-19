@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
+#[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Quiz
 {
     #[ORM\Id]
@@ -40,10 +41,15 @@ class Quiz
     #[ORM\Column(nullable: true)]
     private ?int $dropouts = null;
 
+    /** @var Collection<int, Elimination> */
+    #[ORM\OneToMany(targetEntity: Elimination::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $eliminations;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->corrections = new ArrayCollection();
+        $this->eliminations = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -115,6 +121,19 @@ class Quiz
     public function setDropouts(?int $dropouts): static
     {
         $this->dropouts = $dropouts;
+
+        return $this;
+    }
+
+    /** @return Collection<int, Elimination> */
+    public function getEliminations(): Collection
+    {
+        return $this->eliminations;
+    }
+
+    public function addElimination(Elimination $elimination): self
+    {
+        $this->eliminations->add($elimination);
 
         return $this;
     }

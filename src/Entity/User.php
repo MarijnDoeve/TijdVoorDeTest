@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -31,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     /** @var list<string> The user roles */
-    #[ORM\Column]
+    #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
 
     /** @var string The hashed password */
