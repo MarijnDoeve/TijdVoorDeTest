@@ -1,7 +1,8 @@
 'Active Quiz': 'Actieve test'
 Add: Toevoegen
 'Add Candidate': 'Voeg kandidaat toe'
-'Add a quiz to': 'Voeg een test toe aan'
+'Add Candidates': 'Voeg kandidaten toe'
+'Add a quiz to %name%': 'Voeg een test toe aan %name%'
 'All Seasons': 'Alle seizoenen'
 'Already have an account? Log in': 'Heb je al een account? Log in'
 Candidate: Kandidaat
@@ -9,8 +10,10 @@ Candidate: Kandidaat
 Candidates: Kandidaten
 'Correct Answers': 'Goede antwoorden'
 Corrections: Jokers
+'Cound not find candidate with name %name%': 'Kon kandidaat met naam %name% niet vinden'
 'Create a season': 'Maak een seizoen aan'
 'Create an account': 'Maak een account aan'
+'Deactivate Quiz': 'Deactiveer test'
 'Download Template': 'Download sjabloon'
 Email: E-mail
 'Enter your name': 'Voor je naam in'
@@ -42,7 +45,7 @@ Register: Registreren
 Score: Score
 Season: Seizoen
 'Season Code': Seizoenscode
-'Season Name': 'Seizoensnaam'
+'Season Name': Seizoensnaam
 Seasons: Seizoenen
 'Sign in': 'Log in'
 'Start Elimination': 'Start eliminatie'

@@ -94,6 +94,7 @@ class QuizSpreadsheetService
                     if (1 === $answerCounter) {
                         $errors[] = \sprintf('Question %d has no answers', $answerCounter);
                     }
+
                     break;
                 }
 

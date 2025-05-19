@@ -33,7 +33,7 @@ RUN set -eux; \
 		zip \
 		uuid \
 		gd \
-		excimer \
+		excimer-1.2.3 \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser

@@ -20,6 +20,10 @@ class Elimination
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private Uuid $id;
 
+    #[ORM\ManyToOne(inversedBy: 'eliminations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Quiz $quiz;
+
     /** @var array<string, mixed> */
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
@@ -41,5 +45,17 @@ class Elimination
         $this->data = $data;
 
         return $this;
+    }
+
+    public function setQuiz(Quiz $quiz): self
+    {
+        $this->quiz = $quiz;
+
+        return $this;
+    }
+
+    public function getQuiz(): Quiz
+    {
+        return $this->quiz;
     }
 }

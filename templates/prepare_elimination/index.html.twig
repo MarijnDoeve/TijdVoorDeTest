@@ -1,0 +1,26 @@
+{% extends 'backoffice/base.html.twig' %}
+{% block body %}
+    <div class="row">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_backoffice_index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a
+                        href="{{ path('app_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ season.name }}</a>
+                </li>
+                <li class="breadcrumb-item"><a
+                        href="{{ path('app_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
+                </li>
+
+                <li class="breadcrumb-item active" aria-current="page">Prepare Elimination</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+
+        </div>
+        <div class="col-12 col-md-6">
+            <p>Hier kan dus weer wat uitleg komen</p>
+        </div>
+    </div>
+{% endblock %}
