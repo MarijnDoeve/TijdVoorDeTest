@@ -23,7 +23,7 @@ class Answer
     private Uuid $id;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
-    private int $ordering;
+    private int $ordering = 0;
 
     #[ORM\ManyToOne(inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]

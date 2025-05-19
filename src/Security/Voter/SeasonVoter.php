@@ -14,11 +14,13 @@ final class SeasonVoter extends Voter
 {
     public const string EDIT = 'SEASON_EDIT';
 
+    public const string ELIMINATION = 'SEASON_ELIMINATION';
+
     public const string DELETE = 'SEASON_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return \in_array($attribute, [self::EDIT, self::DELETE], true)
+        return \in_array($attribute, [self::EDIT, self::DELETE, self::ELIMINATION], true)
             && $subject instanceof Season;
     }
 
@@ -34,16 +36,9 @@ final class SeasonVoter extends Voter
             return true;
         }
 
-        switch ($attribute) {
-            case self::EDIT:
-            case self::DELETE:
-                if ($subject->isOwner($user)) {
-                    return true;
-                }
-
-                break;
-        }
-
-        return false;
+        return match ($attribute) {
+            self::EDIT, self::DELETE, self::ELIMINATION => $subject->isOwner($user),
+            default => false,
+        };
     }
 }

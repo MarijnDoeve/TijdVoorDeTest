@@ -2,8 +2,15 @@
 
 {% block body %}
     <h2 class="py-2">{{ 'Quiz'|trans }}: {{ quiz.season.name }} - {{ quiz.name }}</h2>
-    <a class="py-2 btn btn-primary {% if quiz is same as(season.activeQuiz) %}disabled{% endif %}"
-       href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
+    <div class="py-2 btn-group">
+        <a class="btn btn-primary {% if quiz is same as(season.activeQuiz) %}disabled{% endif %}"
+           href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
+        {% if quiz is same as (season.activeQuiz) %}
+            <a class="btn btn-secondary"
+               href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}">{{ 'Deactivate Quiz'|trans }}</a>
+        {% endif %}
+    </div>
+
     <div id="questions">
         <h4 class="py-2">{{ 'Questions'|trans }}</h4>
         <div class="accordion">
@@ -51,7 +58,8 @@
                 <a class="btn btn-primary">{{ 'Start Elimination'|trans }}</a>
             </div>
             <div class="btn-group btn-group-lg">
-                <a class="btn btn-secondary">{{ 'Prepare Custom Elimination'|trans }}</a>
+                <a href="{{ path('app_prepare_elimination', {seasonCode: season.seasonCode, quiz: quiz.id}) }}"
+                   class="btn btn-secondary">{{ 'Prepare Custom Elimination'|trans }}</a>
                 <a class="btn btn-secondary">{{ 'Load Prepared Elimination'|trans }}</a>
             </div>
         </div>

@@ -36,12 +36,12 @@ jobs:
         run: docker compose up --wait --no-build
       - name: Coding Style
         run: docker compose exec -T php vendor/bin/php-cs-fixer check --diff --show-progress=none
+      - name: Twig Coding Style
+        run: docker compose exec -T php vendor/bin/twig-cs-fixer check
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
-      - name: Check HTTPS reachability
-        if: false # Remove this line when the homepage will be configured, or change the path to check
-        run: curl -vk --fail-with-body https://localhost
       - name: Check Mercure reachability
+        if: false
         run: curl -vkI --fail-with-body https://localhost/.well-known/mercure?topic=test
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
