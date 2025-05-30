@@ -99,4 +99,7 @@ RUN set -eux; \
 	composer dump-autoload --classmap-authoritative --no-dev; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
-	chmod +x bin/console; sync;
+	chmod +x bin/console; \
+    bin/console sass:build \
+    bin/console asset-map:compile --no-debug --quiet --no-ansi; \
+    sync;

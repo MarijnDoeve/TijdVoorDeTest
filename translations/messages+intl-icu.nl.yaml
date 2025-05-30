@@ -17,7 +17,7 @@ Corrections: Jokers
 'Download Template': 'Download sjabloon'
 Email: E-mail
 'Enter your name': 'Voor je naam in'
-'Invalid season code': 'Ongeldige seizoenscode'
+'Invalid season code': 'Ongeldige seizoencode'
 'Load Prepared Elimination': 'Laad voorbereide eliminatie'
 Logout: Uitloggen
 'Make active': 'Maak actief'
@@ -42,14 +42,17 @@ Quiz: Test
 Quizzes: Tests
 Register: Registreren
 'Remember me': 'Onthoud mij'
+'Repeat Password': 'Herhaal wachtwoord'
+Save: Opslaan
 Score: Score
 Season: Seizoen
-'Season Code': Seizoenscode
-'Season Name': Seizoensnaam
+'Season Code': Seizoencode
+'Season Name': Seizoennaam
 Seasons: Seizoenen
 'Sign in': 'Log in'
 'Start Elimination': 'Start eliminatie'
 Submit: Verstuur
+'The password fields must match.': 'De wachtwoorden moeten overeen komen.'
 'There are no answers for this question': 'Er zijn geen antwoorden voor deze vraag'
 Time: Tijd
 'Your Seasons': 'Jouw seizoenen'

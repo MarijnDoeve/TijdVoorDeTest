@@ -13,11 +13,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 use Safe\Exceptions\UrlException;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends ServiceEntityRepository<Candidate>
  *
- * @phpstan-type Result array{0: Candidate, correct: int, time: \DateInterval, corrections?: float, score: float}
+ * @phpstan-type Result array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections?: float, score: float}
  * @phpstan-type ResultList list<Result>
  */
 class CandidateRepository extends ServiceEntityRepository
@@ -56,7 +57,7 @@ class CandidateRepository extends ServiceEntityRepository
     public function getScores(Quiz $quiz): array
     {
         $scoreTimeQb = $this->createQueryBuilder('c', 'c.id')
-            ->select('c', 'sum(case when a.isRightAnswer = true then 1 else 0 end) as correct', 'max(ga.created) - min(ga.created) as time')
+            ->select('c.id', 'c.name', 'sum(case when a.isRightAnswer = true then 1 else 0 end) as correct', 'max(ga.created) - min(ga.created) as time')
             ->join('c.givenAnswers', 'ga')
             ->join('ga.answer', 'a')
             ->where('ga.quiz = :quiz')
@@ -64,7 +65,7 @@ class CandidateRepository extends ServiceEntityRepository
             ->setParameter('quiz', $quiz);
 
         $correctionsQb = $this->createQueryBuilder('c', 'c.id')
-            ->select('c', 'cor.amount as corrections')
+            ->select('c.id', 'cor.amount as corrections')
             ->innerJoin(Correction::class, 'cor', Join::WITH, 'cor.candidate = c and cor.quiz = :quiz')
             ->setParameter('quiz', $quiz);
 
@@ -74,7 +75,7 @@ class CandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<string, array{0: Candidate, correct: int, time: \DateInterval, corrections?: float}> $in
+     * @param array<string, array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections?: float}> $in
      *
      * @return array<string, Result>
      * */

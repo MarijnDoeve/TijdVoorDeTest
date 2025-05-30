@@ -21,6 +21,7 @@ class CreateSeasonFormType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => $this->translator->trans('Season Name'),
+                'translation_domain' => false,
             ])
         ;
     }

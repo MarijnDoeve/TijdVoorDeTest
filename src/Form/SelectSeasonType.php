@@ -20,7 +20,7 @@ class SelectSeasonType extends AbstractType
     {
         $builder
             ->add('season_code', TextType::class,
-                ['required' => true, 'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/"), 'label' => $this->translator->trans('Season Code')]
+                ['required' => true, 'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/"), 'label' => $this->translator->trans('Season Code'), 'translation_domain' => false]
             )
         ;
     }

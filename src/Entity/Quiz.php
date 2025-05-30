@@ -38,11 +38,12 @@ class Quiz
     #[ORM\OneToMany(targetEntity: Correction::class, mappedBy: 'quiz', orphanRemoval: true)]
     private Collection $corrections;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $dropouts = null;
+    #[ORM\Column(nullable: false, options: ['default' => 1])]
+    private int $dropouts = 1;
 
     /** @var Collection<int, Elimination> */
     #[ORM\OneToMany(targetEntity: Elimination::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['created' => 'DESC'])]
     private Collection $eliminations;
 
     public function __construct()
@@ -113,12 +114,12 @@ class Quiz
         return $this;
     }
 
-    public function getDropouts(): ?int
+    public function getDropouts(): int
     {
         return $this->dropouts;
     }
 
-    public function setDropouts(?int $dropouts): static
+    public function setDropouts(int $dropouts): static
     {
         $this->dropouts = $dropouts;
 
