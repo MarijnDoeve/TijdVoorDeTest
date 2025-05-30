@@ -11,18 +11,19 @@
         "ext-iconv": "*",
         "doctrine/dbal": "^4.2.3",
         "doctrine/doctrine-bundle": "^2.14.0",
-        "doctrine/doctrine-migrations-bundle": "^3.4.1",
-        "doctrine/orm": "^3.3.2",
-        "easycorp/easyadmin-bundle": "^4.24.6",
-        "phpdocumentor/reflection-docblock": "^5.6",
-        "phpoffice/phpspreadsheet": "*",
+        "doctrine/doctrine-migrations-bundle": "^3.4.2",
+        "doctrine/orm": "^3.3.3",
+        "easycorp/easyadmin-bundle": "^4.24.7",
+        "phpdocumentor/reflection-docblock": "^5.6.2",
+        "phpoffice/phpspreadsheet": "^4.2.0",
         "phpstan/phpdoc-parser": "^2.1",
         "runtime/frankenphp-symfony": "^0.2.0",
         "sentry/sentry-symfony": "^5.2",
         "symfony/asset": "7.2.*",
+        "symfony/asset-mapper": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
-        "symfony/flex": "^2.5.0",
+        "symfony/flex": "^2.7.0",
         "symfony/form": "7.2.*",
         "symfony/framework-bundle": "7.2.*",
         "symfony/mailer": "7.2.*",
@@ -35,28 +36,32 @@
         "symfony/twig-bundle": "7.2.*",
         "symfony/uid": "7.2.*",
         "symfony/yaml": "7.2.*",
+        "symfonycasts/sass-bundle": "^0.8.2",
         "symfonycasts/verify-email-bundle": "^1.17.3",
-        "thecodingmachine/safe": "^3.1.0"
+        "thecodingmachine/safe": "^3.3.0",
+        "twig/extra-bundle": "^3.21",
+        "twig/intl-extra": "^3.21",
+        "twig/twig": "^3.21.1"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.1",
         "friendsofphp/php-cs-fixer": "^3.75.0",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.12",
-        "phpstan/phpstan-doctrine": "^2.0.2",
+        "phpstan/phpstan": "^2.1.17",
+        "phpstan/phpstan-doctrine": "^2.0.3",
         "phpstan/phpstan-phpunit": "^2.0.6",
-        "phpstan/phpstan-symfony": "^2.0.4",
-        "phpunit/phpunit": "^12.1.3",
-        "rector/rector": "^2.0.12",
+        "phpstan/phpstan-symfony": "^2.0.6",
+        "phpunit/phpunit": "^12.1.6",
+        "rector/rector": "^2.0.16",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "7.2.*",
         "symfony/css-selector": "7.2.*",
-        "symfony/maker-bundle": "^1.62.1",
-        "symfony/phpunit-bridge": "^7.2",
+        "symfony/maker-bundle": "^1.63.0",
+        "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*",
-        "thecodingmachine/phpstan-safe-rule": "^1.4",
-        "vincentlanglet/twig-cs-fixer": "^3.5.1"
+        "thecodingmachine/phpstan-safe-rule": "^1.4.1",
+        "vincentlanglet/twig-cs-fixer": "^3.7.1"
     },
     "config": {
         "allow-plugins": {
@@ -94,7 +99,8 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

@@ -18,7 +18,11 @@ class EnterNameType extends AbstractType
     {
         $builder
             ->add('name', TextType::class,
-                ['required' => true, 'label' => $this->translator->trans('Enter your name')],
+                [
+                    'required' => true,
+                    'label' => $this->translator->trans('Enter your name'),
+                    'translation_domain' => false,
+                ],
             )
         ;
     }

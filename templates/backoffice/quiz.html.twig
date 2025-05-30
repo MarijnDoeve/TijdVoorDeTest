@@ -14,7 +14,7 @@
     <div id="questions">
         <h4 class="py-2">{{ 'Questions'|trans }}</h4>
         <div class="accordion">
-            {% for question in quiz.questions %}
+            {%~ for question in quiz.questions ~%}
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed"
@@ -23,23 +23,23 @@
                                 data-bs-target="#question-{{ loop.index0 }}"
                                 aria-controls="question-{{ loop.index0 }}">
                             {% set questionErrors = question.getErrors %}
-                            {% if questionErrors %}
+                            {%~ if questionErrors -%}
                                 <span data-bs-toggle="tooltip"
                                       title="{{ questionErrors }}"
                                       class="badge text-bg-danger rounded-pill me-2">!</span>
                             {% endif %}
-                            {{ loop.index }}. {{ question.question }}
+                            {{~ loop.index -}}. {{ question.question -}}
                         </button>
                     </h2>
                     <div id="question-{{ loop.index0 }}"
                          class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <ul>
-                                {% for answer in question.answers %}
-                                    <li {% if answer.isRightAnswer %}class="text-decoration-underline"{% endif %}>{{ answer.text }}</li>
-                                {% else %}
-                                    {{ 'There are no answers for this question'|trans }}
-                                {% endfor %}
+                                {%~ for answer in question.answers %}
+                                    <li{% if answer.isRightAnswer %} class="text-decoration-underline"{% endif %}>{{ answer.text -}}</li>
+                                {%~ else %}
+                                    {{ 'There are no answers for this question'|trans -}}
+                                {%~ endfor %}
                             </ul>
                         </div>
                     </div>
@@ -50,17 +50,23 @@
         </div>
     </div>
     <div class="scores">
-        <p>
-        <h4>{{ 'Score'|trans }}</h4>
-        </p>
+        <h4 class="py-2">{{ 'Score'|trans }}</h4>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group btn-group-lg me-2">
                 <a class="btn btn-primary">{{ 'Start Elimination'|trans }}</a>
-            </div>
-            <div class="btn-group btn-group-lg">
                 <a href="{{ path('app_prepare_elimination', {seasonCode: season.seasonCode, quiz: quiz.id}) }}"
                    class="btn btn-secondary">{{ 'Prepare Custom Elimination'|trans }}</a>
-                <a class="btn btn-secondary">{{ 'Load Prepared Elimination'|trans }}</a>
+                {%~ if not quiz.eliminations.empty %}
+                    <button class="btn btn-secondary dropdown-toggle"
+                            data-bs-toggle="dropdown">{{ 'Load Prepared Elimination'|trans }}</button>
+                    <ul class="dropdown-menu">
+                        {%~ for elimination in quiz.eliminations %}
+                            <li><a class="dropdown-item"
+                                   href="{{ path('app_prepare_elimination_view', {elimination: elimination.id}) }}">{{ elimination.created | format_datetime() }}</a>
+                            </li>
+                        {%~ endfor %}
+                    </ul>
+                {% endif %}
             </div>
         </div>
         <p>{{ 'Number of dropouts:'|trans }}  {{ quiz.dropouts }} </p>
@@ -75,9 +81,9 @@
             </tr>
             </thead>
             <tbody>
-            {% for candidate in result %}
+            {%~ for candidate in result ~%}
                 <tr class="table-{% if loop.revindex > quiz.dropouts %}success{% else %}danger{% endif %}">
-                    <td>{{ candidate.0.name }}</td>
+                    <td>{{ candidate.name }}</td>
                     <td>{{ candidate.correct|default('0') }}</td>
                     <td>{{ candidate.corrections|default('0') }}</td>
                     <td>{{ candidate.score|default('x') }}</td>
@@ -93,6 +99,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
+    {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
