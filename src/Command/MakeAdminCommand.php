@@ -26,7 +26,7 @@ class MakeAdminCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('email', InputArgument::OPTIONAL, 'The email of the user to make admin')
+            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user to make admin')
         ;
     }
 

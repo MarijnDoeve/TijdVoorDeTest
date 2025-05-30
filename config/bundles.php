@@ -14,6 +14,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
 use SymfonyCasts\Bundle\VerifyEmail\SymfonyCastsVerifyEmailBundle;
+use Symfonycasts\SassBundle\SymfonycastsSassBundle;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 return [
@@ -30,4 +31,5 @@ return [
     DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
     SymfonyCastsVerifyEmailBundle::class => ['all' => true],
     SentryBundle::class => ['prod' => true],
+    SymfonycastsSassBundle::class => ['all' => true],
 ];

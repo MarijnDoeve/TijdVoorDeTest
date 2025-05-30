@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
+#[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Quiz
 {
     #[ORM\Id]
@@ -37,13 +38,19 @@ class Quiz
     #[ORM\OneToMany(targetEntity: Correction::class, mappedBy: 'quiz', orphanRemoval: true)]
     private Collection $corrections;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $dropouts = null;
+    #[ORM\Column(nullable: false, options: ['default' => 1])]
+    private int $dropouts = 1;
+
+    /** @var Collection<int, Elimination> */
+    #[ORM\OneToMany(targetEntity: Elimination::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['created' => 'DESC'])]
+    private Collection $eliminations;
 
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->corrections = new ArrayCollection();
+        $this->eliminations = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -107,14 +114,27 @@ class Quiz
         return $this;
     }
 
-    public function getDropouts(): ?int
+    public function getDropouts(): int
     {
         return $this->dropouts;
     }
 
-    public function setDropouts(?int $dropouts): static
+    public function setDropouts(int $dropouts): static
     {
         $this->dropouts = $dropouts;
+
+        return $this;
+    }
+
+    /** @return Collection<int, Elimination> */
+    public function getEliminations(): Collection
+    {
+        return $this->eliminations;
+    }
+
+    public function addElimination(Elimination $elimination): self
+    {
+        $this->eliminations->add($elimination);
 
         return $this;
     }

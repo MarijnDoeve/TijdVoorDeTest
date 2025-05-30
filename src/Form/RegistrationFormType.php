@@ -8,6 +8,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
@@ -27,11 +28,16 @@ class RegistrationFormType extends AbstractType
             ->add('email', EmailType::class, [
                 'label' => $this->translator->trans('Email'),
                 'attr' => ['autocomplete' => 'email'],
+                'translation_domain' => false,
             ])
-            ->add('plainPassword', PasswordType::class, [
-                'label' => $this->translator->trans('Password'),
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => $this->translator->trans('The password fields must match.'),
+                'options' => ['attr' => ['class' => 'password-field']],
+                'required' => true,
+                'first_options' => ['label' => $this->translator->trans('Password')],
+                'second_options' => ['label' => $this->translator->trans('Repeat Password')],
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',
@@ -43,6 +49,7 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
+                'translation_domain' => false,
             ])
         ;
     }

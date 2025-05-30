@@ -4,17 +4,30 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Elimination;
+use App\Entity\Quiz;
+use App\Entity\Season;
+use App\Factory\EliminationFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class PrepareEliminationController extends AbstractController
 {
-    #[Route('/backoffice/elimination/prepare', name: 'app_prepare_elimination')]
-    public function index(): Response
+    #[Route('/backoffice/elimination/{seasonCode}/{quiz}/prepare', name: 'app_prepare_elimination')]
+    public function index(Season $season, Quiz $quiz, EliminationFactory $eliminationFactory): Response
     {
-        return $this->render('prepare_elimination/index.html.twig', [
+        $elimination = $eliminationFactory->createEliminationFromQuiz($quiz);
+
+        return $this->redirectToRoute('app_prepare_elimination_view', ['elimination' => $elimination->getId()]);
+    }
+
+    #[Route('/backoffice/elimination/{elimination}', name: 'app_prepare_elimination_view')]
+    public function viewElimination(Elimination $elimination): Response
+    {
+        return $this->render('backoffice/prepare_elimination/index.html.twig', [
             'controller_name' => 'PrepareEliminationController',
+            'elimination' => $elimination,
         ]);
     }
 }

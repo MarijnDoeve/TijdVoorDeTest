@@ -52,14 +52,14 @@ class QuizSpreadsheetService
     }
 
     /** @throws SpreadsheetDataException */
-    public function xlsxToQuiz(Quiz $quiz, File $file): Quiz
+    public function xlsxToQuiz(Quiz $quiz, File $file): void
     {
         $spreadsheet = $this->readSheet($file);
         $sheet = $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex());
 
         $answerLines = \array_slice($sheet->toArray(formatData: false), 1);
 
-        return $this->fillQuizFromArray($quiz, $answerLines);
+        $this->fillQuizFromArray($quiz, $answerLines);
     }
 
     private function readSheet(File $file): Spreadsheet
@@ -94,6 +94,7 @@ class QuizSpreadsheetService
                     if (1 === $answerCounter) {
                         $errors[] = \sprintf('Question %d has no answers', $answerCounter);
                     }
+
                     break;
                 }
 

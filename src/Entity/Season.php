@@ -35,6 +35,7 @@ class Season
 
     /** @var Collection<int, Candidate> */
     #[ORM\OneToMany(targetEntity: Candidate::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
     private Collection $candidates;
 
     /** @var Collection<int, User> */

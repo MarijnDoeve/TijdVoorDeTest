@@ -23,11 +23,13 @@ class UploadQuizFormType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => $this->translator->trans('Quiz name'),
+                'translation_domain' => false,
             ])
             ->add('sheet', FileType::class, [
                 'label' => $this->translator->trans('Quiz (xlsx)'),
                 'mapped' => false,
                 'required' => true,
+                'translation_domain' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
