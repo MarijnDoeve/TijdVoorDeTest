@@ -100,6 +100,6 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; \
-    bin/console sass:build \
+    bin/console sass:build; \
     bin/console asset-map:compile --no-debug --quiet --no-ansi; \
     sync;
