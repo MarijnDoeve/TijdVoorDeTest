@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security\Voter;
 
+use App\Entity\Elimination;
 use App\Entity\Season;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -21,10 +22,10 @@ final class SeasonVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         return \in_array($attribute, [self::EDIT, self::DELETE, self::ELIMINATION], true)
-            && $subject instanceof Season;
+                && ($subject instanceof Season || $subject instanceof Elimination);
     }
 
-    /** @param Season $subject */
+    /** @param Season|Elimination $subject */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
@@ -36,8 +37,10 @@ final class SeasonVoter extends Voter
             return true;
         }
 
+        $season = $subject instanceof Season ? $subject : $subject->getQuiz()->getSeason();
+
         return match ($attribute) {
-            self::EDIT, self::DELETE, self::ELIMINATION => $subject->isOwner($user),
+            self::EDIT, self::DELETE, self::ELIMINATION => $season->isOwner($user),
             default => false,
         };
     }

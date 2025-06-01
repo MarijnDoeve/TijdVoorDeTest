@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Candidate;
-use App\Entity\Season;
+use App\Entity\Elimination;
 use App\Enum\FlashType;
+use App\Form\EliminationEnterNameType;
 use App\Helpers\Base64;
 use App\Repository\CandidateRepository;
 use App\Security\Voter\SeasonVoter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,30 +27,50 @@ final class EliminationController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator) {}
 
-    #[Route('/elimination/{seasonCode}', name: 'app_elimination')]
-    #[IsGranted(SeasonVoter::ELIMINATION, 'season')]
-    public function index(#[MapEntity] Season $season): Response
+    #[Route('/elimination/{elimination}', name: 'app_elimination')]
+    #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
+    public function index(#[MapEntity] Elimination $elimination, Request $request): Response
     {
-        return $this->render('elimination/index.html.twig', [
+        $form = $this->createForm(EliminationEnterNameType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $name = $form->get('name')->getData();
+
+            return $this->redirectToRoute('app_elimination_candidate', ['elimination' => $elimination->getId(), 'candidateHash' => Base64::base64UrlEncode($name)]);
+        }
+
+        return $this->render('quiz/elimination/index.html.twig', [
+            'form' => $form,
             'controller_name' => 'EliminationController',
         ]);
     }
 
-    #[Route('/elimination/{seasonCode}/{candidateHash}', name: 'app_elimination_cadidate')]
-    #[IsGranted(SeasonVoter::ELIMINATION, 'season')]
-    public function candidateScreen(Season $season, string $candidateHash, CandidateRepository $candidateRepository): Response
+    #[Route('/elimination/{elimination}/{candidateHash}', name: 'app_elimination_candidate')]
+    #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
+    public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
     {
-        $candidate = $candidateRepository->getCandidateByHash($season, $candidateHash);
+        $candidate = $candidateRepository->getCandidateByHash($elimination->getQuiz()->getSeason(), $candidateHash);
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Warning,
                 t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator)
             );
-            throw new \InvalidArgumentException('Candidate not found');
+
+            return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
         }
 
-        return $this->render('elimination/candidate.html.twig', [
-            'season' => $season,
+        $screenColour = $elimination->getScreenColour($candidate->getName());
+
+        if (null === $screenColour) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('Cound not find candidate with name %name% in elimination.', ['%name%' => $candidate->getName()]));
+
+            return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
+        }
+
+        return $this->render('quiz/elimination/candidate.html.twig', [
             'candidate' => $candidate,
+            'colour' => $screenColour,
         ]);
     }
 }

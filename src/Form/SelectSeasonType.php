@@ -19,10 +19,13 @@ class SelectSeasonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('season_code', TextType::class,
-                ['required' => true, 'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/"), 'label' => $this->translator->trans('Season Code'), 'translation_domain' => false]
-            )
-        ;
+            ->add('season_code', TextType::class, [
+                'required' => true,
+                'constraints' => new Regex(pattern: "/^[A-Za-z\d]{5}$/"),
+                'label' => $this->translator->trans('Season Code'),
+                'translation_domain' => false,
+                'attr' => ['autofocus' => true],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

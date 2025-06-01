@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** @extends AbstractType<null> */
-class EnterNameType extends AbstractType
+class EliminationEnterNameType extends AbstractType
 {
     public function __construct(private readonly TranslatorInterface $translator) {}
 
@@ -20,7 +20,7 @@ class EnterNameType extends AbstractType
             ->add('name', TextType::class,
                 [
                     'required' => true,
-                    'label' => $this->translator->trans('Enter your name'),
+                    'label' => $this->translator->trans('Enter name'),
                     'translation_domain' => false,
                     'attr' => ['autofocus' => true],
                 ],

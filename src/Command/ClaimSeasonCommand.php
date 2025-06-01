@@ -31,7 +31,7 @@ class ClaimSeasonCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user to make admin')
+            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user thats claims the season')
             ->addArgument('season', InputArgument::REQUIRED, 'The season to claim')
         ;
     }

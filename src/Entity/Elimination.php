@@ -76,6 +76,11 @@ class Elimination
         return $this;
     }
 
+    public function getScreenColour(?string $name): ?string
+    {
+        return $this->data[$name] ?? null;
+    }
+
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
