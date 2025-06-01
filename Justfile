@@ -34,3 +34,8 @@ rector *args:
 
 phpstan *args:
     docker compose exec php vendor/bin/phpstan analyse {{ args }}
+
+[confirm]
+clean:
+    docker compose down -v --remove-orphans
+    rm -rf vendor var assets/vendor public/assets public/bundles .php-cs-fixer.cache .twig-cs-fixer.cache

@@ -5,6 +5,7 @@ Add: Toevoegen
 'Add a quiz to %name%': 'Voeg een test toe aan %name%'
 'All Seasons': 'Alle seizoenen'
 'Already have an account? Log in': 'Heb je al een account? Log in'
+Back: Terug
 Candidate: Kandidaat
 'Candidate not found': 'Kandidaat niet gevonden'
 Candidates: Kandidaten
@@ -44,6 +45,7 @@ Register: Registreren
 'Remember me': 'Onthoud mij'
 'Repeat Password': 'Herhaal wachtwoord'
 Save: Opslaan
+'Save and start elimination': 'Opslaan en start eliminatie'
 Score: Score
 Season: Seizoen
 'Season Code': Seizoencode
