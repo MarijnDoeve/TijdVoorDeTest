@@ -62,7 +62,7 @@
                     <ul class="dropdown-menu">
                         {%~ for elimination in quiz.eliminations %}
                             <li><a class="dropdown-item"
-                                   href="{{ path('app_prepare_elimination_view', {elimination: elimination.id}) }}">{{ elimination.created | format_datetime() }}</a>
+                                   href="{{ path('app_prepare_elimination_view', {elimination: elimination.id}) }}">{{ elimination.created|format_datetime() }}</a>
                             </li>
                         {%~ endfor %}
                     </ul>

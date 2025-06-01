@@ -8,7 +8,9 @@ use App\Entity\Elimination;
 use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Factory\EliminationFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -23,8 +25,15 @@ final class PrepareEliminationController extends AbstractController
     }
 
     #[Route('/backoffice/elimination/{elimination}', name: 'app_prepare_elimination_view')]
-    public function viewElimination(Elimination $elimination): Response
+    public function viewElimination(Elimination $elimination, Request $request, EntityManagerInterface $em): Response
     {
+        if ('POST' === $request->getMethod()) {
+            $elimination->updateFromInputBag($request->request);
+            $em->flush();
+
+            $this->addFlash('success', 'Elimination updated');
+        }
+
         return $this->render('backoffice/prepare_elimination/index.html.twig', [
             'controller_name' => 'PrepareEliminationController',
             'elimination' => $elimination,

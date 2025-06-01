@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EliminationRepository::class)]
@@ -60,6 +61,19 @@ class Elimination
     public function getQuiz(): Quiz
     {
         return $this->quiz;
+    }
+
+    /** @param InputBag<bool|float|int|string> $inputBag */
+    public function updateFromInputBag(InputBag $inputBag): self
+    {
+        foreach ($this->data as $name => $screenColour) {
+            $newColour = $inputBag->get('colour-'.mb_strtolower($name));
+            if (\is_string($newColour)) {
+                $this->data[$name] = $inputBag->get('colour-'.mb_strtolower($name));
+            }
+        }
+
+        return $this;
     }
 
     #[ORM\PrePersist]
