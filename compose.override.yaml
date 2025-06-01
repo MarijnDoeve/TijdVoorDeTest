@@ -9,6 +9,7 @@ services:
       - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
       - ./frankenphp/data:/data
+      - sass:/app/var/sass
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
@@ -34,7 +35,8 @@ services:
   sass:
     image: ${IMAGES_PREFIX:-}app-php
     volumes:
-      - ./:/app
+      - ./:/app:ro
+      - sass:/app/var/sass
     entrypoint: ''
     depends_on:
       - php
@@ -42,6 +44,7 @@ services:
       - bin/console
       - sass:build
       - --watch
+      - -v
   
   ###> symfony/mercure-bundle ###
   ###< symfony/mercure-bundle ###
@@ -62,3 +65,6 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
   ###< symfony/mailer ###
+
+volumes:
+  sass:

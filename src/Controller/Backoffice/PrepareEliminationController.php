@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Backoffice;
 
 use App\Entity\Elimination;
 use App\Entity\Quiz;
@@ -31,6 +31,9 @@ final class PrepareEliminationController extends AbstractController
             $elimination->updateFromInputBag($request->request);
             $em->flush();
 
+            if (true === $request->request->getBoolean('start')) {
+                return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
+            }
             $this->addFlash('success', 'Elimination updated');
         }
 

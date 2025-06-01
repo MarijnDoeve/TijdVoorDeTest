@@ -1,3 +1,7 @@
+{% extends 'quiz/base.html.twig' %}
+
 {% block body %}
+    <img src="{{ asset("img/#{colour}.png") }}" class="elimination-screen" id="{{ colour }}"
+         alt="Screen with colour {{ colour }}">
 
 {% endblock %}

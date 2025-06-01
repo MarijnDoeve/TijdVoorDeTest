@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="nl" target-language="nl" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="uyMngrK" resname="Active Quiz">
+        <source>Active Quiz</source>
+        <target>Actieve test</target>
+      </trans-unit>
+      <trans-unit id="g.hyGgB" resname="Add">
+        <source>Add</source>
+        <target>Toevoegen</target>
+      </trans-unit>
+      <trans-unit id="pv1legV" resname="Add Candidate">
+        <source>Add Candidate</source>
+        <target>Voeg kandidaat toe</target>
+      </trans-unit>
+      <trans-unit id="7aI6qex" resname="Add Candidates">
+        <source>Add Candidates</source>
+        <target>Voeg kandidaten toe</target>
+      </trans-unit>
+      <trans-unit id="ehB6pAw" resname="Add a quiz to %name%">
+        <source>Add a quiz to %name%</source>
+        <target>Voeg een test toe aan %name%</target>
+      </trans-unit>
+      <trans-unit id="qiXD5ve" resname="All Seasons">
+        <source>All Seasons</source>
+        <target>Alle seizoenen</target>
+      </trans-unit>
+      <trans-unit id="PaW5ihf" resname="Already have an account? Log in">
+        <source>Already have an account? Log in</source>
+        <target>Heb je al een account? Log in</target>
+      </trans-unit>
+      <trans-unit id=".QFPbFe" resname="Back">
+        <source>Back</source>
+        <target>Terug</target>
+      </trans-unit>
+      <trans-unit id="T6TIfj7" resname="Candidate">
+        <source>Candidate</source>
+        <target>Kandidaat</target>
+      </trans-unit>
+      <trans-unit id="TiTLBGW" resname="Candidate not found">
+        <source>Candidate not found</source>
+        <target>Kandidaat niet gevonden</target>
+      </trans-unit>
+      <trans-unit id="WJJE4q_" resname="Candidates">
+        <source>Candidates</source>
+        <target>Kandidaten</target>
+      </trans-unit>
+      <trans-unit id="sFpB4C2" resname="Correct Answers">
+        <source>Correct Answers</source>
+        <target>Goede antwoorden</target>
+      </trans-unit>
+      <trans-unit id="YrMVdGf" resname="Corrections">
+        <source>Corrections</source>
+        <target>Jokers</target>
+      </trans-unit>
+      <trans-unit id="Lu7u8U2" resname="Cound not find candidate with name %name%">
+        <source>Cound not find candidate with name %name%</source>
+        <target>Kon kandidaat met naam %name% niet vinden</target>
+      </trans-unit>
+      <trans-unit id="YQUiB4T" resname="Cound not find candidate with name %name% in elimination.">
+        <source>Cound not find candidate with name %name% in elimination.</source>
+        <target>Kon geen kandidaat vinden met de naam %name% in de eliminatie</target>
+      </trans-unit>
+      <trans-unit id="0DvmToq" resname="Create a season">
+        <source>Create a season</source>
+        <target>Maak een seizoen aan</target>
+      </trans-unit>
+      <trans-unit id="Wsms_zc" resname="Create an account">
+        <source>Create an account</source>
+        <target>Maak een account aan</target>
+      </trans-unit>
+      <trans-unit id="w9AyAnn" resname="Deactivate Quiz">
+        <source>Deactivate Quiz</source>
+        <target>Deactiveer test</target>
+      </trans-unit>
+      <trans-unit id="R9yHzHv" resname="Download Template">
+        <source>Download Template</source>
+        <target>Download sjabloon</target>
+      </trans-unit>
+      <trans-unit id="JZi_tm0" resname="Email">
+        <source>Email</source>
+        <target>E-mail</target>
+      </trans-unit>
+      <trans-unit id="mSo9TGC" resname="Enter name">
+        <source>Enter name</source>
+        <target>Voer een naam in</target>
+      </trans-unit>
+      <trans-unit id="RnI7jJT" resname="Enter your name">
+        <source>Enter your name</source>
+        <target>Voor je naam in</target>
+      </trans-unit>
+      <trans-unit id="OGiIhMH" resname="Green">
+        <source>Green</source>
+        <target>Groen</target>
+      </trans-unit>
+      <trans-unit id="k1X7w12" resname="Invalid season code">
+        <source>Invalid season code</source>
+        <target>Ongeldige seizoencode</target>
+      </trans-unit>
+      <trans-unit id="q0FeoCr" resname="Load Prepared Elimination">
+        <source>Load Prepared Elimination</source>
+        <target>Laad voorbereide eliminatie</target>
+      </trans-unit>
+      <trans-unit id="JKl2Twv" resname="Logout">
+        <source>Logout</source>
+        <target>Uitloggen</target>
+      </trans-unit>
+      <trans-unit id="NCItilE" resname="Make active">
+        <source>Make active</source>
+        <target>Maak actief</target>
+      </trans-unit>
+      <trans-unit id="WP2lXKC" resname="Manage">
+        <source>Manage</source>
+        <target>Beheren</target>
+      </trans-unit>
+      <trans-unit id="LZzySF." resname="Manage Quiz">
+        <source>Manage Quiz</source>
+        <target>Beheer test</target>
+      </trans-unit>
+      <trans-unit id="wbMeKOh" resname="Name">
+        <source>Name</source>
+        <target>Naam</target>
+      </trans-unit>
+      <trans-unit id="nOHriCl" resname="No active quiz">
+        <source>No active quiz</source>
+        <target>Geen actieve test</target>
+      </trans-unit>
+      <trans-unit id="swW4qFE" resname="No results">
+        <source>No results</source>
+        <target>Geen resultaten</target>
+      </trans-unit>
+      <trans-unit id="k7Eqnjt" resname="Number of dropouts:">
+        <source>Number of dropouts:</source>
+        <target>Aantal afvallers:</target>
+      </trans-unit>
+      <trans-unit id="PywqOf4" resname="Owner(s)">
+        <source>Owner(s)</source>
+        <target>Eigena(a)r(en)</target>
+      </trans-unit>
+      <trans-unit id="GqmFSHc" resname="Password">
+        <source>Password</source>
+        <target>Wachtwoord</target>
+      </trans-unit>
+      <trans-unit id="6EclFME" resname="Please Confirm your Email">
+        <source>Please Confirm your Email</source>
+        <target>messages</target>
+      </trans-unit>
+      <trans-unit id="lSX_PHJ" resname="Please sign in">
+        <source>Please sign in</source>
+        <target>Log in aub</target>
+      </trans-unit>
+      <trans-unit id="ruFGaU." resname="Please upload a valid XLSX file">
+        <source>Please upload a valid XLSX file</source>
+        <target>Upload een geldig XLSX-bestand</target>
+      </trans-unit>
+      <trans-unit id="YG9Osau" resname="Prepare Custom Elimination">
+        <source>Prepare Custom Elimination</source>
+        <target>Bereid aangepaste eliminatie voor</target>
+      </trans-unit>
+      <trans-unit id="Rx5irUP" resname="Questions">
+        <source>Questions</source>
+        <target>Vragen</target>
+      </trans-unit>
+      <trans-unit id="0tv0gq." resname="Quiz">
+        <source>Quiz</source>
+        <target>Test</target>
+      </trans-unit>
+      <trans-unit id="4BzxOP3" resname="Quiz (xlsx)">
+        <source>Quiz (xlsx)</source>
+        <target>Test (xlsx)</target>
+      </trans-unit>
+      <trans-unit id="nU5BEhV" resname="Quiz Added!">
+        <source>Quiz Added!</source>
+        <target>Test toegevoegd!</target>
+      </trans-unit>
+      <trans-unit id="LbVe.2c" resname="Quiz completed">
+        <source>Quiz completed</source>
+        <target>Test voltooid</target>
+      </trans-unit>
+      <trans-unit id="frxoIkW" resname="Quiz name">
+        <source>Quiz name</source>
+        <target>Testnaam</target>
+      </trans-unit>
+      <trans-unit id="bggVfH9" resname="Quizzes">
+        <source>Quizzes</source>
+        <target>Tests</target>
+      </trans-unit>
+      <trans-unit id="P1HcfAu" resname="Red">
+        <source>Red</source>
+        <target>Rood</target>
+      </trans-unit>
+      <trans-unit id="fGfBzt6" resname="Register">
+        <source>Register</source>
+        <target>Registreren</target>
+      </trans-unit>
+      <trans-unit id="WevL4T_" resname="Remember me">
+        <source>Remember me</source>
+        <target>Onthoud mij</target>
+      </trans-unit>
+      <trans-unit id="Z9CSKpk" resname="Repeat Password">
+        <source>Repeat Password</source>
+        <target>Herhaal wachtwoord</target>
+      </trans-unit>
+      <trans-unit id="z9OKodR" resname="Save">
+        <source>Save</source>
+        <target>Opslaan</target>
+      </trans-unit>
+      <trans-unit id="8HUcmWU" resname="Save and start elimination">
+        <source>Save and start elimination</source>
+        <target>Opslaan en start eliminatie</target>
+      </trans-unit>
+      <trans-unit id="uRWqG15" resname="Score">
+        <source>Score</source>
+        <target>Score</target>
+      </trans-unit>
+      <trans-unit id="yH9A3q0" resname="Season">
+        <source>Season</source>
+        <target>Seizoen</target>
+      </trans-unit>
+      <trans-unit id="yj8.c2D" resname="Season Code">
+        <source>Season Code</source>
+        <target>Seizoencode</target>
+      </trans-unit>
+      <trans-unit id="1ULw_4S" resname="Season Name">
+        <source>Season Name</source>
+        <target>Seizoennaam</target>
+      </trans-unit>
+      <trans-unit id="kc_J96C" resname="Seasons">
+        <source>Seasons</source>
+        <target>Seizoenen</target>
+      </trans-unit>
+      <trans-unit id="pNIxNSX" resname="Sign in">
+        <source>Sign in</source>
+        <target>Log in</target>
+      </trans-unit>
+      <trans-unit id="2QO7aYC" resname="Start Elimination">
+        <source>Start Elimination</source>
+        <target>Start eliminatie</target>
+      </trans-unit>
+      <trans-unit id="9m8DOBg" resname="Submit">
+        <source>Submit</source>
+        <target>Verstuur</target>
+      </trans-unit>
+      <trans-unit id="_z4el3Z" resname="The password fields must match.">
+        <source>The password fields must match.</source>
+        <target>De wachtwoorden moeten overeen komen.</target>
+      </trans-unit>
+      <trans-unit id="HuzRgeN" resname="There are no answers for this question">
+        <source>There are no answers for this question</source>
+        <target>Er zijn geen antwoorden voor deze vraag</target>
+      </trans-unit>
+      <trans-unit id="Dptvysv" resname="Time">
+        <source>Time</source>
+        <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="vVQAP9A" resname="Your Seasons">
+        <source>Your Seasons</source>
+        <target>Jouw seizoenen</target>
+      </trans-unit>
+      <trans-unit id="m80cBv0" resname="Your email address has been verified.">
+        <source>Your email address has been verified.</source>
+        <target>Je e-mailadres is geverifieerd.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

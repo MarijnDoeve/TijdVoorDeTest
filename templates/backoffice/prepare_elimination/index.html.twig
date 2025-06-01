@@ -24,16 +24,18 @@
                         <div class="col-4">
                             <select id="colour-{{ candidate|lower }}" class="form-select"
                                     name="colour-{{ candidate|lower }}">
-                                <option value="green"{% if colour == 'green' %} selected{% endif %}>Green</option>
-                                <option value="red"{% if colour == 'red' %} selected{% endif %}>Red</option>
+                                <option
+                                    value="green"{% if colour == 'green' %} selected{% endif %}>{{ 'Green'|trans }}</option>
+                                <option
+                                    value="red"{% if colour == 'red' %} selected{% endif %}>{{ 'Red'|trans }}</option>
                             </select>
                         </div>
                     </div>
                 {% endfor %}
                 <div class="btn-group py-2">
-                    <button type="submit" class="btn btn-primary" name="start" value="1">{{ 'Save'|trans }}</button>
+                    <button type="submit" class="btn btn-primary" name="start" value="0">{{ 'Save'|trans }}</button>
                     <button type="submit" class="btn btn-success" name="start"
-                            value="0">{{ 'Save and start elimination'|trans }}</button>
+                            value="1">{{ 'Save and start elimination'|trans }}</button>
                     <a href="{{ path('app_backoffice_quiz', {seasonCode: elimination.quiz.season.seasonCode, quiz: elimination.quiz.id}) }}"
                        class="btn btn-secondary">{{ 'Back'|trans }}</a>
                 </div>

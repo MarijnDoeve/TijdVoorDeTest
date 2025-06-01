@@ -53,7 +53,7 @@
         <h4 class="py-2">{{ 'Score'|trans }}</h4>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group btn-group-lg me-2">
-                <a class="btn btn-primary">{{ 'Start Elimination'|trans }}</a>
+                {# <a class="btn btn-primary">{{ 'Start Elimination'|trans }}</a> #}
                 <a href="{{ path('app_prepare_elimination', {seasonCode: season.seasonCode, quiz: quiz.id}) }}"
                    class="btn btn-secondary">{{ 'Prepare Custom Elimination'|trans }}</a>
                 {%~ if not quiz.eliminations.empty %}
