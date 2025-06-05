@@ -30,6 +30,8 @@ return (new Config())
         'single_line_empty_body' => true,
         'strict_comparison' => true,
         'strict_param' => true,
+        'trailing_comma_in_multiline' => ['after_heredoc' => true, 'elements' => ['arguments', 'array_destructuring', 'arrays', 'match', 'parameters']],
+
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
