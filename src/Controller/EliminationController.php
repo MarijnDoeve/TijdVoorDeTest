@@ -54,7 +54,7 @@ final class EliminationController extends AbstractController
         $candidate = $candidateRepository->getCandidateByHash($elimination->getQuiz()->getSeason(), $candidateHash);
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Warning,
-                t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator)
+                t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator),
             );
 
             return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);

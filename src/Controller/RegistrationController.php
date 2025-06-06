@@ -48,7 +48,7 @@ final class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->to((string) $user->getEmail())
                     ->subject($this->translator->trans('Please Confirm your Email'))
-                    ->htmlTemplate('backoffice/registration/confirmation_email.html.twig')
+                    ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
             );
 
             $response = $security->login($user, 'form_login', 'main');
