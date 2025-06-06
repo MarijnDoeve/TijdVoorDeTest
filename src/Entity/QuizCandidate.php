@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\GivenAnswerRepository;
+use App\Repository\QuizCandidateRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
@@ -12,9 +12,10 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 
-#[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
+#[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
+#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
 #[ORM\HasLifecycleCallbacks]
-class GivenAnswer
+class QuizCandidate
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
@@ -22,21 +23,20 @@ class GivenAnswer
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private Uuid $id;
 
-    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
+    #[ORM\Column]
+    private float $corrections = 0;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private \DateTimeImmutable $created;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
-        #[ORM\JoinColumn(nullable: false)]
-        private Candidate $candidate,
-
-        #[ORM\ManyToOne]
+        #[ORM\ManyToOne(inversedBy: 'candidateData')]
         #[ORM\JoinColumn(nullable: false)]
         private Quiz $quiz,
 
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
+        #[ORM\ManyToOne(inversedBy: 'quizData')]
         #[ORM\JoinColumn(nullable: false)]
-        private Answer $answer,
+        private Candidate $candidate,
     ) {}
 
     public function getId(): Uuid
@@ -54,9 +54,16 @@ class GivenAnswer
         return $this->quiz;
     }
 
-    public function getAnswer(): Answer
+    public function getCorrections(): ?float
     {
-        return $this->answer;
+        return $this->corrections;
+    }
+
+    public function setCorrections(float $corrections): static
+    {
+        $this->corrections = $corrections;
+
+        return $this;
     }
 
     public function getCreated(): \DateTimeImmutable

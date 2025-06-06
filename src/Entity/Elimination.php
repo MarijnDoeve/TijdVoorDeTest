@@ -30,7 +30,7 @@ class Elimination
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: false)]
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private \DateTimeImmutable $created;
 
     public function __construct(

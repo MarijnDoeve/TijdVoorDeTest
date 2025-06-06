@@ -23,7 +23,9 @@ class QuizController extends AbstractController
         private readonly CandidateRepository $candidateRepository,
     ) {}
 
-    #[Route('/backoffice/season/{seasonCode}/quiz/{quiz}', name: 'app_backoffice_quiz')]
+    #[Route('/backoffice/season/{seasonCode}/quiz/{quiz}', name: 'app_backoffice_quiz',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+    )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function index(Season $season, Quiz $quiz): Response
     {
@@ -34,7 +36,9 @@ class QuizController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/season/{seasonCode}/quiz/{quiz}/enable', name: 'app_backoffice_enable')]
+    #[Route('/backoffice/season/{seasonCode}/quiz/{quiz}/enable', name: 'app_backoffice_enable',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+    )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): Response
     {

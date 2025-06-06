@@ -21,7 +21,7 @@ class Candidate
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
     #[ORM\ManyToOne(inversedBy: 'candidates')]
     #[ORM\JoinColumn(nullable: false)]
@@ -35,9 +35,9 @@ class Candidate
     #[ORM\OneToMany(targetEntity: GivenAnswer::class, mappedBy: 'candidate', orphanRemoval: true)]
     private Collection $givenAnswers;
 
-    /** @var Collection<int, Correction> */
-    #[ORM\OneToMany(targetEntity: Correction::class, mappedBy: 'candidate', orphanRemoval: true)]
-    private Collection $corrections;
+    /** @var Collection<int, QuizCandidate> */
+    #[ORM\OneToMany(targetEntity: QuizCandidate::class, mappedBy: 'candidate', orphanRemoval: true)]
+    private Collection $quizData;
 
     public function __construct(
         #[ORM\Column(length: 16)]
@@ -45,10 +45,10 @@ class Candidate
     ) {
         $this->answersOnCandidate = new ArrayCollection();
         $this->givenAnswers = new ArrayCollection();
-        $this->corrections = new ArrayCollection();
+        $this->quizData = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -108,30 +108,10 @@ class Candidate
         return $this->givenAnswers;
     }
 
-    public function addGivenAnswer(GivenAnswer $givenAnswer): static
+    /** @return Collection<int, QuizCandidate> */
+    public function getQuizData(): Collection
     {
-        if (!$this->givenAnswers->contains($givenAnswer)) {
-            $this->givenAnswers->add($givenAnswer);
-            $givenAnswer->setCandidate($this);
-        }
-
-        return $this;
-    }
-
-    /** @return Collection<int, Correction> */
-    public function getCorrections(): Collection
-    {
-        return $this->corrections;
-    }
-
-    public function addCorrection(Correction $correction): static
-    {
-        if (!$this->corrections->contains($correction)) {
-            $this->corrections->add($correction);
-            $correction->setCandidate($this);
-        }
-
-        return $this;
+        return $this->quizData;
     }
 
     public function getNameHash(): string

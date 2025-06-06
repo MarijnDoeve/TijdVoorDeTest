@@ -8,6 +8,7 @@ use App\Entity\Answer;
 use App\Entity\Candidate;
 use App\Entity\GivenAnswer;
 use App\Entity\Question;
+use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Enum\FlashType;
 use App\Form\EnterNameType;
@@ -17,6 +18,7 @@ use App\Repository\AnswerRepository;
 use App\Repository\CandidateRepository;
 use App\Repository\GivenAnswerRepository;
 use App\Repository\QuestionRepository;
+use App\Repository\QuizCandidateRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -29,13 +31,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
-
-    private const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
-
     public function __construct(private readonly TranslatorInterface $translator) {}
 
-    #[Route(path: '/', name: 'app_quiz_selectseason', methods: ['GET', 'POST'])]
+    #[Route(path: '/', name: 'app_quiz_select_season', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request, SeasonRepository $seasonRepository): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
@@ -47,16 +45,16 @@ final class QuizController extends AbstractController
             if ([] === $seasonRepository->findBy(['seasonCode' => $seasonCode])) {
                 $this->addFlash(FlashType::Warning, $this->translator->trans('Invalid season code'));
 
-                return $this->redirectToRoute('app_quiz_selectseason');
+                return $this->redirectToRoute('app_quiz_select_season');
             }
 
-            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $seasonCode]);
+            return $this->redirectToRoute('app_quiz_enter_name', ['seasonCode' => $seasonCode]);
         }
 
         return $this->render('quiz/select_season.html.twig', ['form' => $form]);
     }
 
-    #[Route(path: '/{seasonCode}', name: 'app_quiz_entername', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
+    #[Route(path: '/{seasonCode}', name: 'app_quiz_enter_name', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
     public function enterName(
         Request $request,
         #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
@@ -69,7 +67,7 @@ final class QuizController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $name = $form->get('name')->getData();
 
-            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64UrlEncode($name)]);
+            return $this->redirectToRoute('app_quiz_quiz_page', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64UrlEncode($name)]);
         }
 
         return $this->render('quiz/enter_name.twig', ['season' => $season, 'form' => $form]);
@@ -77,25 +75,34 @@ final class QuizController extends AbstractController
 
     #[Route(
         path: '/{seasonCode}/{nameHash}',
-        name: 'app_quiz_quizpage',
+        name: 'app_quiz_quiz_page',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
     )]
     public function quizPage(
         #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
         Season $season,
         string $nameHash,
+        Request $request,
         CandidateRepository $candidateRepository,
         QuestionRepository $questionRepository,
         AnswerRepository $answerRepository,
         GivenAnswerRepository $givenAnswerRepository,
-        Request $request,
+        QuizCandidateRepository $quizCandidateRepository,
     ): Response {
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('Candidate not found'));
 
-            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('app_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
+        }
+
+        $quiz = $season->getActiveQuiz();
+
+        if (!$quiz instanceof Quiz) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('There is no active quiz'));
+
+            return $this->redirectToRoute('app_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
         }
 
         if ('POST' === $request->getMethod()) {
@@ -105,13 +112,10 @@ final class QuizController extends AbstractController
                 throw new BadRequestException('Invalid Answer ID');
             }
 
-            $givenAnswer = (new GivenAnswer())
-                ->setCandidate($candidate)
-                ->setAnswer($answer)
-            ->setQuiz($answer->getQuestion()->getQuiz());
+            $givenAnswer = new GivenAnswer($candidate, $answer->getQuestion()->getQuiz(), $answer);
             $givenAnswerRepository->save($givenAnswer);
 
-            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => $nameHash]);
+            return $this->redirectToRoute('app_quiz_quiz_page', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => $nameHash]);
         }
 
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
@@ -119,10 +123,11 @@ final class QuizController extends AbstractController
         if (!$question instanceof Question) {
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz completed'));
 
-            return $this->redirectToRoute('app_quiz_entername', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('app_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
         }
 
-        // TODO One first question record time
+        $quizCandidateRepository->createIfNotExist($quiz, $candidate);
+
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question]);
     }
 }

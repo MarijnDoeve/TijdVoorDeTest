@@ -38,7 +38,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a {% if season.activeQuiz %}href="{{ path('app_quiz_entername', {seasonCode: season.seasonCode}) }}"
+                    <a {% if season.activeQuiz %}href="{{ path('app_quiz_enter_name', {seasonCode: season.seasonCode}) }}"
                        {% else %}class="disabled" {% endif %}>{{ season.seasonCode }}</a>
                 </td>
                 <td>

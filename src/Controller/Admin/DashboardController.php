@@ -6,10 +6,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\Answer;
 use App\Entity\Candidate;
-use App\Entity\Correction;
 use App\Entity\GivenAnswer;
 use App\Entity\Question;
 use App\Entity\Quiz;
+use App\Entity\QuizCandidate;
 use App\Entity\Season;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -58,7 +58,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Quiz', 'fas fa-list', Quiz::class);
         yield MenuItem::linkToCrud('Question', 'fas fa-list', Question::class);
         yield MenuItem::linkToCrud('Candidate', 'fas fa-list', Candidate::class);
-        yield MenuItem::linkToCrud('Correction', 'fas fa-list', Correction::class);
+        yield MenuItem::linkToCrud('Correction', 'fas fa-list', QuizCandidate::class);
         yield MenuItem::linkToCrud('User', 'fas fa-list', User::class);
         yield MenuItem::linkToCrud('Given Answer', 'fas fa-list', GivenAnswer::class);
         yield MenuItem::linkToCrud('Answer', 'fas fa-list', Answer::class);
