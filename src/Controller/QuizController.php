@@ -110,6 +110,8 @@ final class QuizController extends AbstractController
                 ->setAnswer($answer)
             ->setQuiz($answer->getQuestion()->getQuiz());
             $givenAnswerRepository->save($givenAnswer);
+
+            return $this->redirectToRoute('app_quiz_quizpage', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => $nameHash]);
         }
 
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
