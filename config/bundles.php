@@ -12,6 +12,8 @@ use Symfony\Bundle\MakerBundle\MakerBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\UX\StimulusBundle\StimulusBundle;
+use Symfony\UX\Turbo\TurboBundle;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
 use SymfonyCasts\Bundle\VerifyEmail\SymfonyCastsVerifyEmailBundle;
 use Symfonycasts\SassBundle\SymfonycastsSassBundle;
@@ -32,4 +34,6 @@ return [
     SymfonyCastsVerifyEmailBundle::class => ['all' => true],
     SentryBundle::class => ['prod' => true],
     SymfonycastsSassBundle::class => ['all' => true],
+    StimulusBundle::class => ['all' => true],
+    TurboBundle::class => ['all' => true],
 ];
