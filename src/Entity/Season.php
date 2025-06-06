@@ -21,7 +21,7 @@ class Season
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
     #[ORM\Column(length: 64)]
     private string $name;
@@ -52,7 +52,7 @@ class Season
         $this->owners = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }

@@ -20,7 +20,7 @@ class Question
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
     private int $ordering;
@@ -45,7 +45,7 @@ class Question
         $this->answers = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }

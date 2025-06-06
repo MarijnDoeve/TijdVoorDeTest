@@ -20,7 +20,7 @@ class Quiz
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $id = null;
+    private Uuid $id;
 
     #[ORM\Column(length: 64)]
     private string $name;
@@ -34,9 +34,9 @@ class Quiz
     #[ORM\OrderBy(['ordering' => 'ASC'])]
     private Collection $questions;
 
-    /** @var Collection<int, Correction> */
-    #[ORM\OneToMany(targetEntity: Correction::class, mappedBy: 'quiz', orphanRemoval: true)]
-    private Collection $corrections;
+    /** @var Collection<int, QuizCandidate> */
+    #[ORM\OneToMany(targetEntity: QuizCandidate::class, mappedBy: 'quiz', orphanRemoval: true)]
+    private Collection $candidateData;
 
     #[ORM\Column(nullable: false, options: ['default' => 1])]
     private int $dropouts = 1;
@@ -49,11 +49,11 @@ class Quiz
     public function __construct()
     {
         $this->questions = new ArrayCollection();
-        $this->corrections = new ArrayCollection();
+        $this->candidateData = new ArrayCollection();
         $this->eliminations = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -98,20 +98,10 @@ class Quiz
         return $this;
     }
 
-    /** @return Collection<int, Correction> */
-    public function getCorrections(): Collection
+    /** @return Collection<int, QuizCandidate> */
+    public function getCandidateData(): Collection
     {
-        return $this->corrections;
-    }
-
-    public function addCorrection(Correction $correction): static
-    {
-        if (!$this->corrections->contains($correction)) {
-            $this->corrections->add($correction);
-            $correction->setQuiz($this);
-        }
-
-        return $this;
+        return $this->candidateData;
     }
 
     public function getDropouts(): int

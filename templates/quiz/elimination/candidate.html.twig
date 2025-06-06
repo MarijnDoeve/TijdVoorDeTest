@@ -1,7 +1,12 @@
 {% extends 'quiz/base.html.twig' %}
 
 {% block body %}
-    <img src="{{ asset("img/#{colour}.png") }}" class="elimination-screen" id="{{ colour }}"
-         alt="Screen with colour {{ colour }}">
+    <img src="{{ asset("img/#{colour}.png") }}"
+         class="elimination-screen" id="{{ colour }}"
+         alt="Screen with colour {{ colour }}"
+         data-controller="elimination"
+         data-action="click->elimination#next"
+         tabindex="0"
+    >
 
 {% endblock %}

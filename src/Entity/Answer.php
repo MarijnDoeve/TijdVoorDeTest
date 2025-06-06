@@ -116,16 +116,6 @@ class Answer
         return $this->givenAnswers;
     }
 
-    public function addGivenAnswer(GivenAnswer $givenAnswer): static
-    {
-        if (!$this->givenAnswers->contains($givenAnswer)) {
-            $this->givenAnswers->add($givenAnswer);
-            $givenAnswer->setAnswer($this);
-        }
-
-        return $this;
-    }
-
     public function getOrdering(): int
     {
         return $this->ordering;

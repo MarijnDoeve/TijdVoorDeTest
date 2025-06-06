@@ -29,7 +29,11 @@ class SeasonController extends AbstractController
     public function __construct(private readonly TranslatorInterface $translator, private EntityManagerInterface $em,
     ) {}
 
-    #[Route('/backoffice/season/{seasonCode}', name: 'app_backoffice_season')]
+    #[Route(
+        '/backoffice/season/{seasonCode}',
+        name: 'app_backoffice_season',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+    )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function index(Season $season): Response
     {
@@ -38,7 +42,12 @@ class SeasonController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/season/{seasonCode}/add_candidate', name: 'app_backoffice_add_candidates', priority: 10)]
+    #[Route(
+        '/backoffice/season/{seasonCode}/add_candidate',
+        name: 'app_backoffice_add_candidates',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        priority: 10,
+    )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addCandidates(Season $season, Request $request): Response
     {
@@ -59,7 +68,12 @@ class SeasonController extends AbstractController
         return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form]);
     }
 
-    #[Route('/backoffice/season/{seasonCode}/add', name: 'app_backoffice_quiz_add', priority: 10)]
+    #[Route(
+        '/backoffice/season/{seasonCode}/add',
+        name: 'app_backoffice_quiz_add',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        priority: 10,
+    )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addQuiz(Request $request, Season $season, QuizSpreadsheetService $quizSpreadsheet): Response
     {

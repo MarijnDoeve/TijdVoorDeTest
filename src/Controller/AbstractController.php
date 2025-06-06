@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as AbstractBase
 
 abstract class AbstractController extends AbstractBaseController
 {
+    protected const string SEASON_CODE_REGEX = '[A-Za-z\d]{5}';
+    protected const string CANDIDATE_HASH_REGEX = '[\w\-=]+';
+
     #[\Override]
     protected function addFlash(FlashType|string $type, mixed $message): void
     {
