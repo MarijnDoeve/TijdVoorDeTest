@@ -8,8 +8,9 @@ use App\Entity\Answer;
 use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Exception\SpreadsheetDataException;
+use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer;
 use Symfony\Component\HttpFoundation\File\File;
 
 class QuizSpreadsheetService
@@ -64,7 +65,7 @@ class QuizSpreadsheetService
 
     private function readSheet(File $file): Spreadsheet
     {
-        return (new \PhpOffice\PhpSpreadsheet\Reader\Xlsx())->setReadDataOnly(true)->load($file->getRealPath());
+        return new Reader\Xlsx()->setReadDataOnly(true)->load($file->getRealPath());
     }
 
     /**
@@ -117,7 +118,7 @@ class QuizSpreadsheetService
 
     private function toXlsx(Spreadsheet $spreadsheet): \Closure
     {
-        $writer = new Xlsx($spreadsheet);
+        $writer = new Writer\Xlsx($spreadsheet);
 
         return static fn () => $writer->save('php://output');
     }
