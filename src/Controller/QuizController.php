@@ -20,7 +20,6 @@ use App\Repository\GivenAnswerRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizCandidateRepository;
 use App\Repository\SeasonRepository;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -54,10 +53,9 @@ final class QuizController extends AbstractController
         return $this->render('quiz/select_season.html.twig', ['form' => $form]);
     }
 
-    #[Route(path: '/{seasonCode}', name: 'app_quiz_enter_name', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
+    #[Route(path: '/{seasonCode:season}', name: 'app_quiz_enter_name', requirements: ['seasonCode' => self::SEASON_CODE_REGEX])]
     public function enterName(
         Request $request,
-        #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
         Season $season,
     ): Response {
         $form = $this->createForm(EnterNameType::class);
@@ -74,12 +72,11 @@ final class QuizController extends AbstractController
     }
 
     #[Route(
-        path: '/{seasonCode}/{nameHash}',
+        path: '/{seasonCode:season}/{nameHash}',
         name: 'app_quiz_quiz_page',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
     )]
     public function quizPage(
-        #[MapEntity(mapping: ['seasonCode' => 'seasonCode'])]
         Season $season,
         string $nameHash,
         Request $request,
