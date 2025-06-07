@@ -21,10 +21,10 @@ use App\Repository\QuestionRepository;
 use App\Repository\QuizCandidateRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -109,7 +109,7 @@ final class QuizController extends AbstractController
             $answer = $answerRepository->findOneBy(['id' => $request->request->get('answer')]);
 
             if (!$answer instanceof Answer) {
-                throw new BadRequestException('Invalid Answer ID');
+                throw new BadRequestHttpException('Invalid Answer ID');
             }
 
             $givenAnswer = new GivenAnswer($candidate, $answer->getQuestion()->getQuiz(), $answer);

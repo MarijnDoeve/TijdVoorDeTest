@@ -74,10 +74,10 @@
             <thead>
             <tr>
                 <th scope="col">{{ 'Candidate'|trans }}</th>
-                <th scope="col">{{ 'Correct Answers'|trans }}</th>
-                <th scope="col">{{ 'Corrections'|trans }}</th>
-                <th scope="col">{{ 'Score'|trans }}</th>
-                <th scope="col">{{ 'Time'|trans }}</th>
+                <th style="width: 15%" scope="col">{{ 'Correct Answers'|trans }}</th>
+                <th style="width: 20%" scope="col">{{ 'Corrections'|trans }}</th>
+                <th style="width: 10%" scope="col">{{ 'Score'|trans }}</th>
+                <th style="width: 20%" scope="col">{{ 'Time'|trans }}</th>
             </tr>
             </thead>
             <tbody>
@@ -85,7 +85,21 @@
                 <tr class="table-{% if loop.revindex > quiz.dropouts %}success{% else %}danger{% endif %}">
                     <td>{{ candidate.name }}</td>
                     <td>{{ candidate.correct|default('0') }}</td>
-                    <td>{{ candidate.corrections|default('0') }}</td>
+                    <td>
+                        <form method="post"
+                              action="{{ path('app_backoffice_modify_correction', {quiz: quiz.id, candidate: candidate.id}) }}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <input class="form-control form-control-sm" type="number"
+                                           value="{{ candidate.corrections }}" step="0.5"
+                                           name="corrections">
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-sm btn-primary" type="submit">{{ 'Save'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
                     <td>{{ candidate.score|default('x') }}</td>
                     <td>{{ candidate.time }}</td>
                 </tr>
