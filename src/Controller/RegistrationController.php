@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -53,7 +54,7 @@ final class RegistrationController extends AbstractController
                         ->subject($this->translator->trans('Please Confirm your Email'))
                         ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
                 );
-            } catch (\Exception $e) {
+            } catch (TransportExceptionInterface $e) {
                 $logger->error($e->getMessage());
             }
             $response = $security->login($user, 'form_login', 'main');
