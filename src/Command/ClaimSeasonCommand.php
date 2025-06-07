@@ -7,9 +7,9 @@ namespace App\Command;
 use App\Repository\SeasonRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -18,29 +18,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'app:claim-season',
     description: 'Give a user owner rights on a season',
 )]
-class ClaimSeasonCommand extends Command
+readonly class ClaimSeasonCommand
 {
-    public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly SeasonRepository $seasonRepository,
-        private readonly EntityManagerInterface $entityManager)
-    {
-        parent::__construct();
-    }
+    public function __construct(private UserRepository $userRepository, private SeasonRepository $seasonRepository, private EntityManagerInterface $entityManager) {}
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user thats claims the season')
-            ->addArgument('season', InputArgument::REQUIRED, 'The season to claim')
-        ;
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        #[Argument]
+        string $seasonCode,
+        #[Argument]
+        string $email,
+        InputInterface $input,
+        OutputInterface $output,
+    ): int {
         $io = new SymfonyStyle($input, $output);
-        $email = $input->getArgument('email');
-        $seasonCode = $input->getArgument('season');
 
         try {
             $season = $this->seasonRepository->findOneBy(['seasonCode' => $seasonCode]);

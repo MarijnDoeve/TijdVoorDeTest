@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Repository\UserRepository;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -16,25 +16,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'app:make-admin',
     description: 'Give a user the role admin',
 )]
-class MakeAdminCommand extends Command
+readonly class MakeAdminCommand
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
-        parent::__construct();
-    }
+    public function __construct(private UserRepository $userRepository) {}
 
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('email', InputArgument::REQUIRED, 'The email of the user to make admin')
-        ;
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        #[Argument]
+        string $email,
+        InputInterface $input,
+        OutputInterface $output,
+    ): int {
         $io = new SymfonyStyle($input, $output);
-        $email = $input->getArgument('email');
-
         try {
             $this->userRepository->makeAdmin($email);
         } catch (\InvalidArgumentException) {
