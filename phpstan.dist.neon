@@ -7,3 +7,4 @@ parameters:
         - public/
         - src/
         - tests/
+    treatPhpDocTypesAsCertain: false

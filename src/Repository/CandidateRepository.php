@@ -16,7 +16,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * @extends ServiceEntityRepository<Candidate>
  *
- * @phpstan-type Result array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections?: float, score: float}
+ * @phpstan-type Result array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections: float, score: float}
  * @phpstan-type ResultList list<Result>
  */
 class CandidateRepository extends ServiceEntityRepository
@@ -54,40 +54,32 @@ class CandidateRepository extends ServiceEntityRepository
     /** @return ResultList */
     public function getScores(Quiz $quiz): array
     {
-        $scoreQb = $this->createQueryBuilder('c', 'c.id')
-            ->select('c.id', 'c.name', 'sum(case when a.isRightAnswer = true then 1 else 0 end) as correct')
+        $qb = $this->createQueryBuilder('c', 'c.id')
+            ->select('c.id', 'c.name', 'sum(case when a.isRightAnswer = true then 1 else 0 end) as correct', 'qc.corrections', 'max(ga.created) - qc.created as time')
             ->join('c.givenAnswers', 'ga')
             ->join('ga.answer', 'a')
-            ->where('ga.quiz = :quiz')
-            ->groupBy('c.id')
-            ->setParameter('quiz', $quiz);
-
-        $startTimeCorrectionQb = $this->createQueryBuilder('c', 'c.id')
-            ->select('c.id', 'qc.corrections', 'max(ga.created) - qc.created as time')
             ->join('c.quizData', 'qc')
-            ->join('c.givenAnswers', 'ga')
             ->where('qc.quiz = :quiz')
             ->groupBy('ga.quiz', 'c.id', 'qc.id')
             ->setParameter('quiz', $quiz);
 
-        $merged = array_merge_recursive(
-            $scoreQb->getQuery()->getArrayResult(),
-            $startTimeCorrectionQb->getQuery()->getArrayResult(),
+        return $this->sortResults(
+            $this->calculateScore(
+                $qb->getQuery()->getResult(),
+            ),
         );
-
-        return $this->sortResults($this->calculateScore($merged));
     }
 
     /**
-     * @param array<string, array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections?: float}> $in
+     * @param array<string, array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections: float}> $in
      *
      * @return array<string, Result>
-     * */
+     */
     private function calculateScore(array $in): array
     {
         return array_map(static fn ($candidate): array => [
             ...$candidate,
-            'score' => $candidate['correct'] + ($candidate['corrections'] ?? 0.0),
+            'score' => $candidate['correct'] + $candidate['corrections'],
         ], $in);
     }
 
