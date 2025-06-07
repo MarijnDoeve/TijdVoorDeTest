@@ -31,7 +31,7 @@ class GivenAnswer
         private Candidate $candidate,
 
         #[ORM\ManyToOne]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         private Quiz $quiz,
 
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]

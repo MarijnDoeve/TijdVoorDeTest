@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_USER')]
 class SeasonController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private EntityManagerInterface $em,
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $em,
     ) {}
 
     #[Route(

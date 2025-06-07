@@ -8,8 +8,10 @@ use App\Controller\AbstractController;
 use App\Entity\Candidate;
 use App\Entity\Quiz;
 use App\Entity\Season;
+use App\Exception\ErrorClearingQuizException;
 use App\Repository\CandidateRepository;
 use App\Repository\QuizCandidateRepository;
+use App\Repository\QuizRepository;
 use App\Security\Voter\SeasonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,6 +21,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsController]
 #[IsGranted('ROLE_USER')]
@@ -26,6 +29,7 @@ class QuizController extends AbstractController
 {
     public function __construct(
         private readonly CandidateRepository $candidateRepository,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     #[Route(
@@ -59,6 +63,37 @@ class QuizController extends AbstractController
         }
 
         return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+    }
+
+    #[Route(
+        '/backoffice/quiz/{quiz}/clear',
+        name: 'app_backoffice_quiz_clear',
+    )]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    public function clearQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
+    {
+        try {
+            $quizRepository->clearQuiz($quiz);
+            $this->addFlash('success', $this->translator->trans('Quiz cleared'));
+        } catch (ErrorClearingQuizException) {
+            $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
+        }
+
+        return $this->redirectToRoute('app_backoffice_quiz', ['seasonCode' => $quiz->getSeason()->getSeasonCode(), 'quiz' => $quiz->getId()]);
+    }
+
+    #[Route(
+        '/backoffice/quiz/{quiz}/delete',
+        name: 'app_backoffice_quiz_delete',
+    )]
+    #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
+    public function deleteQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
+    {
+        $quizRepository->deleteQuiz($quiz);
+
+        $this->addFlash('success', $this->translator->trans('Quiz deleted'));
+
+        return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $quiz->getSeason()->getSeasonCode()]);
     }
 
     #[Route(
