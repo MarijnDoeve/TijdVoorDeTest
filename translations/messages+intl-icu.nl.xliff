@@ -99,7 +99,7 @@
       </trans-unit>
       <trans-unit id="RnI7jJT" resname="Enter your name">
         <source>Enter your name</source>
-        <target>Voor je naam in</target>
+        <target>Voer je naam in</target>
       </trans-unit>
       <trans-unit id="HNMwvRn" resname="Error clearing quiz">
         <source>Error clearing quiz</source>
