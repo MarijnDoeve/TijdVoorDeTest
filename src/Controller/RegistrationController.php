@@ -9,6 +9,7 @@ use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -29,6 +30,7 @@ final class RegistrationController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         Security $security,
         EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -43,14 +45,17 @@ final class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                new TemplatedEmail()
-                    ->to((string) $user->getEmail())
-                    ->subject($this->translator->trans('Please Confirm your Email'))
-                    ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
-            );
-
+            try {
+                // generate a signed url and email it to the user
+                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                    new TemplatedEmail()
+                        ->to((string) $user->getEmail())
+                        ->subject($this->translator->trans('Please Confirm your Email'))
+                        ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
+                );
+            } catch (\Exception $e) {
+                $logger->error($e->getMessage());
+            }
             $response = $security->login($user, 'form_login', 'main');
             \assert($response instanceof Response);
 
