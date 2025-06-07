@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -27,7 +28,7 @@ final class EliminationController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator) {}
 
-    #[Route('/elimination/{elimination}', name: 'app_elimination')]
+    #[Route('/elimination/{elimination}', name: 'app_elimination', requirements: ['elimination' => Requirement::UUID])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     public function index(#[MapEntity] Elimination $elimination, Request $request): Response
     {
@@ -47,7 +48,7 @@ final class EliminationController extends AbstractController
         ]);
     }
 
-    #[Route('/elimination/{elimination}/{candidateHash}', name: 'app_elimination_candidate')]
+    #[Route('/elimination/{elimination}/{candidateHash}', name: 'app_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
     {

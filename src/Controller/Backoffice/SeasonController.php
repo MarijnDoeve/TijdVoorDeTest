@@ -30,7 +30,7 @@ class SeasonController extends AbstractController
     ) {}
 
     #[Route(
-        '/backoffice/season/{seasonCode}',
+        '/backoffice/season/{seasonCode:season}',
         name: 'app_backoffice_season',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
@@ -43,7 +43,7 @@ class SeasonController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/season/{seasonCode}/add-candidate',
+        '/backoffice/season/{seasonCode:season}/add-candidate',
         name: 'app_backoffice_add_candidates',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
@@ -56,7 +56,7 @@ class SeasonController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $candidates = $form->get('candidates')->getData();
-            foreach (explode("\r\n", (string) $candidates) as $candidate) {
+            foreach (explode("\n", (string) $candidates) as $candidate) {
                 $season->addCandidate(new Candidate($candidate));
             }
 
@@ -69,7 +69,7 @@ class SeasonController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/season/{seasonCode}/add-quiz',
+        '/backoffice/season/{seasonCode:season}/add-quiz',
         name: 'app_backoffice_quiz_add',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,

@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -33,9 +34,9 @@ class QuizController extends AbstractController
     ) {}
 
     #[Route(
-        '/backoffice/season/{seasonCode}/quiz/{quiz}',
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}',
         name: 'app_backoffice_quiz',
-        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function index(Season $season, Quiz $quiz): Response
@@ -48,9 +49,9 @@ class QuizController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/season/{seasonCode}/quiz/{quiz}/enable',
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
         name: 'app_backoffice_enable',
-        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): RedirectResponse
@@ -68,6 +69,7 @@ class QuizController extends AbstractController
     #[Route(
         '/backoffice/quiz/{quiz}/clear',
         name: 'app_backoffice_quiz_clear',
+        requirements: ['quiz' => Requirement::UUID],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     public function clearQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
@@ -85,6 +87,7 @@ class QuizController extends AbstractController
     #[Route(
         '/backoffice/quiz/{quiz}/delete',
         name: 'app_backoffice_quiz_delete',
+        requirements: ['quiz' => Requirement::UUID],
     )]
     #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
     public function deleteQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
@@ -99,6 +102,7 @@ class QuizController extends AbstractController
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
         name: 'app_backoffice_modify_correction',
+        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     public function modifyCorrection(Quiz $quiz, Candidate $candidate, QuizCandidateRepository $quizCandidateRepository, Request $request): RedirectResponse
