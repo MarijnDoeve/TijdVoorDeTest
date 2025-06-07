@@ -18,19 +18,19 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
-class SeasonVoterTest extends TestCase
+final class SeasonVoterTest extends TestCase
 {
     private SeasonVoter $seasonVoter;
+
     private TokenInterface&Stub $token;
-    private User&Stub $user;
 
     protected function setUp(): void
     {
         $this->seasonVoter = new SeasonVoter();
         $this->token = $this->createStub(TokenInterface::class);
 
-        $this->user = $this->createStub(User::class);
-        $this->token->method('getUser')->willReturn($this->user);
+        $user = $this->createStub(User::class);
+        $this->token->method('getUser')->willReturn($user);
     }
 
     #[DataProvider('typesProvider')]

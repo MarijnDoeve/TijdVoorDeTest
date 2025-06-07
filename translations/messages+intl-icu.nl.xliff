@@ -49,6 +49,10 @@
         <source>Candidates</source>
         <target>Kandidaten</target>
       </trans-unit>
+      <trans-unit id="FNY513f" resname="Clear quiz...">
+        <source>Clear quiz...</source>
+        <target>Test leegmaken...</target>
+      </trans-unit>
       <trans-unit id="sFpB4C2" resname="Correct Answers">
         <source>Correct Answers</source>
         <target>Goede antwoorden</target>
@@ -77,6 +81,10 @@
         <source>Deactivate Quiz</source>
         <target>Deactiveer test</target>
       </trans-unit>
+      <trans-unit id="p9GNNI3" resname="Delete Quiz...">
+        <source>Delete Quiz...</source>
+        <target>Test verwijderen...</target>
+      </trans-unit>
       <trans-unit id="R9yHzHv" resname="Download Template">
         <source>Download Template</source>
         <target>Download sjabloon</target>
@@ -92,6 +100,10 @@
       <trans-unit id="RnI7jJT" resname="Enter your name">
         <source>Enter your name</source>
         <target>Voor je naam in</target>
+      </trans-unit>
+      <trans-unit id="HNMwvRn" resname="Error clearing quiz">
+        <source>Error clearing quiz</source>
+        <target>Fout bij leegmaken test</target>
       </trans-unit>
       <trans-unit id="OGiIhMH" resname="Green">
         <source>Green</source>
@@ -177,9 +189,17 @@
         <source>Quiz Added!</source>
         <target>Test toegevoegd!</target>
       </trans-unit>
+      <trans-unit id="vXN8b2w" resname="Quiz cleared">
+        <source>Quiz cleared</source>
+        <target>Test leeggemaakt</target>
+      </trans-unit>
       <trans-unit id="LbVe.2c" resname="Quiz completed">
         <source>Quiz completed</source>
         <target>Test voltooid</target>
+      </trans-unit>
+      <trans-unit id="XdfTTMD" resname="Quiz deleted">
+        <source>Quiz deleted</source>
+        <target>Test verwijderd</target>
       </trans-unit>
       <trans-unit id="frxoIkW" resname="Quiz name">
         <source>Quiz name</source>
@@ -237,10 +257,6 @@
         <source>Sign in</source>
         <target>Log in</target>
       </trans-unit>
-      <trans-unit id="2QO7aYC" resname="Start Elimination">
-        <source>Start Elimination</source>
-        <target>Start eliminatie</target>
-      </trans-unit>
       <trans-unit id="9m8DOBg" resname="Submit">
         <source>Submit</source>
         <target>Verstuur</target>
@@ -253,9 +269,17 @@
         <source>There are no answers for this question</source>
         <target>Er zijn geen antwoorden voor deze vraag</target>
       </trans-unit>
+      <trans-unit id=".LrcTyU" resname="There is no active quiz">
+        <source>There is no active quiz</source>
+        <target>Er is geen test actief</target>
+      </trans-unit>
       <trans-unit id="Dptvysv" resname="Time">
         <source>Time</source>
         <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="0afY1NF" resname="You have no seasons yet.">
+        <source>You have no seasons yet.</source>
+        <target>Je hebt nog geen seizoenen.</target>
       </trans-unit>
       <trans-unit id="vVQAP9A" resname="Your Seasons">
         <source>Your Seasons</source>

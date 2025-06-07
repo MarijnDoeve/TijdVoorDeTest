@@ -43,6 +43,7 @@ class Season
     private Collection $owners;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Quiz $ActiveQuiz = null;
 
     public function __construct()

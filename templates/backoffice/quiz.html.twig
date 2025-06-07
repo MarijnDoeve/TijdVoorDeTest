@@ -2,13 +2,19 @@
 
 {% block body %}
     <h2 class="py-2">{{ 'Quiz'|trans }}: {{ quiz.season.name }} - {{ quiz.name }}</h2>
-    <div class="py-2 btn-group">
+    <div class="py-2 btn-group" data-controller="bo--quiz">
         <a class="btn btn-primary {% if quiz is same as(season.activeQuiz) %}disabled{% endif %}"
            href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
         {% if quiz is same as (season.activeQuiz) %}
             <a class="btn btn-secondary"
                href="{{ path('app_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}">{{ 'Deactivate Quiz'|trans }}</a>
         {% endif %}
+        <button class="btn btn-danger" data-action="click->bo--quiz#clearQuiz">
+            {{ 'Clear quiz...'|trans }}
+        </button>
+        <button class="btn btn-danger" data-action="click->bo--quiz#deleteQuiz">
+            {{ 'Delete Quiz...'|trans }}
+        </button>
     </div>
 
     <div id="questions">
@@ -111,16 +117,48 @@
             </tbody>
         </table>
     </div>
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-        });
-    </script>
-{% endblock javascripts %}
-{% block title %}
 
+    {# Modal Clear #}
+    <div class="modal fade" id="clearQuizModal" data-bs-backdrop="static"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Please Confirm</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to clear all the results? This will also delete al the eliminations.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="{{ path('app_backoffice_quiz_clear', {quiz: quiz.id}) }}" class="btn btn-danger">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal Delete #}
+    <div class="modal fade" id="deleteQuizModal" data-bs-backdrop="static"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Please Confirm</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this quiz?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a href="{{ path('app_backoffice_quiz_delete', {quiz: quiz.id}) }}" class="btn btn-danger">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block title %}
 {% endblock %}

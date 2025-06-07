@@ -39,9 +39,10 @@ final class PrepareEliminationController extends AbstractController
             $elimination->updateFromInputBag($request->request);
             $em->flush();
 
-            if (true === $request->request->getBoolean('start')) {
+            if ($request->request->getBoolean('start')) {
                 return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
             }
+
             $this->addFlash('success', 'Elimination updated');
         }
 

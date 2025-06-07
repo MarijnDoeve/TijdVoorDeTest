@@ -18,6 +18,7 @@ use Symfony\Component\Uid\Uuid;
 class Elimination
 {
     public const string SCREEN_GREEN = 'green';
+
     public const string SCREEN_RED = 'red';
 
     #[ORM\Id]
@@ -35,7 +36,7 @@ class Elimination
 
     public function __construct(
         #[ORM\ManyToOne(inversedBy: 'eliminations')]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         private Quiz $quiz,
     ) {}
 
@@ -66,7 +67,7 @@ class Elimination
     /** @param InputBag<bool|float|int|string> $inputBag */
     public function updateFromInputBag(InputBag $inputBag): self
     {
-        foreach ($this->data as $name => $screenColour) {
+        foreach (array_keys($this->data) as $name) {
             $newColour = $inputBag->get('colour-'.mb_strtolower($name));
             if (\is_string($newColour)) {
                 $this->data[$name] = $inputBag->get('colour-'.mb_strtolower($name));
