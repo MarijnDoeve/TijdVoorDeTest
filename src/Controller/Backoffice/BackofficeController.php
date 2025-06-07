@@ -43,7 +43,7 @@ final class BackofficeController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/add', name: 'app_backoffice_season_add', priority: 10)]
+    #[Route('/backoffice/season/add', name: 'app_backoffice_season_add', priority: 10)]
     public function addSeason(Request $request, EntityManagerInterface $em): Response
     {
         $season = new Season();

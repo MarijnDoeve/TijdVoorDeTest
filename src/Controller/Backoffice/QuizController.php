@@ -97,7 +97,7 @@ class QuizController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/quiz/{quiz}/modify_correction/{candidate}',
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
         name: 'app_backoffice_modify_correction',
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]

@@ -43,7 +43,7 @@ class SeasonController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/season/{seasonCode}/add_candidate',
+        '/backoffice/season/{seasonCode}/add-candidate',
         name: 'app_backoffice_add_candidates',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
@@ -69,7 +69,7 @@ class SeasonController extends AbstractController
     }
 
     #[Route(
-        '/backoffice/season/{seasonCode}/add',
+        '/backoffice/season/{seasonCode}/add-quiz',
         name: 'app_backoffice_quiz_add',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,

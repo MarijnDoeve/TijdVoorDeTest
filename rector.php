@@ -27,7 +27,6 @@ return RectorConfig::configure()
         phpunitCodeQuality: true,
         doctrineCodeQuality: true,
         symfonyCodeQuality: true,
-        //        naming: true
     )
     ->withAttributesSets(all: true)
     ->withComposerBased(twig: true, doctrine: true, phpunit: true, symfony: true)

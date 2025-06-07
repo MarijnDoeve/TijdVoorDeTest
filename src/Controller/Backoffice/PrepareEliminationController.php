@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class PrepareEliminationController extends AbstractController
 {
     #[Route(
-        '/backoffice/elimination/{seasonCode}/{quiz}/prepare',
+        '/backoffice/season/{seasonCode}/quiz/{quiz}/elimination/prepare',
         name: 'app_prepare_elimination',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
