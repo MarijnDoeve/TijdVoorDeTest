@@ -73,7 +73,7 @@ class QuizSpreadsheetService
      *
      * @throws SpreadsheetDataException
      */
-    private function fillQuizFromArray(Quiz $quiz, array $sheet): Quiz
+    private function fillQuizFromArray(Quiz $quiz, array $sheet): void
     {
         $errors = [];
 
@@ -110,8 +110,6 @@ class QuizSpreadsheetService
         if ([] !== $errors) {
             throw new SpreadsheetDataException($errors);
         }
-
-        return $quiz;
     }
 
     public function quizToXlsx(Quiz $quiz): void {}
