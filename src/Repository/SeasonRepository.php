@@ -22,11 +22,9 @@ class SeasonRepository extends ServiceEntityRepository
     /** @return list<Season> Returns an array of Season objects */
     public function getSeasonsForUser(User $user): array
     {
-        $qb = $this->createQueryBuilder('s')
-            ->where(':user MEMBER OF s.owners')
-            ->orderBy('s.name')
-            ->setParameter('user', $user);
-
-        return $qb->getQuery()->getResult();
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select s from App\Entity\Season s where :user member of s.owners order by s.name
+        DQL
+        )->setParameter('user', $user)->getResult();
     }
 }

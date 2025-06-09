@@ -51,7 +51,7 @@ class QuizController extends AbstractController
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
         name: 'app_backoffice_enable',
-        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): RedirectResponse

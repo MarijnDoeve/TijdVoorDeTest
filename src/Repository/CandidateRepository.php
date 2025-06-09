@@ -34,12 +34,14 @@ class CandidateRepository extends ServiceEntityRepository
             return null;
         }
 
-        return $this->createQueryBuilder('c')
-            ->where('c.season = :season')
-            ->andWhere('lower(c.name) = lower(:name)')
-            ->setParameter('season', $season)
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select c from App\Entity\Candidate c
+                where c.season = :season
+                and lower(c.name) = lower(:name)
+        DQL
+        )->setParameter('season', $season)
             ->setParameter('name', $name)
-            ->getQuery()->getOneOrNullResult();
+            ->getOneOrNullResult();
     }
 
     public function save(Candidate $candidate, bool $flush = true): void
@@ -54,44 +56,22 @@ class CandidateRepository extends ServiceEntityRepository
     /** @return ResultList */
     public function getScores(Quiz $quiz): array
     {
-        $qb = $this->createQueryBuilder('c', 'c.id')
-            ->select('c.id', 'c.name', 'sum(case when a.isRightAnswer = true then 1 else 0 end) as correct', 'qc.corrections', 'max(ga.created) - qc.created as time')
-            ->join('c.givenAnswers', 'ga')
-            ->join('ga.answer', 'a')
-            ->join('c.quizData', 'qc')
-            ->where('qc.quiz = :quiz')
-            ->groupBy('ga.quiz', 'c.id', 'qc.id')
-            ->setParameter('quiz', $quiz);
-
-        return $this->sortResults(
-            $this->calculateScore(
-                $qb->getQuery()->getResult(),
-            ),
-        );
-    }
-
-    /**
-     * @param array<string, array{id: Uuid, name: string, correct: int, time: \DateInterval, corrections: float}> $in
-     *
-     * @return array<string, Result>
-     */
-    private function calculateScore(array $in): array
-    {
-        return array_map(static fn ($candidate): array => [
-            ...$candidate,
-            'score' => $candidate['correct'] + $candidate['corrections'],
-        ], $in);
-    }
-
-    /**
-     * @param array<string, Result> $results
-     *
-     * @return ResultList
-     * */
-    private function sortResults(array $results): array
-    {
-        usort($results, static fn ($a, $b): int => $b['score'] <=> $a['score']);
-
-        return $results;
+        return $this->getEntityManager()->createQuery(<<<DQL
+        select
+            c.id,
+            c.name,
+            sum(case when a.isRightAnswer = true then 1 else 0 end) as correct,
+            qc.corrections,
+            max(ga.created) - qc.created                           as  time,
+            (sum(case when a.isRightAnswer = true then 1 else 0 end) + qc.corrections) as score
+        from App\Entity\Candidate c
+        join c.givenAnswers ga
+        join ga.answer a
+        join c.quizData qc
+        where qc.quiz = :quiz
+        group by ga.quiz, c.id, qc.id
+        order by score desc, time desc
+        DQL
+        )->setParameter('quiz', $quiz)->getResult();
     }
 }

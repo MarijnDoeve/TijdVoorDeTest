@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Candidate;
-use App\Entity\GivenAnswer;
 use App\Entity\Question;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,22 +21,21 @@ class QuestionRepository extends ServiceEntityRepository
 
     public function findNextQuestionForCandidate(Candidate $candidate): ?Question
     {
-        $qb = $this->createQueryBuilder('q');
-
-        return $qb->join('q.quiz', 'qz')
-            ->andWhere($qb->expr()->notIn('q.id', $this->getEntityManager()->createQueryBuilder()
-                ->select('q1')
-                ->from(GivenAnswer::class, 'ga')
-                ->join('ga.answer', 'a')
-                ->join('a.question', 'q1')
-                ->andWhere($qb->expr()->isNotNull('ga.answer'))
-                ->andWhere('ga.candidate = :candidate')
-                ->andWhere('q1.quiz = :quiz')
-                ->getDQL()))
-            ->andWhere('qz = :quiz')
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select q from App\Entity\Question q
+            join q.quiz qz
+            where q.id not in (
+                select q1.id from App\Entity\GivenAnswer ga
+                join ga.answer a
+                join a.question q1
+                where ga.candidate = :candidate
+                and q1.quiz = :quiz
+            )
+            and qz = :quiz
+        DQL)
             ->setMaxResults(1)
             ->setParameter('candidate', $candidate)
             ->setParameter('quiz', $candidate->getSeason()->getActiveQuiz())
-        ->getQuery()->getOneOrNullResult();
+            ->getOneOrNullResult();
     }
 }
