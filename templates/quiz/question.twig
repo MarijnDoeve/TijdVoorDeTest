@@ -1,17 +1,35 @@
 {% extends 'quiz/base.html.twig' %}
 {% block body %}
-    {{ question.question }}<br/>
+    <h4>
+        {% if season.settings.showNumbers %}
+            ({{ question.ordering }}/{{ question.quiz.questions.count }})
+        {% endif %}{{ question.question }}<br/>
+    </h4>
     <form method="post">
         <input type="hidden" name="token" value="{{ csrf_token('question') }}">
-        {% for answer in question.answers %}
-            <div>
-                <button class="btn btn-outline-success"
-                        type="submit"
-                        name="answer"
-                        value="{{ answer.id }}">{{ answer.text }}</button>
-            </div>
+        {% if season.settings.confirmAnswers == false %}
+            {% for answer in question.answers %}
+                <div class="py-2">
+                    <button class="btn btn-outline-success"
+                            type="submit"
+                            name="answer"
+                            value="{{ answer.id }}">{{ answer.text }}</button>
+                </div>
+            {% endfor %}
         {% else %}
-            Weirdly enough this question has no answers...
-        {% endfor %}
+            {% for answer in question.answers %}
+                <div class="py-1">
+                    <input type="radio" class="btn-check" name="answer" id="answer-{{ loop.index0 }}" autocomplete="off"
+                           value="{{ answer.id }}">
+                    <label class="btn btn-outline-secondary" for="answer-{{ loop.index0 }}">{{ answer.text }}</label>
+                </div>
+            {% endfor %}
+            <div class="py-2">
+                <button class="btn btn-success"
+                        type="submit"
+                >{{ 'Next'|trans }}</button>
+            </div>
+
+        {% endif %}
     </form>
 {% endblock body %}

@@ -125,6 +125,6 @@ final class QuizController extends AbstractController
 
         $quizCandidateRepository->createIfNotExist($quiz, $candidate);
 
-        return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question]);
+        return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question, 'season' => $season]);
     }
 }
