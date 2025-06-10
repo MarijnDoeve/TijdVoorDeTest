@@ -10,6 +10,7 @@ use App\Entity\Quiz;
 use App\Entity\Season;
 use App\Enum\FlashType;
 use App\Form\AddCandidatesFormType;
+use App\Form\SettingsForm;
 use App\Form\UploadQuizFormType;
 use App\Security\Voter\SeasonVoter;
 use App\Service\QuizSpreadsheetService;
@@ -26,7 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_USER')]
 class SeasonController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $em,
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly EntityManagerInterface $em,
     ) {}
 
     #[Route(
@@ -35,10 +38,19 @@ class SeasonController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
-    public function index(Season $season): Response
+    public function index(Season $season, Request $request): Response
     {
+        $form = $this->createForm(SettingsForm::class, $season->getSettings());
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+        }
+
         return $this->render('backoffice/season.html.twig', [
             'season' => $season,
+            'form' => $form,
         ]);
     }
 

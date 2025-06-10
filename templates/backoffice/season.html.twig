@@ -21,13 +21,18 @@
             <div class="d-flex flex-row align-items-center">
                 <h4 class="py-2 pe-2">{{ 'Candidates'|trans }}</h4>
                 <a class="link"
-                   href="{{ path('app_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}</a>
-
+                   href="{{ path('app_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}
+                </a>
             </div>
             <ul>
                 {% for candidate in season.candidates %}
                     <li>{{ candidate.name }}</li>{% endfor %}
             </ul>
+
+            <div class="d-flex flex-row align-items-center">
+                <h4 class="py-2 pe-2">{{ 'Settings'|trans }}</h4>
+            </div>
+            {{ form(form) }}
         </div>
         <div class="col-12 col-md-3"></div>
     </div>
