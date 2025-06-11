@@ -33,6 +33,14 @@
         <source>Already have an account? Log in</source>
         <target>Heb je al een account? Log in</target>
       </trans-unit>
+      <trans-unit id="Qu1euq_" resname="Are you sure you want to clear all the results? This will also delete al the eliminations.">
+        <source>Are you sure you want to clear all the results? This will also delete al the eliminations.</source>
+        <target>Weet je zeker datatype je de resultaten will leegmaken? Dit gooit ook alle eliminaties weg.</target>
+      </trans-unit>
+      <trans-unit id="Ec4twG8" resname="Are you sure you want to delete this quiz?">
+        <source>Are you sure you want to delete this quiz?</source>
+        <target>Weet je zeker datatype je deze test will verwijderen?</target>
+      </trans-unit>
       <trans-unit id=".QFPbFe" resname="Back">
         <source>Back</source>
         <target>Terug</target>
@@ -89,6 +97,10 @@
         <source>Download Template</source>
         <target>Download sjabloon</target>
       </trans-unit>
+      <trans-unit id="FfYlwX8" resname="EMPTY">
+        <source>EMPTY</source>
+        <target>LEEG</target>
+      </trans-unit>
       <trans-unit id="JZi_tm0" resname="Email">
         <source>Email</source>
         <target>E-mail</target>
@@ -137,6 +149,10 @@
         <source>Name</source>
         <target>Naam</target>
       </trans-unit>
+      <trans-unit id="wd1MvZW" resname="No">
+        <source>No</source>
+        <target>Nee</target>
+      </trans-unit>
       <trans-unit id="nOHriCl" resname="No active quiz">
         <source>No active quiz</source>
         <target>Geen actieve test</target>
@@ -157,9 +173,13 @@
         <source>Password</source>
         <target>Wachtwoord</target>
       </trans-unit>
+      <trans-unit id="VbgD9L8" resname="Please Confirm">
+        <source>Please Confirm</source>
+        <target>Bevestig Alsjeblieft</target>
+      </trans-unit>
       <trans-unit id="6EclFME" resname="Please Confirm your Email">
         <source>Please Confirm your Email</source>
-        <target>messages</target>
+        <target>Bevestig je e-mailadres alsjeblieft</target>
       </trans-unit>
       <trans-unit id="lSX_PHJ" resname="Please sign in">
         <source>Please sign in</source>
@@ -276,6 +296,10 @@
       <trans-unit id="Dptvysv" resname="Time">
         <source>Time</source>
         <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="pRCwpOT" resname="Yes">
+        <source>Yes</source>
+        <target>Ja</target>
       </trans-unit>
       <trans-unit id="0afY1NF" resname="You have no seasons yet.">
         <source>You have no seasons yet.</source>
