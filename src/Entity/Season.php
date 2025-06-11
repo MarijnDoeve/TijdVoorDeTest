@@ -46,8 +46,13 @@ class Season
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Quiz $ActiveQuiz = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?SeasonSettings $settings = null;
+
     public function __construct()
     {
+        $this->settings = new SeasonSettings();
         $this->quizzes = new ArrayCollection();
         $this->candidates = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -163,6 +168,18 @@ class Season
         }
 
         $this->seasonCode = $code;
+
+        return $this;
+    }
+
+    public function getSettings(): ?SeasonSettings
+    {
+        return $this->settings;
+    }
+
+    public function setSettings(SeasonSettings $settings): static
+    {
+        $this->settings = $settings;
 
         return $this;
     }

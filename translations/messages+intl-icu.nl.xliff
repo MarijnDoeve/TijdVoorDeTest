@@ -153,6 +153,10 @@
         <source>No</source>
         <target>Nee</target>
       </trans-unit>
+      <trans-unit id="gefhnBC" resname="Next">
+        <source>Next</source>
+        <target>Volgende</target>
+      </trans-unit>
       <trans-unit id="nOHriCl" resname="No active quiz">
         <source>No active quiz</source>
         <target>Geen actieve test</target>
@@ -272,6 +276,10 @@
       <trans-unit id="kc_J96C" resname="Seasons">
         <source>Seasons</source>
         <target>Seizoenen</target>
+      </trans-unit>
+      <trans-unit id="VXFwlwn" resname="Settings">
+        <source>Settings</source>
+        <target>Instellingen</target>
       </trans-unit>
       <trans-unit id="pNIxNSX" resname="Sign in">
         <source>Sign in</source>
