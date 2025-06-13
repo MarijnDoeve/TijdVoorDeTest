@@ -1,4 +1,5 @@
 {% extends 'backoffice/base.html.twig' %}
+{% block title %}{{ parent() }}{{ season.name }}{% endblock %}
 {% block body %}
     <h2 class="py-2">{{ 'Season'|trans }}: {{ season.name }}</h2>
     <div class="row">
