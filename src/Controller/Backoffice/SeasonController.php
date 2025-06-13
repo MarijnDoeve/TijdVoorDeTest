@@ -69,7 +69,7 @@ class SeasonController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $candidates = $form->get('candidates')->getData();
             foreach (explode("\n", (string) $candidates) as $candidate) {
-                $season->addCandidate(new Candidate($candidate));
+                $season->addCandidate(new Candidate(mb_rtrim($candidate)));
             }
 
             $this->em->flush();
