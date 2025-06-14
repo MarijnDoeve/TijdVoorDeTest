@@ -68,7 +68,7 @@ class CandidateRepository extends ServiceEntityRepository
         join c.givenAnswers ga
         join ga.answer a
         join c.quizData qc
-        where qc.quiz = :quiz
+        where qc.quiz = :quiz and ga.quiz = :quiz
         group by ga.quiz, c.id, qc.id
         order by score desc, time asc
         DQL
