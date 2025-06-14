@@ -70,7 +70,7 @@ class CandidateRepository extends ServiceEntityRepository
         join c.quizData qc
         where qc.quiz = :quiz
         group by ga.quiz, c.id, qc.id
-        order by score desc, time desc
+        order by score desc, time asc
         DQL
         )->setParameter('quiz', $quiz)->getResult();
     }
