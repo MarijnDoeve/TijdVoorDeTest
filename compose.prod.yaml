@@ -24,6 +24,8 @@ services:
   database:
     networks:
       - internal
+    ports:
+      - "5430:5432"
 networks:
   web:
     external: true
