@@ -31,13 +31,9 @@ class UploadQuizFormType extends AbstractType
                 'required' => true,
                 'translation_domain' => false,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        ],
-                        'mimeTypesMessage' => $this->translator->trans('Please upload a valid XLSX file'),
-                    ]),
+                    new File(maxSize: '1024k', mimeTypes: [
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    ], mimeTypesMessage: $this->translator->trans('Please upload a valid XLSX file')),
                 ],
             ])
         ;

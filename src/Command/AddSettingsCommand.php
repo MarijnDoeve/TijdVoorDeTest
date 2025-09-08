@@ -29,6 +29,7 @@ readonly class AddSettingsCommand
             if (null !== $season->getSettings()) {
                 continue;
             }
+
             $io->text('Adding settings to season : '.$season->getSeasonCode());
             $season->setSettings(new SeasonSettings());
         }

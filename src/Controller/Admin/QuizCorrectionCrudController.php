@@ -7,7 +7,8 @@ namespace App\Controller\Admin;
 use App\Entity\QuizCandidate;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
-class CorrectionCrudController extends AbstractCrudController
+/** @extends AbstractCrudController<QuizCandidate> */
+class QuizCorrectionCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {

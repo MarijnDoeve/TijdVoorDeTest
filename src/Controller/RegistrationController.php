@@ -57,6 +57,7 @@ final class RegistrationController extends AbstractController
             } catch (TransportExceptionInterface $e) {
                 $logger->error($e->getMessage());
             }
+
             $response = $security->login($user, 'form_login', 'main');
             \assert($response instanceof Response);
 

@@ -39,15 +39,8 @@ class RegistrationFormType extends AbstractType
                 'second_options' => ['label' => $this->translator->trans('Repeat Password')],
                 'mapped' => false,
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
-                    new Length([
-                        'min' => 8,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
+                    new NotBlank(message: 'Please enter a password'),
+                    new Length(min: 8, max: 4096, minMessage: 'Your password should be at least {{ limit }} characters'),
                 ],
                 'translation_domain' => false,
             ])
