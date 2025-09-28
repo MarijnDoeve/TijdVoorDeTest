@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Security\Voter;
+namespace Tvdt\Tests\Security\Voter;
 
-use App\Entity\Answer;
-use App\Entity\Candidate;
-use App\Entity\Elimination;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Entity\User;
-use App\Security\Voter\SeasonVoter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
+use Tvdt\Security\Voter\SeasonVoter;
 
 final class SeasonVoterTest extends TestCase
 {

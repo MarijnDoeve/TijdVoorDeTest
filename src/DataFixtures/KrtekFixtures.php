@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\DataFixtures;
+namespace Tvdt\DataFixtures;
 
-use App\Entity\Answer;
-use App\Entity\Candidate;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Entity\Season;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
 
 class KrtekFixtures extends Fixture
 {

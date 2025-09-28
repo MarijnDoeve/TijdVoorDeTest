@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Candidate;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Helpers\Base64;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Safe\Exceptions\UrlException;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Helpers\Base64;
 
 /**
  * @extends ServiceEntityRepository<Candidate>
@@ -35,7 +35,7 @@ class CandidateRepository extends ServiceEntityRepository
         }
 
         return $this->getEntityManager()->createQuery(<<<DQL
-            select c from App\Entity\Candidate c
+            select c from Tvdt\Entity\Candidate c
                 where c.season = :season
                 and lower(c.name) = lower(:name)
         DQL
@@ -64,7 +64,7 @@ class CandidateRepository extends ServiceEntityRepository
             qc.corrections,
             max(ga.created) - qc.created                           as  time,
             (sum(case when a.isRightAnswer = true then 1 else 0 end) + qc.corrections) as score
-        from App\Entity\Candidate c
+        from Tvdt\Entity\Candidate c
         join c.givenAnswers ga
         join ga.answer a
         join c.quizData qc

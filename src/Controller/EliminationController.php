@@ -2,15 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Tvdt\Controller;
 
-use App\Entity\Candidate;
-use App\Entity\Elimination;
-use App\Enum\FlashType;
-use App\Form\EliminationEnterNameType;
-use App\Helpers\Base64;
-use App\Repository\CandidateRepository;
-use App\Security\Voter\SeasonVoter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +12,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Elimination;
+use Tvdt\Enum\FlashType;
+use Tvdt\Form\EliminationEnterNameType;
+use Tvdt\Helpers\Base64;
+use Tvdt\Repository\CandidateRepository;
+use Tvdt\Security\Voter\SeasonVoter;
 
 use function Symfony\Component\Translation\t;
 
@@ -28,7 +28,7 @@ final class EliminationController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator) {}
 
-    #[Route('/elimination/{elimination}', name: 'app_elimination', requirements: ['elimination' => Requirement::UUID])]
+    #[Route('/elimination/{elimination}', name: 'tvdt_elimination', requirements: ['elimination' => Requirement::UUID])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     public function index(#[MapEntity] Elimination $elimination, Request $request): Response
     {
@@ -39,7 +39,7 @@ final class EliminationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $name = $form->get('name')->getData();
 
-            return $this->redirectToRoute('app_elimination_candidate', ['elimination' => $elimination->getId(), 'candidateHash' => Base64::base64UrlEncode($name)]);
+            return $this->redirectToRoute('tvdt_elimination_candidate', ['elimination' => $elimination->getId(), 'candidateHash' => Base64::base64UrlEncode($name)]);
         }
 
         return $this->render('quiz/elimination/index.html.twig', [
@@ -48,7 +48,7 @@ final class EliminationController extends AbstractController
         ]);
     }
 
-    #[Route('/elimination/{elimination}/{candidateHash}', name: 'app_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
+    #[Route('/elimination/{elimination}/{candidateHash}', name: 'tvdt_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
     {
@@ -58,7 +58,7 @@ final class EliminationController extends AbstractController
                 t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator),
             );
 
-            return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
+            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->getId()]);
         }
 
         $screenColour = $elimination->getScreenColour($candidate->getName());
@@ -66,7 +66,7 @@ final class EliminationController extends AbstractController
         if (null === $screenColour) {
             $this->addFlash(FlashType::Warning, $this->translator->trans('Cound not find candidate with name %name% in elimination.', ['%name%' => $candidate->getName()]));
 
-            return $this->redirectToRoute('app_elimination', ['elimination' => $elimination->getId()]);
+            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->getId()]);
         }
 
         return $this->render('quiz/elimination/candidate.html.twig', [

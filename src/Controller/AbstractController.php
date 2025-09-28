@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Tvdt\Controller;
 
-use App\Enum\FlashType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as AbstractBaseController;
+use Tvdt\Enum\FlashType;
 
 abstract class AbstractController extends AbstractBaseController
 {

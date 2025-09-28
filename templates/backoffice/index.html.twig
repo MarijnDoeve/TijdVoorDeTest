@@ -7,7 +7,7 @@
         <h2 class="py-2 pe-2">
             {{ is_granted('ROLE_ADMIN') ? 'All Seasons'|trans : 'Your Seasons'|trans }}
         </h2>
-        <a class="link" href="{{ path('app_backoffice_season_add') }}">
+        <a class="link" href="{{ path('tvdt_backoffice_season_add') }}">
             {{ 'Add'|trans }}
         </a>
     </div>
@@ -39,11 +39,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a {% if season.activeQuiz %}href="{{ path('app_quiz_enter_name', {seasonCode: season.seasonCode}) }}"
+                        <a {% if season.activeQuiz %}href="{{ path('tvdt_quiz_enter_name', {seasonCode: season.seasonCode}) }}"
                            {% else %}class="disabled" {% endif %}>{{ season.seasonCode }}</a>
                     </td>
                     <td>
-                        <a href="{{ path('app_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ 'Manage'|trans }}</a>
+                        <a href="{{ path('tvdt_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ 'Manage'|trans }}</a>
                     </td>
                 </tr>
             {% endfor %}

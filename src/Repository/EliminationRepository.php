@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Elimination;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tvdt\Entity\Elimination;
 
 /**
  * @extends ServiceEntityRepository<Elimination>

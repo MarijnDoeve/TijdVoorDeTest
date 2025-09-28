@@ -1,7 +1,7 @@
 framework:
-  mailer:
-    dsn: '%env(MAILER_DSN)%'
-    envelope:
-      sender: '%env(MAILER_SENDER)%'
-    headers:
-      From: 'Tijd voor de test <%env(MAILER_SENDER)%>'
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: '%env(MAILER_SENDER)%'
+        headers:
+            From: 'Tijd voor de test <%env(MAILER_SENDER)%>'

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace Tvdt\Service;
 
-use App\Repository\CandidateRepository;
+use Tvdt\Repository\CandidateRepository;
 
 /**
  * @phpstan-import-type ResultList from CandidateRepository

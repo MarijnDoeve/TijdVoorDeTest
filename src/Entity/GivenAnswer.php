@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Repository\GivenAnswerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Repository\GivenAnswerRepository;
 
 #[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
 #[ORM\HasLifecycleCallbacks]

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Helpers\Base64;
-use App\Repository\CandidateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Helpers\Base64;
+use Tvdt\Repository\CandidateRepository;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]

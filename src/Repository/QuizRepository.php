@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Elimination;
-use App\Entity\GivenAnswer;
-use App\Entity\Quiz;
-use App\Entity\QuizCandidate;
-use App\Exception\ErrorClearingQuizException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\GivenAnswer;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\QuizCandidate;
+use Tvdt\Exception\ErrorClearingQuizException;
 
 /**
  * @extends ServiceEntityRepository<Quiz>

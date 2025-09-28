@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace Tvdt\Controller\Admin;
 
-use App\Entity\Answer;
-use App\Entity\Candidate;
-use App\Entity\GivenAnswer;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Entity\QuizCandidate;
-use App\Entity\Season;
-use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\GivenAnswer;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\QuizCandidate;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Factory;
+namespace Tvdt\Factory;
 
-use App\Entity\Elimination;
-use App\Entity\Quiz;
-use App\Repository\CandidateRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\Quiz;
+use Tvdt\Repository\CandidateRepository;
 
 final readonly class EliminationFactory
 {

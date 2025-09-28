@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Form;
+namespace Tvdt\Form;
 
-use App\Entity\Season;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Tvdt\Entity\Season;
 
 /** @extends AbstractType<Season> */
 class CreateSeasonFormType extends AbstractType

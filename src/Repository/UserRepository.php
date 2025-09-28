@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Tvdt\Entity\User;
 
 /** @extends ServiceEntityRepository<User> */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface

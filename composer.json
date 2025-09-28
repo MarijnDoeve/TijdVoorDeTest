@@ -76,12 +76,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "Tvdt\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "Tvdt\\Tests\\": "tests/"
         }
     },
     "replace": {

@@ -2,18 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Backoffice;
+namespace Tvdt\Controller\Backoffice;
 
-use App\Controller\AbstractController;
-use App\Entity\Candidate;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Enum\FlashType;
-use App\Form\AddCandidatesFormType;
-use App\Form\SettingsForm;
-use App\Form\UploadQuizFormType;
-use App\Security\Voter\SeasonVoter;
-use App\Service\QuizSpreadsheetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +12,16 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Tvdt\Controller\AbstractController;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Enum\FlashType;
+use Tvdt\Form\AddCandidatesFormType;
+use Tvdt\Form\SettingsForm;
+use Tvdt\Form\UploadQuizFormType;
+use Tvdt\Security\Voter\SeasonVoter;
+use Tvdt\Service\QuizSpreadsheetService;
 
 #[AsController]
 #[IsGranted('ROLE_USER')]
@@ -34,7 +34,7 @@ class SeasonController extends AbstractController
 
     #[Route(
         '/backoffice/season/{seasonCode:season}',
-        name: 'app_backoffice_season',
+        name: 'tvdt_backoffice_season',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -56,7 +56,7 @@ class SeasonController extends AbstractController
 
     #[Route(
         '/backoffice/season/{seasonCode:season}/add-candidate',
-        name: 'app_backoffice_add_candidates',
+        name: 'tvdt_backoffice_add_candidates',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
     )]
@@ -74,7 +74,7 @@ class SeasonController extends AbstractController
 
             $this->em->flush();
 
-            return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
         }
 
         return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form]);
@@ -82,7 +82,7 @@ class SeasonController extends AbstractController
 
     #[Route(
         '/backoffice/season/{seasonCode:season}/add-quiz',
-        name: 'app_backoffice_quiz_add',
+        name: 'tvdt_backoffice_quiz_add',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
     )]
@@ -106,7 +106,7 @@ class SeasonController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz Added!'));
 
-            return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
         }
 
         return $this->render('/backoffice/quiz_add.html.twig', ['form' => $form, 'season' => $season]);

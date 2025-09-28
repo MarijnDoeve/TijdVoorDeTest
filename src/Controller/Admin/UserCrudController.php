@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Admin;
+namespace Tvdt\Controller\Admin;
 
-use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Tvdt\Entity\User;
 
 /** @extends AbstractCrudController<User> */
 class UserCrudController extends AbstractCrudController

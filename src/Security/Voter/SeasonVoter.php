@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Voter;
+namespace Tvdt\Security\Voter;
 
-use App\Entity\Answer;
-use App\Entity\Candidate;
-use App\Entity\Elimination;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
 
 /** @extends Voter<string, Season> */
 final class SeasonVoter extends Voter

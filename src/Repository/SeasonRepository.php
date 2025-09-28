@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Season;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
 
 /**
  * @extends ServiceEntityRepository<Season>
@@ -23,7 +23,7 @@ class SeasonRepository extends ServiceEntityRepository
     public function getSeasonsForUser(User $user): array
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-            select s from App\Entity\Season s where :user member of s.owners order by s.name
+            select s from Tvdt\Entity\Season s where :user member of s.owners order by s.name
         DQL
         )->setParameter('user', $user)->getResult();
     }

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Security;
+namespace Tvdt\Security;
 
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use Tvdt\Entity\User;
 
 readonly class EmailVerifier
 {

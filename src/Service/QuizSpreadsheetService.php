@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace Tvdt\Service;
 
-use App\Entity\Answer;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Exception\SpreadsheetDataException;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer;
 use Symfony\Component\HttpFoundation\File\File;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Exception\SpreadsheetDataException;
 
 class QuizSpreadsheetService
 {

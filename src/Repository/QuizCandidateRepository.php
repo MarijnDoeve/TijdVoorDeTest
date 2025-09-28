@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Candidate;
-use App\Entity\Quiz;
-use App\Entity\QuizCandidate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\QuizCandidate;
 
 /**
  * @extends ServiceEntityRepository<QuizCandidate>

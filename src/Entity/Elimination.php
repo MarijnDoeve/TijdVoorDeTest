@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Repository\EliminationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
@@ -12,6 +11,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Repository\EliminationRepository;
 
 #[ORM\Entity(repositoryClass: EliminationRepository::class)]
 #[ORM\HasLifecycleCallbacks]

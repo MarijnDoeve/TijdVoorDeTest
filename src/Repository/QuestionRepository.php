@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\Candidate;
-use App\Entity\Question;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Question;
 
 /**
  * @extends ServiceEntityRepository<Question>
@@ -22,10 +22,10 @@ class QuestionRepository extends ServiceEntityRepository
     public function findNextQuestionForCandidate(Candidate $candidate): ?Question
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-            select q from App\Entity\Question q
+            select q from Tvdt\Entity\Question q
             join q.quiz qz
             where q.id not in (
-                select q1.id from App\Entity\GivenAnswer ga
+                select q1.id from Tvdt\Entity\GivenAnswer ga
                 join ga.answer a
                 join a.question q1
                 where ga.candidate = :candidate

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Repository\SeasonSettingsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Repository\SeasonSettingsRepository;
 
 #[ORM\Entity(repositoryClass: SeasonSettingsRepository::class)]
 class SeasonSettings

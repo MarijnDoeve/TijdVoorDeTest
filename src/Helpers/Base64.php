@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Helpers;
+namespace Tvdt\Helpers;
 
 use Safe\Exceptions\UrlException;
 
