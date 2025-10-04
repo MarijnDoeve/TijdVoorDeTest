@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
+use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -11,7 +13,9 @@ return RectorConfig::configure()
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
-    ->withSymfonyContainerXml('var/cache/dev/App_KernelDevDebugContainer.xml')
+    ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/Tvdt_KernelDevDebugContainer.xml')
+    ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
+    ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class)
     ->withParallel()
     ->withPhpSets()
     ->withPreparedSets(
