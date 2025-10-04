@@ -14,10 +14,10 @@ use Tvdt\Repository\SeasonSettingsRepository;
 #[ORM\Entity(repositoryClass: SeasonSettingsRepository::class)]
 class SeasonSettings
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]

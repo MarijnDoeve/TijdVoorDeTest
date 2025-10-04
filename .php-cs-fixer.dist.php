@@ -5,13 +5,13 @@ use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
-$finder = (new Finder())
+$finder = new Finder()
     ->in(__DIR__)
     ->exclude('var')
     ->exclude('bin')
 ;
 
-return (new Config())
+return new Config()
     ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
@@ -30,8 +30,9 @@ return (new Config())
         'single_line_empty_body' => true,
         'strict_comparison' => true,
         'strict_param' => true,
+        'ordered_attributes' => true,
+        'heredoc_indentation' => ['indentation' => 'start_plus_one'],
         'trailing_comma_in_multiline' => ['after_heredoc' => true, 'elements' => ['arguments', 'array_destructuring', 'arrays', 'match', 'parameters']],
-
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

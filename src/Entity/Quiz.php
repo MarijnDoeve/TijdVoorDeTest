@@ -16,17 +16,17 @@ use Tvdt\Repository\QuizRepository;
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Quiz
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(length: 64)]
     private string $name;
 
-    #[ORM\ManyToOne(inversedBy: 'quizzes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'quizzes')]
     private Season $season;
 
     /** @var Collection<int, Question> */

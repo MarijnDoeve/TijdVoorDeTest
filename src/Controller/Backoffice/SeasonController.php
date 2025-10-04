@@ -32,12 +32,12 @@ class SeasonController extends AbstractController
         private readonly EntityManagerInterface $em,
     ) {}
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}',
         name: 'tvdt_backoffice_season',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function index(Season $season, Request $request): Response
     {
         $form = $this->createForm(SettingsForm::class, $season->getSettings());
@@ -54,13 +54,13 @@ class SeasonController extends AbstractController
         ]);
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/add-candidate',
         name: 'tvdt_backoffice_add_candidates',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addCandidates(Season $season, Request $request): Response
     {
         $form = $this->createForm(AddCandidatesFormType::class);
@@ -80,13 +80,13 @@ class SeasonController extends AbstractController
         return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form]);
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/add-quiz',
         name: 'tvdt_backoffice_quiz_add',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function addQuiz(Request $request, Season $season, QuizSpreadsheetService $quizSpreadsheet): Response
     {
         $quiz = new Quiz();

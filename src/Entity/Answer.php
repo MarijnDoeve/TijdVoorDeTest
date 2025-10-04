@@ -16,17 +16,17 @@ use Tvdt\Repository\AnswerRepository;
 #[ORM\Entity(repositoryClass: AnswerRepository::class)]
 class Answer
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
     private int $ordering = 0;
 
-    #[ORM\ManyToOne(inversedBy: 'answers')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'answers')]
     private Question $question;
 
     /** @var Collection<int, Candidate> */

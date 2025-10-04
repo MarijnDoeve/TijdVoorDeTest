@@ -16,10 +16,10 @@ use Tvdt\Repository\QuestionRepository;
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
@@ -28,8 +28,8 @@ class Question
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $question;
 
-    #[ORM\ManyToOne(inversedBy: 'questions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'questions')]
     private Quiz $quiz;
 
     #[ORM\Column]

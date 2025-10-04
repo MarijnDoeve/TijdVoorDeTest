@@ -16,26 +16,26 @@ use Tvdt\Repository\GivenAnswerRepository;
 #[ORM\HasLifecycleCallbacks]
 class GivenAnswer
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private \DateTimeImmutable $created;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         #[ORM\JoinColumn(nullable: false)]
+        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         private Candidate $candidate,
 
-        #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+        #[ORM\ManyToOne]
         private Quiz $quiz,
 
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         #[ORM\JoinColumn(nullable: false)]
+        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         private Answer $answer,
     ) {}
 

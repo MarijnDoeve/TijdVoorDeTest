@@ -17,14 +17,14 @@ use Tvdt\Repository\CandidateRepository;
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Candidate
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
-    #[ORM\ManyToOne(inversedBy: 'candidates')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'candidates')]
     private Season $season;
 
     /** @var Collection<int, Answer> */

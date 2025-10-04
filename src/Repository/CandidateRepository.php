@@ -38,7 +38,7 @@ class CandidateRepository extends ServiceEntityRepository
             select c from Tvdt\Entity\Candidate c
                 where c.season = :season
                 and lower(c.name) = lower(:name)
-        DQL
+            DQL
         )->setParameter('season', $season)
             ->setParameter('name', $name)
             ->getOneOrNullResult();
@@ -57,21 +57,21 @@ class CandidateRepository extends ServiceEntityRepository
     public function getScores(Quiz $quiz): array
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-        select
-            c.id,
-            c.name,
-            sum(case when a.isRightAnswer = true then 1 else 0 end) as correct,
-            qc.corrections,
-            max(ga.created) - qc.created                           as  time,
-            (sum(case when a.isRightAnswer = true then 1 else 0 end) + qc.corrections) as score
-        from Tvdt\Entity\Candidate c
-        join c.givenAnswers ga
-        join ga.answer a
-        join c.quizData qc
-        where qc.quiz = :quiz and ga.quiz = :quiz
-        group by ga.quiz, c.id, qc.id
-        order by score desc, time asc
-        DQL
+            select
+                c.id,
+                c.name,
+                count(case when a.isRightAnswer = true then 1 else null end)                  as correct,
+                qc.corrections,
+                max(ga.created) - qc.created                                               as  time,
+                (count(case when a.isRightAnswer = true then 1 else null end) + qc.corrections) as score
+            from Tvdt\Entity\Candidate c
+            join c.givenAnswers ga
+            join ga.answer a
+            join c.quizData qc
+            where qc.quiz = :quiz and ga.quiz = :quiz
+            group by ga.quiz, c.id, qc.id
+            order by score desc, time asc
+            DQL
         )->setParameter('quiz', $quiz)->getResult();
     }
 }

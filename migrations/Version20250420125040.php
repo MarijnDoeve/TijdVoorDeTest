@@ -18,13 +18,13 @@ final class Version20250420125040 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE season DROP preregister_candidates
-        SQL);
+            SQL);
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE season ADD preregister_candidates BOOLEAN NOT NULL DEFAULT true
-        SQL);
+            SQL);
     }
 }

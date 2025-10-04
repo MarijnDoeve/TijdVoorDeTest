@@ -17,10 +17,10 @@ class Season
 {
     private const string SEASON_CODE_CHARACTERS = 'bcdfghjklmnpqrstvwxz';
 
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column(length: 64)]
@@ -42,12 +42,12 @@ class Season
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'seasons')]
     private Collection $owners;
 
-    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\ManyToOne]
     private ?Quiz $ActiveQuiz = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?SeasonSettings $settings = null;
 
     public function __construct()

@@ -24,7 +24,7 @@ class SeasonRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<DQL
             select s from Tvdt\Entity\Season s where :user member of s.owners order by s.name
-        DQL
+            DQL
         )->setParameter('user', $user)->getResult();
     }
 }

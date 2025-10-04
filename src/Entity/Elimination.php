@@ -21,10 +21,10 @@ class Elimination
 
     public const string SCREEN_RED = 'red';
 
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     /** @var array<string, mixed> */
@@ -35,8 +35,8 @@ class Elimination
     private \DateTimeImmutable $created;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'eliminations')]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+        #[ORM\ManyToOne(inversedBy: 'eliminations')]
         private Quiz $quiz,
     ) {}
 

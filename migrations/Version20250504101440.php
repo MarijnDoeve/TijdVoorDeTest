@@ -22,10 +22,10 @@ final class Version20250504101440 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_C8B28E445E237E064EC001D1 ON candidate (name, season_id)
-        SQL);
+            SQL);
         $this->addSql(<<<'SQL'
             CREATE UNIQUE INDEX UNIQ_A412FA925E237E064EC001D1 ON quiz (name, season_id)
-        SQL);
+            SQL);
     }
 
     public function down(Schema $schema): void
@@ -33,9 +33,9 @@ final class Version20250504101440 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
             DROP INDEX UNIQ_A412FA925E237E064EC001D1
-        SQL);
+            SQL);
         $this->addSql(<<<'SQL'
             DROP INDEX UNIQ_C8B28E445E237E064EC001D1
-        SQL);
+            SQL);
     }
 }

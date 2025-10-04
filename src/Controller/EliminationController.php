@@ -28,8 +28,8 @@ final class EliminationController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator) {}
 
-    #[Route('/elimination/{elimination}', name: 'tvdt_elimination', requirements: ['elimination' => Requirement::UUID])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
+    #[Route('/elimination/{elimination}', name: 'tvdt_elimination', requirements: ['elimination' => Requirement::UUID])]
     public function index(#[MapEntity] Elimination $elimination, Request $request): Response
     {
         $form = $this->createForm(EliminationEnterNameType::class);
@@ -48,8 +48,8 @@ final class EliminationController extends AbstractController
         ]);
     }
 
-    #[Route('/elimination/{elimination}/{candidateHash}', name: 'tvdt_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
+    #[Route('/elimination/{elimination}/{candidateHash}', name: 'tvdt_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
     public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
     {
         $candidate = $candidateRepository->getCandidateByHash($elimination->getQuiz()->getSeason(), $candidateHash);

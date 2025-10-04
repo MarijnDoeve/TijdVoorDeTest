@@ -13,14 +13,14 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuizCandidateRepository;
 
 #[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
-#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
 #[ORM\HasLifecycleCallbacks]
+#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
 class QuizCandidate
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Id]
     private Uuid $id;
 
     #[ORM\Column]
@@ -30,12 +30,12 @@ class QuizCandidate
     private \DateTimeImmutable $created;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'candidateData')]
         #[ORM\JoinColumn(nullable: false)]
+        #[ORM\ManyToOne(inversedBy: 'candidateData')]
         private Quiz $quiz,
 
-        #[ORM\ManyToOne(inversedBy: 'quizData')]
         #[ORM\JoinColumn(nullable: false)]
+        #[ORM\ManyToOne(inversedBy: 'quizData')]
         private Candidate $candidate,
     ) {}
 
