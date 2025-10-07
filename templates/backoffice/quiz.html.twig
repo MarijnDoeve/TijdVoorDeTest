@@ -109,7 +109,7 @@
                         </form>
                     </td>
                     <td>{{ candidate.score|default('x') }}</td>
-                    <td>{{ candidate.time }}</td>
+                    <td>{{ candidate.time.format('%i:%S') }}</td>
                 </tr>
             {% else %}
                 <tr>

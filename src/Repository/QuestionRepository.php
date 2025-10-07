@@ -35,7 +35,7 @@ class QuestionRepository extends ServiceEntityRepository
             DQL)
             ->setMaxResults(1)
             ->setParameter('candidate', $candidate)
-            ->setParameter('quiz', $candidate->getSeason()->getActiveQuiz())
+            ->setParameter('quiz', $candidate->season->activeQuiz)
             ->getOneOrNullResult();
     }
 }

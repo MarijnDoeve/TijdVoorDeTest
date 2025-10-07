@@ -40,7 +40,7 @@ class SeasonController extends AbstractController
     )]
     public function index(Season $season, Request $request): Response
     {
-        $form = $this->createForm(SettingsForm::class, $season->getSettings());
+        $form = $this->createForm(SettingsForm::class, $season->settings);
 
         $form->handleRequest($request);
 
@@ -74,7 +74,7 @@ class SeasonController extends AbstractController
 
             $this->em->flush();
 
-            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }
 
         return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form]);
@@ -100,13 +100,13 @@ class SeasonController extends AbstractController
 
             $quizSpreadsheet->xlsxToQuiz($quiz, $sheet);
 
-            $quiz->setSeason($season);
+            $quiz->season = $season;
             $this->em->persist($quiz);
             $this->em->flush();
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz Added!'));
 
-            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }
 
         return $this->render('/backoffice/quiz_add.html.twig', ['form' => $form, 'season' => $season]);

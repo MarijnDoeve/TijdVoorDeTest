@@ -56,14 +56,14 @@ class QuizController extends AbstractController
     )]
     public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): RedirectResponse
     {
-        $season->setActiveQuiz($quiz);
+        $season->activeQuiz = $quiz;
         $em->flush();
 
         if ($quiz instanceof Quiz) {
-            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->getSeasonCode(), 'quiz' => $quiz->getId()]);
+            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
         }
 
-        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
@@ -81,7 +81,7 @@ class QuizController extends AbstractController
             $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
         }
 
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->getSeason()->getSeasonCode(), 'quiz' => $quiz->getId()]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
     #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
@@ -96,7 +96,7 @@ class QuizController extends AbstractController
 
         $this->addFlash('success', $this->translator->trans('Quiz deleted'));
 
-        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->getSeason()->getSeasonCode()]);
+        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
@@ -115,6 +115,6 @@ class QuizController extends AbstractController
 
         $quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
 
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->getSeason()->getSeasonCode(), 'quiz' => $quiz->getId()]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 }

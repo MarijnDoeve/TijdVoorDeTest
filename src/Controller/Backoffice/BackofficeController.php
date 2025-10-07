@@ -61,7 +61,7 @@ final class BackofficeController extends AbstractController
             $em->persist($season);
             $em->flush();
 
-            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }
 
         return $this->render('backoffice/season_add.html.twig', ['form' => $form]);

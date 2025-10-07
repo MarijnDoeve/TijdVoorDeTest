@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuestionRepository;
@@ -17,86 +16,39 @@ use Tvdt\Repository\QuestionRepository;
 class Question
 {
     #[ORM\Column(type: UuidType::NAME)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Id]
-    private Uuid $id;
+    public private(set) Uuid $id;
 
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
-    private int $ordering;
+    public int $ordering;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $question;
+    public string $question;
 
     #[ORM\JoinColumn(nullable: false)]
     #[ORM\ManyToOne(inversedBy: 'questions')]
-    private Quiz $quiz;
+    public Quiz $quiz;
 
     #[ORM\Column]
-    private bool $enabled = true;
+    public bool $enabled = true;
 
     /** @var Collection<int, Answer> */
     #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['ordering' => 'ASC'])]
-    private Collection $answers;
+    public private(set) Collection $answers;
 
     public function __construct()
     {
         $this->answers = new ArrayCollection();
     }
 
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getQuestion(): string
-    {
-        return $this->question;
-    }
-
-    public function setQuestion(string $question): static
-    {
-        $this->question = $question;
-
-        return $this;
-    }
-
-    public function getQuiz(): Quiz
-    {
-        return $this->quiz;
-    }
-
-    public function setQuiz(Quiz $quiz): static
-    {
-        $this->quiz = $quiz;
-
-        return $this;
-    }
-
-    public function isEnabled(): ?bool
-    {
-        return $this->enabled;
-    }
-
-    public function setEnabled(bool $enabled): static
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /** @return Collection<int, Answer> */
-    public function getAnswers(): Collection
-    {
-        return $this->answers;
-    }
-
     public function addAnswer(Answer $answer): static
     {
         if (!$this->answers->contains($answer)) {
             $this->answers->add($answer);
-            $answer->setQuestion($this);
+            $answer->question = $this;
         }
 
         return $this;
@@ -108,7 +60,7 @@ class Question
             return 'This question has no answers';
         }
 
-        $correctAnswers = $this->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer())->count();
+        $correctAnswers = $this->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->count();
 
         if (0 === $correctAnswers) {
             return 'This question has no correct answers';
@@ -119,17 +71,5 @@ class Question
         }
 
         return null;
-    }
-
-    public function getOrdering(): int
-    {
-        return $this->ordering;
-    }
-
-    public function setOrdering(int $ordering): static
-    {
-        $this->ordering = $ordering;
-
-        return $this;
     }
 }

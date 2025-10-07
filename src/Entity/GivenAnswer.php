@@ -7,7 +7,6 @@ namespace Tvdt\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\GivenAnswerRepository;
@@ -17,52 +16,27 @@ use Tvdt\Repository\GivenAnswerRepository;
 class GivenAnswer
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Id]
-    private Uuid $id;
+    public private(set) Uuid $id;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
-    private \DateTimeImmutable $created;
+    public private(set) \DateTimeImmutable $created;
 
     public function __construct(
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
-        private Candidate $candidate,
+        private(set) Candidate $candidate,
 
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         #[ORM\ManyToOne]
-        private Quiz $quiz,
+        private(set) Quiz $quiz,
 
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
-        private Answer $answer,
+        private(set) Answer $answer,
     ) {}
-
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getCandidate(): Candidate
-    {
-        return $this->candidate;
-    }
-
-    public function getQuiz(): Quiz
-    {
-        return $this->quiz;
-    }
-
-    public function getAnswer(): Answer
-    {
-        return $this->answer;
-    }
-
-    public function getCreated(): \DateTimeImmutable
-    {
-        return $this->created;
-    }
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void

@@ -41,7 +41,7 @@ class QuizCandidateRepository extends ServiceEntityRepository
             throw new \InvalidArgumentException('Quiz candidate not found');
         }
 
-        $quizCandidate->setCorrections($corrections);
+        $quizCandidate->corrections = $corrections;
         $this->getEntityManager()->flush();
     }
 }

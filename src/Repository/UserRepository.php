@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        $user->setPassword($newHashedPassword);
+        $user->password = $newHashedPassword;
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
@@ -35,7 +35,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new \InvalidArgumentException('User not found');
         }
 
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->roles = ['ROLE_ADMIN'];
         $this->getEntityManager()->flush();
     }
 }

@@ -39,7 +39,7 @@ final class EliminationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $name = $form->get('name')->getData();
 
-            return $this->redirectToRoute('tvdt_elimination_candidate', ['elimination' => $elimination->getId(), 'candidateHash' => Base64::base64UrlEncode($name)]);
+            return $this->redirectToRoute('tvdt_elimination_candidate', ['elimination' => $elimination->id, 'candidateHash' => Base64::base64UrlEncode($name)]);
         }
 
         return $this->render('quiz/elimination/index.html.twig', [
@@ -52,21 +52,21 @@ final class EliminationController extends AbstractController
     #[Route('/elimination/{elimination}/{candidateHash}', name: 'tvdt_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
     public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
     {
-        $candidate = $candidateRepository->getCandidateByHash($elimination->getQuiz()->getSeason(), $candidateHash);
+        $candidate = $candidateRepository->getCandidateByHash($elimination->quiz->season, $candidateHash);
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Warning,
                 t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator),
             );
 
-            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->getId()]);
+            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
         }
 
-        $screenColour = $elimination->getScreenColour($candidate->getName());
+        $screenColour = $elimination->getScreenColour($candidate->name);
 
         if (null === $screenColour) {
-            $this->addFlash(FlashType::Warning, $this->translator->trans('Cound not find candidate with name %name% in elimination.', ['%name%' => $candidate->getName()]));
+            $this->addFlash(FlashType::Warning, $this->translator->trans('Cound not find candidate with name %name% in elimination.', ['%name%' => $candidate->name]));
 
-            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->getId()]);
+            return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
         }
 
         return $this->render('quiz/elimination/candidate.html.twig', [

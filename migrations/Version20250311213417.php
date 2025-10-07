@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20250311213417 extends AbstractMigration
 {
     public function getDescription(): string
@@ -19,7 +16,6 @@ final class Version20250311213417 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE answer ALTER id TYPE UUID');
         $this->addSql('ALTER TABLE answer ALTER question_id TYPE UUID');
         $this->addSql('COMMENT ON COLUMN answer.id IS \'\'');
@@ -69,7 +65,6 @@ final class Version20250311213417 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE candidate ALTER id TYPE UUID');
         $this->addSql('ALTER TABLE candidate ALTER season_id TYPE UUID');
         $this->addSql('COMMENT ON COLUMN candidate.id IS \'(DC2Type:uuid)\'');

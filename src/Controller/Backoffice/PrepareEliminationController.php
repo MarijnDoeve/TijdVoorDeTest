@@ -26,7 +26,7 @@ final class PrepareEliminationController extends AbstractController
     {
         $elimination = $eliminationFactory->createEliminationFromQuiz($quiz);
 
-        return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->getId()]);
+        return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
     }
 
     #[Route(
@@ -41,7 +41,7 @@ final class PrepareEliminationController extends AbstractController
             $em->flush();
 
             if ($request->request->getBoolean('start')) {
-                return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->getId()]);
+                return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
             }
 
             $this->addFlash('success', 'Elimination updated');
