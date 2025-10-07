@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20241229202103 extends AbstractMigration
 {
     public function getDescription(): string
@@ -19,7 +16,6 @@ final class Version20241229202103 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE correction (id UUID NOT NULL, candidate_id UUID NOT NULL, quiz_id UUID NOT NULL, amount DOUBLE PRECISION NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_A29DA1B891BD8781 ON correction (candidate_id)');
         $this->addSql('CREATE INDEX IDX_A29DA1B8853CD175 ON correction (quiz_id)');
@@ -32,7 +28,6 @@ final class Version20241229202103 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE correction DROP CONSTRAINT FK_A29DA1B891BD8781');
         $this->addSql('ALTER TABLE correction DROP CONSTRAINT FK_A29DA1B8853CD175');

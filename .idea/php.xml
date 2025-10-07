@@ -195,6 +195,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/brevo-mailer" />
       <path value="$PROJECT_DIR$/vendor/symfony/translation" />
       <path value="$PROJECT_DIR$/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/vendor/martin-georgiev/postgresql-for-doctrine" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

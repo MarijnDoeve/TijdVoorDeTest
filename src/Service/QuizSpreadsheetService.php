@@ -84,8 +84,8 @@ class QuizSpreadsheetService
             }
 
             $question = new Question();
-            $question->setQuestion((string) $questionArr[0]);
-            $question->setOrdering($questionCounter++);
+            $question->question = (string) $questionArr[0];
+            $question->ordering = $questionCounter++;
 
             $answerCounter = 1;
             $arrCounter = 1;
@@ -100,7 +100,7 @@ class QuizSpreadsheetService
                 }
 
                 $answer = new Answer((string) $questionArr[$arrCounter++], (bool) $questionArr[$arrCounter++]);
-                $answer->setOrdering($answerCounter++);
+                $answer->ordering = $answerCounter++;
                 $question->addAnswer($answer);
             }
 

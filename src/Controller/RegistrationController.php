@@ -41,7 +41,7 @@ final class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->password = $userPasswordHasher->hashPassword($user, $plainPassword);
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -50,7 +50,7 @@ final class RegistrationController extends AbstractController
                 // generate a signed url and email it to the user
                 $this->emailVerifier->sendEmailConfirmation('tvdt_verify_email', $user,
                     new TemplatedEmail()
-                        ->to((string) $user->getEmail())
+                        ->to($user->email)
                         ->subject($this->translator->trans('Please Confirm your Email'))
                         ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
                 );

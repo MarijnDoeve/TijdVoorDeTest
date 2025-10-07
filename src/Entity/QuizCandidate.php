@@ -7,7 +7,6 @@ namespace Tvdt\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuizCandidateRepository;
@@ -18,58 +17,26 @@ use Tvdt\Repository\QuizCandidateRepository;
 class QuizCandidate
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Id]
-    private Uuid $id;
+    public private(set) Uuid $id;
 
     #[ORM\Column]
-    private float $corrections = 0;
+    public float $corrections = 0;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
-    private \DateTimeImmutable $created;
+    public private(set) \DateTimeImmutable $created;
 
     public function __construct(
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'candidateData')]
-        private Quiz $quiz,
+        public Quiz $quiz,
 
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'quizData')]
-        private Candidate $candidate,
+        public Candidate $candidate,
     ) {}
-
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getCandidate(): Candidate
-    {
-        return $this->candidate;
-    }
-
-    public function getQuiz(): Quiz
-    {
-        return $this->quiz;
-    }
-
-    public function getCorrections(): ?float
-    {
-        return $this->corrections;
-    }
-
-    public function setCorrections(float $corrections): static
-    {
-        $this->corrections = $corrections;
-
-        return $this;
-    }
-
-    public function getCreated(): \DateTimeImmutable
-    {
-        return $this->created;
-    }
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void

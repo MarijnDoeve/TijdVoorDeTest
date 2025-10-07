@@ -26,12 +26,12 @@ readonly class AddSettingsCommand
         $io = new SymfonyStyle($input, $output);
 
         foreach ($this->seasonRepository->findAll() as $season) {
-            if (null !== $season->getSettings()) {
+            if (null !== $season->settings) {
                 continue;
             }
 
-            $io->text('Adding settings to season : '.$season->getSeasonCode());
-            $season->setSettings(new SeasonSettings());
+            $io->text('Adding settings to season : '.$season->seasonCode);
+            $season->settings = new SeasonSettings();
         }
 
         $this->entityManager->flush();

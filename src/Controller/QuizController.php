@@ -65,7 +65,7 @@ final class QuizController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $name = $form->get('name')->getData();
 
-            return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => Base64::base64UrlEncode($name)]);
+            return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => Base64::base64UrlEncode($name)]);
         }
 
         return $this->render('quiz/enter_name.twig', ['season' => $season, 'form' => $form]);
@@ -91,15 +91,15 @@ final class QuizController extends AbstractController
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('Candidate not found'));
 
-            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
-        $quiz = $season->getActiveQuiz();
+        $quiz = $season->activeQuiz;
 
         if (!$quiz instanceof Quiz) {
             $this->addFlash(FlashType::Warning, $this->translator->trans('There is no active quiz'));
 
-            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
         if ('POST' === $request->getMethod()) {
@@ -109,10 +109,10 @@ final class QuizController extends AbstractController
                 throw new BadRequestHttpException('Invalid Answer ID');
             }
 
-            $givenAnswer = new GivenAnswer($candidate, $answer->getQuestion()->getQuiz(), $answer);
+            $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $givenAnswerRepository->save($givenAnswer);
 
-            return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->getSeasonCode(), 'nameHash' => $nameHash]);
+            return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
         }
 
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
@@ -120,7 +120,7 @@ final class QuizController extends AbstractController
         if (!$question instanceof Question) {
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz completed'));
 
-            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
         $quizCandidateRepository->createIfNotExist($quiz, $candidate);

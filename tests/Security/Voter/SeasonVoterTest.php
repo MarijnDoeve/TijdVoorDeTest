@@ -53,19 +53,19 @@ final class SeasonVoterTest extends TestCase
         $season->method('isOwner')->willReturn(true);
 
         $quiz = self::createStub(Quiz::class);
-        $quiz->method('getSeason')->willReturn($season);
+        $quiz->season = $season;
 
         $elimination = self::createStub(Elimination::class);
-        $elimination->method('getQuiz')->willReturn($quiz);
+        $elimination->quiz = $quiz;
 
         $candidate = self::createStub(Candidate::class);
-        $candidate->method('getSeason')->willReturn($season);
+        $candidate->season = $season;
 
         $question = self::createStub(Question::class);
-        $question->method('getQuiz')->willReturn($quiz);
+        $question->quiz = $quiz;
 
         $answer = self::createStub(Answer::class);
-        $answer->method('getQuestion')->willReturn($question);
+        $answer->question = $question;
 
         yield 'Season' => [$season];
         yield 'Elimination' => [$elimination];

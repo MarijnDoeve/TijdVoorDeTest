@@ -26,10 +26,10 @@ final readonly class EliminationFactory
         $simpleScores = [];
 
         foreach (array_reverse($scores) as $i => $score) {
-            $simpleScores[$score['name']] = $i < $quiz->getDropouts() ? Elimination::SCREEN_RED : Elimination::SCREEN_GREEN;
+            $simpleScores[$score->name] = $i < $quiz->dropouts ? Elimination::SCREEN_RED : Elimination::SCREEN_GREEN;
         }
 
-        $elimination->setData($simpleScores);
+        $elimination->data = $simpleScores;
 
         $this->em->flush();
 

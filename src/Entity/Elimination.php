@@ -7,7 +7,6 @@ namespace Tvdt\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
@@ -22,47 +21,23 @@ class Elimination
     public const string SCREEN_RED = 'red';
 
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Id]
-    private Uuid $id;
+    public private(set) Uuid $id;
 
     /** @var array<string, mixed> */
-    #[ORM\Column(type: Types::JSON)]
-    private array $data = [];
+    #[ORM\Column(type: Types::JSONB)]
+    public array $data = [];
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
-    private \DateTimeImmutable $created;
+    public private(set) \DateTimeImmutable $created;
 
     public function __construct(
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         #[ORM\ManyToOne(inversedBy: 'eliminations')]
-        private Quiz $quiz,
+        public Quiz $quiz,
     ) {}
-
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    /** @return array<string, mixed> */
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
-    /** @param array<string, mixed> $data */
-    public function setData(array $data): self
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    public function getQuiz(): Quiz
-    {
-        return $this->quiz;
-    }
 
     /** @param InputBag<bool|float|int|string> $inputBag */
     public function updateFromInputBag(InputBag $inputBag): self
@@ -86,10 +61,5 @@ class Elimination
     public function setCreatedAtValue(): void
     {
         $this->created = new DateTimeImmutable();
-    }
-
-    public function getCreated(): \DateTimeInterface
-    {
-        return $this->created;
     }
 }
