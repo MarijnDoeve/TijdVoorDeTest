@@ -15,7 +15,6 @@ services:
       # See https://xdebug.org/docs/all_settings#mode
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
       MAILER_DSN: "smtp://mailer:1025"
-      PHP_CS_FIXER_IGNORE_ENV: 1
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway

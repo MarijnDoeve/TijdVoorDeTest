@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Security;
+namespace Tvdt\Security;
 
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use Tvdt\Entity\User;
 
 readonly class EmailVerifier
 {
@@ -25,9 +25,9 @@ readonly class EmailVerifier
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
-            (string) $user->getId(),
-            (string) $user->getEmail(),
-            ['id' => $user->getId()],
+            $user->id->toRfc4122(),
+            $user->email,
+            ['id' => $user->id],
         );
 
         $context = $email->getContext();
@@ -42,9 +42,9 @@ readonly class EmailVerifier
 
     public function handleEmailConfirmation(Request $request, User $user): void
     {
-        $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
+        $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, $user->id->toRfc4122(), $user->email);
 
-        $user->setIsVerified(true);
+        $user->isVerified = true;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

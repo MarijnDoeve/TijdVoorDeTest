@@ -18,7 +18,7 @@ final class Version20250521194035 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE elimination ADD created TIMESTAMP(0) WITHOUT TIME ZONE
-        SQL);
+            SQL);
         $this->addSql(<<<'SQL'
             UPDATE elimination SET created = NOW()
             SQL
@@ -33,6 +33,6 @@ final class Version20250521194035 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE elimination DROP created
-        SQL);
+            SQL);
     }
 }

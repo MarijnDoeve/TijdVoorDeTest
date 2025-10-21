@@ -1,8 +1,8 @@
-up:
-    docker compose up -d
+up *args:
+    docker compose up -d {{ args }}
 
 down *args:
-    docker compose down {{ args }} --remove-orphans
+    docker compose down --remove-orphans {{ args }}
 
 stop:
     docker compose stop

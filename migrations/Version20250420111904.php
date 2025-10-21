@@ -18,13 +18,13 @@ final class Version20250420111904 extends AbstractMigration
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE "user" ADD is_verified BOOLEAN NOT NULL
-        SQL);
+            SQL);
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql(<<<'SQL'
             ALTER TABLE "user" DROP is_verified
-        SQL);
+            SQL);
     }
 }

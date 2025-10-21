@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Tvdt\Command;
 
-use App\Entity\SeasonSettings;
-use App\Repository\SeasonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Tvdt\Entity\SeasonSettings;
+use Tvdt\Repository\SeasonRepository;
 
 #[AsCommand(
-    name: 'app:add-settings',
+    name: 'tvdt:add-settings',
     description: 'Add a short description for your command',
 )]
 readonly class AddSettingsCommand
@@ -26,11 +26,12 @@ readonly class AddSettingsCommand
         $io = new SymfonyStyle($input, $output);
 
         foreach ($this->seasonRepository->findAll() as $season) {
-            if (null !== $season->getSettings()) {
+            if (null !== $season->settings) {
                 continue;
             }
-            $io->text('Adding settings to season : '.$season->getSeasonCode());
-            $season->setSettings(new SeasonSettings());
+
+            $io->text('Adding settings to season : '.$season->seasonCode);
+            $season->settings = new SeasonSettings();
         }
 
         $this->entityManager->flush();

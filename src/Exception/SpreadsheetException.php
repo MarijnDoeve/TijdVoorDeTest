@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace App\Exception;
+namespace Tvdt\Exception;
 
 class SpreadsheetException extends \Exception {}

@@ -2,53 +2,52 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Repository\SeasonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Repository\SeasonRepository;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
 class Season
 {
     private const string SEASON_CODE_CHARACTERS = 'bcdfghjklmnpqrstvwxz';
 
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private Uuid $id;
+    #[ORM\Id]
+    public private(set) Uuid $id;
 
     #[ORM\Column(length: 64)]
-    private string $name;
+    public string $name;
 
     #[ORM\Column(length: 5)]
-    private string $seasonCode;
+    public string $seasonCode;
 
     /** @var Collection<int, Quiz> */
     #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
-    private Collection $quizzes;
+    public private(set) Collection $quizzes;
 
     /** @var Collection<int, Candidate> */
     #[ORM\OneToMany(targetEntity: Candidate::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['name' => 'ASC'])]
-    private Collection $candidates;
+    public private(set) Collection $candidates;
 
     /** @var Collection<int, User> */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'seasons')]
-    private Collection $owners;
+    public private(set) Collection $owners;
 
-    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Quiz $ActiveQuiz = null;
+    #[ORM\ManyToOne]
+    public ?Quiz $activeQuiz = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
-    private ?SeasonSettings $settings = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    public ?SeasonSettings $settings = null;
 
     public function __construct()
     {
@@ -58,71 +57,24 @@ class Season
         $this->owners = new ArrayCollection();
     }
 
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSeasonCode(): ?string
-    {
-        return $this->seasonCode;
-    }
-
-    public function setSeasonCode(string $seasonCode): static
-    {
-        $this->seasonCode = $seasonCode;
-
-        return $this;
-    }
-
-    /** @return Collection<int, Quiz> */
-    public function getQuizzes(): Collection
-    {
-        return $this->quizzes;
-    }
-
     public function addQuiz(Quiz $quiz): static
     {
         if (!$this->quizzes->contains($quiz)) {
             $this->quizzes->add($quiz);
-            $quiz->setSeason($this);
+            $quiz->season = $this;
         }
 
         return $this;
-    }
-
-    /** @return Collection<int, Candidate> */
-    public function getCandidates(): Collection
-    {
-        return $this->candidates;
     }
 
     public function addCandidate(Candidate $candidate): static
     {
         if (!$this->candidates->contains($candidate)) {
             $this->candidates->add($candidate);
-            $candidate->setSeason($this);
+            $candidate->season = $this;
         }
 
         return $this;
-    }
-
-    /** @return Collection<int, User> */
-    public function getOwners(): Collection
-    {
-        return $this->owners;
     }
 
     public function addOwner(User $owner): static
@@ -137,18 +89,6 @@ class Season
     public function removeOwner(User $owner): static
     {
         $this->owners->removeElement($owner);
-
-        return $this;
-    }
-
-    public function getActiveQuiz(): ?Quiz
-    {
-        return $this->ActiveQuiz;
-    }
-
-    public function setActiveQuiz(?Quiz $ActiveQuiz): static
-    {
-        $this->ActiveQuiz = $ActiveQuiz;
 
         return $this;
     }
@@ -168,18 +108,6 @@ class Season
         }
 
         $this->seasonCode = $code;
-
-        return $this;
-    }
-
-    public function getSettings(): ?SeasonSettings
-    {
-        return $this->settings;
-    }
-
-    public function setSettings(SeasonSettings $settings): static
-    {
-        $this->settings = $settings;
 
         return $this;
     }

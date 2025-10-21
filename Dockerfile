@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	file \
 	gettext \
 	git \
-	&& rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
 	install-php-extensions \
@@ -32,7 +32,7 @@ RUN set -eux; \
 		opcache \
 		zip \
 		gd \
-		excimer-1.2.3 \
+		excimer \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
@@ -60,6 +60,14 @@ FROM frankenphp_base AS frankenphp_dev
 
 ENV APP_ENV=dev XDEBUG_MODE=off
 
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash-completion \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --link frankenphp/console-complete.bash /usr/share/bash-completion/completions/console
+COPY --link frankenphp/composer-complete.bash /usr/share/bash-completion/completions/composer
+
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 RUN set -eux; \
@@ -75,6 +83,8 @@ CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 
 # Prod FrankenPHP image
 FROM frankenphp_base AS frankenphp_prod
+
+RUN rm -rf /var/lib/apt/lists/*
 
 ENV APP_ENV=prod
 ENV FRANKENPHP_CONFIG="import worker.Caddyfile"

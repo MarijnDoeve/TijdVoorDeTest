@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Security\Voter;
+namespace Tvdt\Security\Voter;
 
-use App\Entity\Answer;
-use App\Entity\Candidate;
-use App\Entity\Elimination;
-use App\Entity\Question;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\Question;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
 
-/** @extends Voter<string, Season> */
+/** @extends Voter<string, Season|Elimination|Quiz|Candidate|Answer|Question> */
 final class SeasonVoter extends Voter
 {
     public const string EDIT = 'SEASON_EDIT';
@@ -27,38 +28,37 @@ final class SeasonVoter extends Voter
     {
         return \in_array($attribute, [self::EDIT, self::DELETE, self::ELIMINATION], true)
                 && (
-                    $subject instanceof Season
-                    || $subject instanceof Elimination
-                    || $subject instanceof Quiz
+                    $subject instanceof Answer
                     || $subject instanceof Candidate
-                    || $subject instanceof Answer
+                    || $subject instanceof Elimination
+                    || $subject instanceof Season
                     || $subject instanceof Question
+                    || $subject instanceof Quiz
                 );
     }
 
-    /** @param Season|Elimination|Quiz|Candidate|Answer|Question $subject */
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         $user = $token->getUser();
         if (!$user instanceof User) {
             return false;
         }
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin) {
             return true;
         }
 
         switch (true) {
             case $subject instanceof Answer:
-                $season = $subject->getQuestion()->getQuiz()->getSeason();
+                $season = $subject->question->quiz->season;
                 break;
             case $subject instanceof Elimination:
             case $subject instanceof Question:
-                $season = $subject->getQuiz()->getSeason();
+                $season = $subject->quiz->season;
                 break;
             case $subject instanceof Candidate:
             case $subject instanceof Quiz:
-                $season = $subject->getSeason();
+                $season = $subject->season;
                 break;
             case $subject instanceof Season:
                 $season = $subject;

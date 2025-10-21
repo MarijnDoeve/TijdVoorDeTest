@@ -2,67 +2,41 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Repository\GivenAnswerRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Safe\DateTimeImmutable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Repository\GivenAnswerRepository;
 
 #[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class GivenAnswer
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private Uuid $id;
+    #[ORM\Id]
+    public private(set) Uuid $id;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
-    private \DateTimeImmutable $created;
+    public private(set) \DateTimeImmutable $created;
 
     public function __construct(
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         #[ORM\JoinColumn(nullable: false)]
-        private Candidate $candidate,
+        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
+        private(set) Candidate $candidate,
 
-        #[ORM\ManyToOne]
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-        private Quiz $quiz,
+        #[ORM\ManyToOne]
+        private(set) Quiz $quiz,
 
-        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         #[ORM\JoinColumn(nullable: false)]
-        private Answer $answer,
+        #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
+        private(set) Answer $answer,
     ) {}
-
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getCandidate(): Candidate
-    {
-        return $this->candidate;
-    }
-
-    public function getQuiz(): Quiz
-    {
-        return $this->quiz;
-    }
-
-    public function getAnswer(): Answer
-    {
-        return $this->answer;
-    }
-
-    public function getCreated(): \DateTimeImmutable
-    {
-        return $this->created;
-    }
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void

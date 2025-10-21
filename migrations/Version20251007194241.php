@@ -7,20 +7,20 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20250402185128 extends AbstractMigration
+final class Version20251007194241 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'add elimination table';
+        return 'Change elimination data type to jsonb';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE elimination (id UUID NOT NULL, data JSON NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('ALTER TABLE elimination ALTER data TYPE JSONB');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE elimination');
+        $this->addSql('ALTER TABLE elimination ALTER data TYPE JSON');
     }
 }

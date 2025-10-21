@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace Tvdt\Repository;
 
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Tvdt\Entity\User;
 
 /** @extends ServiceEntityRepository<User> */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        $user->setPassword($newHashedPassword);
+        $user->password = $newHashedPassword;
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
@@ -35,7 +35,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new \InvalidArgumentException('User not found');
         }
 
-        $user->setRoles(['ROLE_ADMIN']);
+        $user->roles = ['ROLE_ADMIN'];
         $this->getEntityManager()->flush();
     }
 }

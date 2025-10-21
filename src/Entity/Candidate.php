@@ -2,120 +2,67 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace Tvdt\Entity;
 
-use App\Helpers\Base64;
-use App\Repository\CandidateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Helpers\Base64;
+use Tvdt\Repository\CandidateRepository;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
 class Candidate
 {
-    #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private Uuid $id;
+    #[ORM\Id]
+    public private(set) Uuid $id;
 
-    #[ORM\ManyToOne(inversedBy: 'candidates')]
     #[ORM\JoinColumn(nullable: false)]
-    private Season $season;
+    #[ORM\ManyToOne(inversedBy: 'candidates')]
+    public Season $season;
 
     /** @var Collection<int, Answer> */
     #[ORM\ManyToMany(targetEntity: Answer::class, mappedBy: 'candidates')]
-    private Collection $answersOnCandidate;
+    public private(set) Collection $answersOnCandidate;
 
     /** @var Collection<int, GivenAnswer> */
     #[ORM\OneToMany(targetEntity: GivenAnswer::class, mappedBy: 'candidate', orphanRemoval: true)]
-    private Collection $givenAnswers;
+    public private(set) Collection $givenAnswers;
 
     /** @var Collection<int, QuizCandidate> */
     #[ORM\OneToMany(targetEntity: QuizCandidate::class, mappedBy: 'candidate', orphanRemoval: true)]
-    private Collection $quizData;
+    public private(set) Collection $quizData;
+
+    public string $nameHash {
+        get => Base64::base64UrlEncode($this->name);
+    }
 
     public function __construct(
         #[ORM\Column(length: 16)]
-        private string $name,
+        public string $name,
     ) {
         $this->answersOnCandidate = new ArrayCollection();
         $this->givenAnswers = new ArrayCollection();
         $this->quizData = new ArrayCollection();
     }
 
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }
-
-    public function getSeason(): Season
-    {
-        return $this->season;
-    }
-
-    public function setSeason(Season $season): static
-    {
-        $this->season = $season;
-
-        return $this;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): static
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /** @return Collection<int, Answer> */
-    public function getAnswersOnCandidate(): Collection
-    {
-        return $this->answersOnCandidate;
-    }
-
-    public function addAnswersOnCandidate(Answer $answersOnCandidate): static
+    public function addAnswersOnCandidate(Answer $answersOnCandidate): void
     {
         if (!$this->answersOnCandidate->contains($answersOnCandidate)) {
             $this->answersOnCandidate->add($answersOnCandidate);
             $answersOnCandidate->addCandidate($this);
         }
-
-        return $this;
     }
 
-    public function removeAnswersOnCandidate(Answer $answersOnCandidate): static
+    public function removeAnswersOnCandidate(Answer $answersOnCandidate): void
     {
         if ($this->answersOnCandidate->removeElement($answersOnCandidate)) {
             $answersOnCandidate->removeCandidate($this);
         }
-
-        return $this;
-    }
-
-    /** @return Collection<int, GivenAnswer> */
-    public function getGivenAnswers(): Collection
-    {
-        return $this->givenAnswers;
-    }
-
-    /** @return Collection<int, QuizCandidate> */
-    public function getQuizData(): Collection
-    {
-        return $this->quizData;
-    }
-
-    public function getNameHash(): string
-    {
-        return Base64::base64UrlEncode($this->name);
     }
 }

@@ -2,17 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Backoffice;
+namespace Tvdt\Controller\Backoffice;
 
-use App\Controller\AbstractController;
-use App\Entity\Candidate;
-use App\Entity\Quiz;
-use App\Entity\Season;
-use App\Exception\ErrorClearingQuizException;
-use App\Repository\CandidateRepository;
-use App\Repository\QuizCandidateRepository;
-use App\Repository\QuizRepository;
-use App\Security\Voter\SeasonVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +14,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Tvdt\Controller\AbstractController;
+use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Exception\ErrorClearingQuizException;
+use Tvdt\Repository\CandidateRepository;
+use Tvdt\Repository\QuizCandidateRepository;
+use Tvdt\Repository\QuizRepository;
+use Tvdt\Security\Voter\SeasonVoter;
 
 #[AsController]
 #[IsGranted('ROLE_USER')]
@@ -33,12 +33,12 @@ class QuizController extends AbstractController
         private readonly TranslatorInterface $translator,
     ) {}
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}',
-        name: 'app_backoffice_quiz',
+        name: 'tvdt_backoffice_quiz',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function index(Season $season, Quiz $quiz): Response
     {
         return $this->render('backoffice/quiz.html.twig', [
@@ -48,30 +48,30 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
-        name: 'app_backoffice_enable',
+        name: 'tvdt_backoffice_enable',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): RedirectResponse
     {
-        $season->setActiveQuiz($quiz);
+        $season->activeQuiz = $quiz;
         $em->flush();
 
         if ($quiz instanceof Quiz) {
-            return $this->redirectToRoute('app_backoffice_quiz', ['seasonCode' => $season->getSeasonCode(), 'quiz' => $quiz->getId()]);
+            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
         }
 
-        return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/clear',
-        name: 'app_backoffice_quiz_clear',
+        name: 'tvdt_backoffice_quiz_clear',
         requirements: ['quiz' => Requirement::UUID],
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     public function clearQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
     {
         try {
@@ -81,30 +81,30 @@ class QuizController extends AbstractController
             $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
         }
 
-        return $this->redirectToRoute('app_backoffice_quiz', ['seasonCode' => $quiz->getSeason()->getSeasonCode(), 'quiz' => $quiz->getId()]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/delete',
-        name: 'app_backoffice_quiz_delete',
+        name: 'tvdt_backoffice_quiz_delete',
         requirements: ['quiz' => Requirement::UUID],
     )]
-    #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
     public function deleteQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
     {
         $quizRepository->deleteQuiz($quiz);
 
         $this->addFlash('success', $this->translator->trans('Quiz deleted'));
 
-        return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $quiz->getSeason()->getSeasonCode()]);
+        return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
-        name: 'app_backoffice_modify_correction',
+        name: 'tvdt_backoffice_modify_correction',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
     )]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     public function modifyCorrection(Quiz $quiz, Candidate $candidate, QuizCandidateRepository $quizCandidateRepository, Request $request): RedirectResponse
     {
         if (!$request->isMethod('POST')) {
@@ -115,6 +115,6 @@ class QuizController extends AbstractController
 
         $quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
 
-        return $this->redirectToRoute('app_backoffice_quiz', ['seasonCode' => $quiz->getSeason()->getSeasonCode(), 'quiz' => $quiz->getId()]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 }

@@ -2,14 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Backoffice;
+namespace Tvdt\Controller\Backoffice;
 
-use App\Controller\AbstractController;
-use App\Entity\Season;
-use App\Entity\User;
-use App\Form\CreateSeasonFormType;
-use App\Repository\SeasonRepository;
-use App\Service\QuizSpreadsheetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +12,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Tvdt\Controller\AbstractController;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
+use Tvdt\Form\CreateSeasonFormType;
+use Tvdt\Repository\SeasonRepository;
+use Tvdt\Service\QuizSpreadsheetService;
 
 #[AsController]
 #[IsGranted('ROLE_USER')]
@@ -28,7 +28,7 @@ final class BackofficeController extends AbstractController
         private readonly Security $security,
     ) {}
 
-    #[Route('/backoffice/', name: 'app_backoffice_index')]
+    #[Route('/backoffice/', name: 'tvdt_backoffice_index')]
     public function index(): Response
     {
         $user = $this->getUser();
@@ -43,7 +43,7 @@ final class BackofficeController extends AbstractController
         ]);
     }
 
-    #[Route('/backoffice/season/add', name: 'app_backoffice_season_add', priority: 10)]
+    #[Route('/backoffice/season/add', name: 'tvdt_backoffice_season_add', priority: 10)]
     public function addSeason(Request $request, EntityManagerInterface $em): Response
     {
         $season = new Season();
@@ -61,13 +61,13 @@ final class BackofficeController extends AbstractController
             $em->persist($season);
             $em->flush();
 
-            return $this->redirectToRoute('app_backoffice_season', ['seasonCode' => $season->getSeasonCode()]);
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }
 
         return $this->render('backoffice/season_add.html.twig', ['form' => $form]);
     }
 
-    #[Route('/backoffice/template', name: 'app_backoffice_template', priority: 10)]
+    #[Route('/backoffice/template', name: 'tvdt_backoffice_template', priority: 10)]
     public function getTemplate(QuizSpreadsheetService $excel): Response
     {
         $response = new StreamedResponse($excel->generateTemplate());

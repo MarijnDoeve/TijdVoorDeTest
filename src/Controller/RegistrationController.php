@@ -2,12 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace Tvdt\Controller;
 
-use App\Entity\User;
-use App\Form\RegistrationFormType;
-use App\Repository\UserRepository;
-use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -20,12 +16,16 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Tvdt\Entity\User;
+use Tvdt\Form\RegistrationFormType;
+use Tvdt\Repository\UserRepository;
+use Tvdt\Security\EmailVerifier;
 
 final class RegistrationController extends AbstractController
 {
     public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator) {}
 
-    #[Route('/register', name: 'app_register')]
+    #[Route('/register', name: 'tvdt_register')]
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -41,22 +41,23 @@ final class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->password = $userPasswordHasher->hashPassword($user, $plainPassword);
 
             $entityManager->persist($user);
             $entityManager->flush();
 
             try {
                 // generate a signed url and email it to the user
-                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                $this->emailVerifier->sendEmailConfirmation('tvdt_verify_email', $user,
                     new TemplatedEmail()
-                        ->to((string) $user->getEmail())
+                        ->to($user->email)
                         ->subject($this->translator->trans('Please Confirm your Email'))
                         ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
                 );
             } catch (TransportExceptionInterface $e) {
                 $logger->error($e->getMessage());
             }
+
             $response = $security->login($user, 'form_login', 'main');
             \assert($response instanceof Response);
 
@@ -68,19 +69,19 @@ final class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/verify/email', name: 'app_verify_email')]
+    #[Route('/verify/email', name: 'tvdt_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
         $id = $request->query->get('id');
 
         if (null === $id) {
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('tvdt_register');
         }
 
         $user = $userRepository->find($id);
 
         if (null === $user) {
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('tvdt_register');
         }
 
         // validate email confirmation link, sets User::isVerified=true and persists
@@ -89,11 +90,11 @@ final class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $verifyEmailException) {
             $this->addFlash('verify_email_error', $translator->trans($verifyEmailException->getReason(), [], 'VerifyEmailBundle'));
 
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('tvdt_register');
         }
 
         $this->addFlash('success', $this->translator->trans('Your email address has been verified.'));
 
-        return $this->redirectToRoute('app_backoffice_index');
+        return $this->redirectToRoute('tvdt_backoffice_index');
     }
 }

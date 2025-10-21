@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace Tvdt\Command;
 
-use App\Repository\SeasonRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -13,9 +11,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Tvdt\Repository\SeasonRepository;
+use Tvdt\Repository\UserRepository;
 
 #[AsCommand(
-    name: 'app:claim-season',
+    name: 'tvdt:claim-season',
     description: 'Give a user owner rights on a season',
 )]
 readonly class ClaimSeasonCommand
