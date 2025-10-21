@@ -13,7 +13,7 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuestionRepository;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
-class Question
+final class Question
 {
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]

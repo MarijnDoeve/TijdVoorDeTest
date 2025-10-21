@@ -14,7 +14,7 @@ use Tvdt\Repository\EliminationRepository;
 
 #[ORM\Entity(repositoryClass: EliminationRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Elimination
+final class Elimination
 {
     public const string SCREEN_GREEN = 'green';
 

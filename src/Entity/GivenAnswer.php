@@ -13,7 +13,7 @@ use Tvdt\Repository\GivenAnswerRepository;
 
 #[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class GivenAnswer
+final class GivenAnswer
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]

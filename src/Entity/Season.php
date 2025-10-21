@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\SeasonRepository;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
-class Season
+final class Season
 {
     private const string SEASON_CODE_CHARACTERS = 'bcdfghjklmnpqrstvwxz';
 

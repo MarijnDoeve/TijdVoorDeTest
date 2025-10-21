@@ -11,7 +11,7 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\SeasonSettingsRepository;
 
 #[ORM\Entity(repositoryClass: SeasonSettingsRepository::class)]
-class SeasonSettings
+final class SeasonSettings
 {
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]

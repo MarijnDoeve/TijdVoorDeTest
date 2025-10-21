@@ -13,7 +13,7 @@ use Tvdt\Repository\QuizRepository;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
-class Quiz
+final class Quiz
 {
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]

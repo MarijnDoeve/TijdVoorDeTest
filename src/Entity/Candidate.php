@@ -14,7 +14,7 @@ use Tvdt\Repository\CandidateRepository;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
-class Candidate
+final class Candidate
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]

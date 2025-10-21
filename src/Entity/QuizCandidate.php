@@ -14,7 +14,7 @@ use Tvdt\Repository\QuizCandidateRepository;
 #[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
-class QuizCandidate
+final class QuizCandidate
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
