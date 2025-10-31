@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\Candidate;
@@ -12,8 +13,13 @@ use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 
-class KrtekFixtures extends Fixture
+final class KrtekFixtures extends Fixture implements FixtureGroupInterface
 {
+    public static function getGroups(): array
+    {
+        return ['test', 'dev'];
+    }
+
     public function load(ObjectManager $manager): void
     {
         $season = new Season();

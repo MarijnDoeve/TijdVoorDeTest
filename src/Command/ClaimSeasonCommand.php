@@ -8,8 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Tvdt\Repository\SeasonRepository;
 use Tvdt\Repository\UserRepository;
@@ -18,7 +16,7 @@ use Tvdt\Repository\UserRepository;
     name: 'tvdt:claim-season',
     description: 'Give a user owner rights on a season',
 )]
-readonly class ClaimSeasonCommand
+final readonly class ClaimSeasonCommand
 {
     public function __construct(private UserRepository $userRepository, private SeasonRepository $seasonRepository, private EntityManagerInterface $entityManager) {}
 
@@ -27,13 +25,10 @@ readonly class ClaimSeasonCommand
         string $seasonCode,
         #[Argument]
         string $email,
-        InputInterface $input,
-        OutputInterface $output,
+        SymfonyStyle $io,
     ): int {
-        $io = new SymfonyStyle($input, $output);
-
         try {
-            $season = $this->seasonRepository->findOneBy(['seasonCode' => $seasonCode]);
+            $season = $this->seasonRepository->findOneBySeasonCode($seasonCode);
             if (null === $season) {
                 throw new \InvalidArgumentException('Season not found');
             }

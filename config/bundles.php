@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
@@ -32,4 +33,5 @@ return [
     SymfonycastsSassBundle::class => ['all' => true],
     StimulusBundle::class => ['all' => true],
     TurboBundle::class => ['all' => true],
+    DAMADoctrineTestBundle::class => ['test' => true],
 ];
