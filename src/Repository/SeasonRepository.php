@@ -25,7 +25,7 @@ class SeasonRepository extends ServiceEntityRepository
             select s from Tvdt\Entity\Season s
             where s.seasonCode = :seasonCode
             DQL)
-            ->setParameter(':seasonCode', $seasonCode)
+            ->setParameter('seasonCode', $seasonCode)
             ->setMaxResults(1)
             ->getOneOrNullResult();
     }

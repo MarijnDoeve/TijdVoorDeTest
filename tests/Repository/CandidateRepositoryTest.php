@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Repository;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tvdt\Entity\Candidate;
@@ -11,9 +12,11 @@ use Tvdt\Entity\Season;
 use Tvdt\Repository\CandidateRepository;
 use Tvdt\Repository\SeasonRepository;
 
-class CandidateRepositoryTest extends KernelTestCase
+#[CoversClass(CandidateRepository::class)]
+final class CandidateRepositoryTest extends KernelTestCase
 {
     private SeasonRepository $seasonRepository;
+
     private CandidateRepository $candidateRepository;
 
     protected function setUp(): void
@@ -53,7 +56,7 @@ class CandidateRepositoryTest extends KernelTestCase
             $krtekSeason,
             'TWFyaWpu',
         );
-        $this->assertNull($result);
+        $this->assertNotInstanceOf(Candidate::class, $result);
     }
 
     public function testGetCandidateByHashInvalidBase64HashReturnsNull(): void
@@ -64,7 +67,7 @@ class CandidateRepositoryTest extends KernelTestCase
             $krtekSeason,
             'TWFyaWpu*',
         );
-        $this->assertNull($result);
+        $this->assertNotInstanceOf(Candidate::class, $result);
     }
 
     public function testGetScores(): void

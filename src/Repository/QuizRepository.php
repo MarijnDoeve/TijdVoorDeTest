@@ -7,10 +7,7 @@ namespace Tvdt\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use Tvdt\Entity\Elimination;
-use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Quiz;
-use Tvdt\Entity\QuizCandidate;
 use Tvdt\Exception\ErrorClearingQuizException;
 
 /**
@@ -29,22 +26,26 @@ class QuizRepository extends ServiceEntityRepository
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
-            $em->createQueryBuilder()
-                ->delete()->from(QuizCandidate::class, 'qc')
-                ->where('qc.quiz = :quiz')
+            $em->createQuery(<<<DQL
+                delete from Tvdt\Entity\QuizCandidate qc
+                where qc.quiz = :quiz
+                DQL)
                 ->setParameter('quiz', $quiz)
-                ->getQuery()->execute();
+                ->execute();
 
-            $em->createQueryBuilder()
-                ->delete()->from(GivenAnswer::class, 'ga')
-                ->where('ga.quiz = :quiz')
+            $em->createQuery(<<<DQL
+                delete from Tvdt\Entity\GivenAnswer ga
+                where ga.quiz = :quiz
+                DQL)
                 ->setParameter('quiz', $quiz)
-                ->getQuery()->execute();
-            $em->createQueryBuilder()
-                ->delete()->from(Elimination::class, 'e')
-                ->where('e.quiz = :quiz')
+                ->execute();
+
+            $em->createQuery(<<<DQL
+                delete from Tvdt\Entity\Elimination e
+                where e.quiz = :quiz
+                DQL)
                 ->setParameter('quiz', $quiz)
-                ->getQuery()->execute();
+                ->execute();
         } catch (\Throwable $throwable) {
             $this->logger->error($throwable->getMessage());
             $em->rollback();

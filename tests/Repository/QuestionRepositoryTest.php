@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\Candidate;
@@ -16,11 +17,15 @@ use Tvdt\Repository\CandidateRepository;
 use Tvdt\Repository\QuestionRepository;
 use Tvdt\Repository\SeasonRepository;
 
-class QuestionRepositoryTest extends KernelTestCase
+#[CoversClass(QuestionRepository::class)]
+final class QuestionRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
+
     private QuestionRepository $questionRepository;
+
     private SeasonRepository $seasonRepository;
+
     private CandidateRepository $candidateRepository;
 
     protected function setUp(): void
@@ -36,9 +41,9 @@ class QuestionRepositoryTest extends KernelTestCase
     public function testFindNextQuestionReturnsRightQuestion(): void
     {
         $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
-        \assert($krtekSeason instanceof Season);
+        $this->assertInstanceOf(Season::class, $krtekSeason);
         $candidate = $this->candidateRepository->findOneBy(['season' => $krtekSeason, 'name' => 'Tom']);
-        \assert($candidate instanceof Candidate);
+        $this->assertInstanceOf(Candidate::class, $candidate);
 
         $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
         $this->assertInstanceOf(Question::class, $question);
@@ -55,7 +60,7 @@ class QuestionRepositoryTest extends KernelTestCase
         $this->assertSame('Hoeveel broers heeft de Krtek?', $question->question, 'Getting question a second time fails');
 
         $quiz = $krtekSeason->quizzes->last();
-        \assert($quiz instanceof Quiz);
+        $this->assertInstanceOf(Quiz::class, $quiz);
         $krtekSeason->activeQuiz = $quiz;
         $this->entityManager->flush();
 
@@ -64,42 +69,43 @@ class QuestionRepositoryTest extends KernelTestCase
         $this->assertSame('Is de Krtek een man of een vrouw?', $question->question, 'Wrong question after switching season.');
     }
 
-    public function testFindNextQuestionGivesNullWhenAllQuestionsAnswred(): void
+    public function testFindNextQuestionGivesNullWhenAllQuestionsAnswered(): void
     {
         $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
-        \assert($krtekSeason instanceof Season);
+        $this->assertInstanceOf(Season::class, $krtekSeason);
         $candidate = $this->candidateRepository->findOneBy(['season' => $krtekSeason, 'name' => 'Tom']);
-        \assert($candidate instanceof Candidate);
+        $this->assertInstanceOf(Candidate::class, $candidate);
 
         for ($i = 0; $i < 15; ++$i) {
             $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
-            \assert($question instanceof Question);
+            $this->assertInstanceOf(Question::class, $question);
             $this->answerQuestion($question, $candidate);
         }
+
         $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
 
-        $this->assertNull($question);
+        $this->assertNotInstanceOf(Question::class, $question);
     }
 
     public function testFindNextQuestionWithNoActiveQuizReturnsNull(): void
     {
         $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
-        \assert($krtekSeason instanceof Season);
+        $this->assertInstanceOf(Season::class, $krtekSeason);
         $candidate = $this->candidateRepository->findOneBy(['season' => $krtekSeason, 'name' => 'Tom']);
-        \assert($candidate instanceof Candidate);
+        $this->assertInstanceOf(Candidate::class, $candidate);
 
         $krtekSeason->activeQuiz = null;
         $this->entityManager->flush();
 
         $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
 
-        $this->assertNull($question);
+        $this->assertNotInstanceOf(Question::class, $question);
     }
 
     private function answerQuestion(Question $question, Candidate $candidate): void
     {
         $answer = $question->answers->first();
-        \assert($answer instanceof Answer);
+        $this->assertInstanceOf(Answer::class, $answer);
         $this->entityManager->persist(new GivenAnswer(
             $candidate,
             $question->quiz,

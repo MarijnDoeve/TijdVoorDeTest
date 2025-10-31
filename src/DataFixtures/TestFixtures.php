@@ -13,7 +13,7 @@ use Tvdt\Entity\User;
 final class TestFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher,
+        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {}
 
     public static function getGroups(): array

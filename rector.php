@@ -26,7 +26,6 @@ return RectorConfig::configure()
         privatization: true,
         instanceOf: true,
         earlyReturn: true,
-        strictBooleans: true,
         rectorPreset: true,
         phpunitCodeQuality: true,
         doctrineCodeQuality: true,

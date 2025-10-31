@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Command;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Tvdt\Command\MakeAdminCommand;
 use Tvdt\Entity\User;
 use Tvdt\Repository\UserRepository;
 
+#[CoversClass(MakeAdminCommand::class)]
 final class MakeAdminCommandTest extends KernelTestCase
 {
     private UserRepository $userRepository;
+
     private CommandTester $commandTester;
 
     protected function setUp(): void
     {
         $container = self::getContainer();
 
-        \assert(self::$kernel instanceof KernelInterface);
+        $this->assertInstanceOf(KernelInterface::class, self::$kernel);
 
         $this->userRepository = $container->get(UserRepository::class);
         $application = new Application(self::$kernel);
@@ -36,19 +40,18 @@ final class MakeAdminCommandTest extends KernelTestCase
         ]);
 
         $user = $this->userRepository->findOneBy(['email' => 'test@example.org']);
-        \assert($user instanceof User);
+        $this->assertInstanceOf(User::class, $user);
 
         $this->assertSame(Command::SUCCESS, $this->commandTester->getStatusCode());
         $this->assertContains('ROLE_ADMIN', $user->roles);
     }
 
-    public function testInvalidEmalFails(): void
+    public function testInvalidEmailFails(): void
     {
         $this->commandTester->execute([
             'email' => 'nonexisting@example.org',
         ]);
 
         $this->assertSame(Command::FAILURE, $this->commandTester->getStatusCode());
-        $this->commandTester->getStatusCode();
     }
 }

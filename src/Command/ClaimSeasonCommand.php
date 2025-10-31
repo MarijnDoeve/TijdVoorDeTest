@@ -9,6 +9,7 @@ use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Tvdt\Entity\Season;
 use Tvdt\Repository\SeasonRepository;
 use Tvdt\Repository\UserRepository;
 
@@ -29,7 +30,7 @@ final readonly class ClaimSeasonCommand
     ): int {
         try {
             $season = $this->seasonRepository->findOneBySeasonCode($seasonCode);
-            if (null === $season) {
+            if (!$season instanceof Season) {
                 throw new \InvalidArgumentException('Season not found');
             }
 
