@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Security\Voter;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 use Tvdt\Security\Voter\SeasonVoter;
 
+#[CoversClass(SeasonVoter::class)]
 final class SeasonVoterTest extends TestCase
 {
     private SeasonVoter $seasonVoter;

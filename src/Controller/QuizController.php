@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -30,7 +31,7 @@ use Tvdt\Repository\SeasonRepository;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager) {}
 
     #[Route(path: '/', name: 'tvdt_quiz_select_season', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request, SeasonRepository $seasonRepository): Response
@@ -110,7 +111,8 @@ final class QuizController extends AbstractController
             }
 
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
-            $givenAnswerRepository->save($givenAnswer);
+            $this->entityManager->persist($givenAnswer);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
         }

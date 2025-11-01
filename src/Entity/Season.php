@@ -98,7 +98,7 @@ class Season
         return $this->owners->contains($user);
     }
 
-    public function generateSeasonCode(): self
+    public function generateSeasonCode(): void
     {
         $code = '';
         $len = mb_strlen(self::SEASON_CODE_CHARACTERS) - 1;
@@ -108,7 +108,5 @@ class Season
         }
 
         $this->seasonCode = $code;
-
-        return $this;
     }
 }

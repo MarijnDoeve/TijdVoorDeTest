@@ -43,15 +43,6 @@ class CandidateRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function save(Candidate $candidate, bool $flush = true): void
-    {
-        $this->getEntityManager()->persist($candidate);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @throws DatetimeException
      *
