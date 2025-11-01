@@ -15,6 +15,8 @@ use Tvdt\Entity\Season;
 
 final class KrtekFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const string KRTEK_SEASON = 'krtek-seaspm';
+
     public static function getGroups(): array
     {
         return ['test', 'dev'];
@@ -47,6 +49,8 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $season->addQuiz($this->createQuiz2($season));
 
         $manager->flush();
+
+        $this->addReference(self::KRTEK_SEASON, $season);
     }
 
     private function createQuiz1(Season $season): Quiz

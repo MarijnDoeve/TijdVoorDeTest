@@ -4,37 +4,17 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tvdt\Entity\Quiz;
-use Tvdt\Entity\Season;
 use Tvdt\Repository\GivenAnswerRepository;
 use Tvdt\Repository\QuizRepository;
-use Tvdt\Repository\SeasonRepository;
 
 #[CoversClass(QuizRepository::class)]
-final class QuizRepositoryTest extends KernelTestCase
+final class QuizRepositoryTest extends DatabaseTestCase
 {
-    private EntityManagerInterface $entityManager;
-
-    private SeasonRepository $seasonRepository;
-
-    private QuizRepository $quizRepository;
-
-    protected function setUp(): void
-    {
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-        $this->seasonRepository = self::getContainer()->get(SeasonRepository::class);
-        $this->quizRepository = self::getContainer()->get(QuizRepository::class);
-        parent::setUp();
-    }
-
     public function testClearQuiz(): void
     {
-        $krtekSeason = $this->seasonRepository->findOneBy(['seasonCode' => 'krtek']);
-        $this->assertInstanceOf(Season::class, $krtekSeason);
-
+        $krtekSeason = $this->getSeasonByCode('krtek');
         $quiz = $krtekSeason->activeQuiz;
         $this->assertInstanceOf(Quiz::class, $quiz);
 
@@ -52,8 +32,7 @@ final class QuizRepositoryTest extends KernelTestCase
 
     public function testDeleteQuiz(): void
     {
-        $krtekSeason = $this->seasonRepository->findOneBy(['seasonCode' => 'krtek']);
-        $this->assertInstanceOf(Season::class, $krtekSeason);
+        $krtekSeason = $this->getSeasonByCode('krtek');
         $quiz = $krtekSeason->quizzes->last();
         $this->assertInstanceOf(Quiz::class, $quiz);
 

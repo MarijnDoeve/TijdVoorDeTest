@@ -41,10 +41,11 @@ final class ClaimSeasonCommandTest extends KernelTestCase
         ]);
 
         $season = $this->seasonRepository->findOneBySeasonCode('krtek');
+
         $this->assertInstanceOf(Season::class, $season);
 
         $this->assertSame(Command::SUCCESS, $this->commandTester->getStatusCode());
-        $this->assertCount(1, $season->owners);
+        $this->assertCount(3, $season->owners);
     }
 
     public function testInvalidEmailFails(): void

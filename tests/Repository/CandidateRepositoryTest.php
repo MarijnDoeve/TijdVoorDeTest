@@ -6,25 +6,12 @@ namespace Tvdt\Tests\Repository;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tvdt\Entity\Candidate;
-use Tvdt\Entity\Season;
 use Tvdt\Repository\CandidateRepository;
-use Tvdt\Repository\SeasonRepository;
 
 #[CoversClass(CandidateRepository::class)]
-final class CandidateRepositoryTest extends KernelTestCase
+final class CandidateRepositoryTest extends DatabaseTestCase
 {
-    private SeasonRepository $seasonRepository;
-
-    private CandidateRepository $candidateRepository;
-
-    protected function setUp(): void
-    {
-        $this->seasonRepository = self::getContainer()->get(SeasonRepository::class);
-        $this->candidateRepository = self::getContainer()->get(CandidateRepository::class);
-    }
-
     /** @return iterable<string, array{0: string}> */
     public static function candidateHashDataProvider(): iterable
     {
@@ -36,8 +23,7 @@ final class CandidateRepositoryTest extends KernelTestCase
     #[DataProvider('candidateHashDataProvider')]
     public function testGetCandidateByHash(string $hash): void
     {
-        /** @var Season $krtekSeason */
-        $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
+        $krtekSeason = $this->getSeasonByCode('krtek');
         $candidate = $this->candidateRepository->getCandidateByHash(
             $krtekSeason,
             $hash,
@@ -50,8 +36,7 @@ final class CandidateRepositoryTest extends KernelTestCase
 
     public function testGetCandidateByHashUnknownHashReturnsNull(): void
     {
-        /** @var Season $krtekSeason */
-        $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
+        $krtekSeason = $this->getSeasonByCode('krtek');
         $result = $this->candidateRepository->getCandidateByHash(
             $krtekSeason,
             'TWFyaWpu',
@@ -61,8 +46,7 @@ final class CandidateRepositoryTest extends KernelTestCase
 
     public function testGetCandidateByHashInvalidBase64HashReturnsNull(): void
     {
-        /** @var Season $krtekSeason */
-        $krtekSeason = $this->seasonRepository->findOneBySeasonCode('krtek');
+        $krtekSeason = $this->getSeasonByCode('krtek');
         $result = $this->candidateRepository->getCandidateByHash(
             $krtekSeason,
             'TWFyaWpu*',
