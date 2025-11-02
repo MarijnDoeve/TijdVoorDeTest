@@ -7,12 +7,12 @@ namespace Tvdt\Factory;
 use Doctrine\ORM\EntityManagerInterface;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
-use Tvdt\Repository\CandidateRepository;
+use Tvdt\Repository\QuizRepository;
 
 final readonly class EliminationFactory
 {
     public function __construct(
-        private CandidateRepository $candidateRepository,
+        private QuizRepository $quizRepository,
         private EntityManagerInterface $em,
     ) {}
 
@@ -21,7 +21,7 @@ final readonly class EliminationFactory
         $elimination = new Elimination($quiz);
         $this->em->persist($elimination);
 
-        $scores = $this->candidateRepository->getScores($quiz);
+        $scores = $this->quizRepository->getScores($quiz);
 
         $simpleScores = [];
 

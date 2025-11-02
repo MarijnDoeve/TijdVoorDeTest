@@ -19,7 +19,6 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
-use Tvdt\Repository\CandidateRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -29,7 +28,7 @@ use Tvdt\Security\Voter\SeasonVoter;
 class QuizController extends AbstractController
 {
     public function __construct(
-        private readonly CandidateRepository $candidateRepository,
+        private readonly QuizRepository $quizRepository,
         private readonly TranslatorInterface $translator,
     ) {}
 
@@ -44,7 +43,7 @@ class QuizController extends AbstractController
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
-            'result' => $this->candidateRepository->getScores($quiz),
+            'result' => $this->quizRepository->getScores($quiz),
         ]);
     }
 

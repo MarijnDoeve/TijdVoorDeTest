@@ -42,4 +42,9 @@ final class QuizRepositoryTest extends DatabaseTestCase
 
         $this->assertCount(1, $krtekSeason->quizzes);
     }
+
+    public function testGetScores(): void
+    {
+        $this->markTestIncomplete('TODO: Make fixtures first and write good test.');
+    }
 }

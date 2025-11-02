@@ -53,9 +53,4 @@ final class CandidateRepositoryTest extends DatabaseTestCase
         );
         $this->assertNotInstanceOf(Candidate::class, $result);
     }
-
-    public function testGetScores(): void
-    {
-        $this->markTestIncomplete('TODO: Make fixtures first and write good test.');
-    }
 }
