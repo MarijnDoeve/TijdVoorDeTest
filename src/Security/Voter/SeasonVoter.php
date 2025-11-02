@@ -48,24 +48,14 @@ final class SeasonVoter extends Voter
             return true;
         }
 
-        switch (true) {
-            case $subject instanceof Answer:
-                $season = $subject->question->quiz->season;
-                break;
-            case $subject instanceof Elimination:
-            case $subject instanceof Question:
-                $season = $subject->quiz->season;
-                break;
-            case $subject instanceof Candidate:
-            case $subject instanceof Quiz:
-                $season = $subject->season;
-                break;
-            case $subject instanceof Season:
-                $season = $subject;
-                break;
-            default:
-                return false;
-        }
+        $season = match (true) {
+            $subject instanceof Answer => $subject->question->quiz->season,
+            $subject instanceof Elimination,
+            $subject instanceof Question => $subject->quiz->season,
+            $subject instanceof Candidate,
+            $subject instanceof Quiz => $subject->season,
+            $subject instanceof Season => $subject,
+        };
 
         return match ($attribute) {
             self::EDIT, self::DELETE, self::ELIMINATION => $season->isOwner($user),

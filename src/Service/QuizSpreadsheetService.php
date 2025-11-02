@@ -55,6 +55,10 @@ class QuizSpreadsheetService
     /** @throws SpreadsheetDataException */
     public function xlsxToQuiz(Quiz $quiz, File $file): void
     {
+        if (!$this->isSpreadsheetFile($file)) {
+            throw new \InvalidArgumentException('File must be a valid XLSX spreadsheet');
+        }
+
         $spreadsheet = $this->readSheet($file);
         $sheet = $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex());
 
@@ -112,12 +116,20 @@ class QuizSpreadsheetService
         }
     }
 
-    public function quizToXlsx(Quiz $quiz): void {}
+    public function quizToXlsx(Quiz $quiz): void
+    {
+        throw new \Exception('Not implemented');
+    }
 
     private function toXlsx(Spreadsheet $spreadsheet): \Closure
     {
         $writer = new Writer\Xlsx($spreadsheet);
 
         return static fn () => $writer->save('php://output');
+    }
+
+    private function isSpreadsheetFile(File $file): bool
+    {
+        return 'xlsx' === $file->getExtension();
     }
 }

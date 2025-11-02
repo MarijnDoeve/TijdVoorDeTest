@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use Sentry\SentryBundle\SentryBundle;
+use Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MakerBundle\MakerBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
@@ -34,4 +35,5 @@ return [
     StimulusBundle::class => ['all' => true],
     TurboBundle::class => ['all' => true],
     DAMADoctrineTestBundle::class => ['test' => true],
+    StofDoctrineExtensionsBundle::class => ['all' => true],
 ];

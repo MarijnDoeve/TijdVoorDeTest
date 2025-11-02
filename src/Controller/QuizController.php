@@ -119,7 +119,7 @@ final class QuizController extends AbstractController
         // TODO: Extract getting next question logic to a service
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
 
-        // Keep creating flash here based on return type of service call
+        // Keep creating flash here based on the return type of service call
         if (!$question instanceof Question) {
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz completed'));
 

@@ -6,13 +6,12 @@ namespace Tvdt\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Safe\DateTimeImmutable;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\GivenAnswerRepository;
 
 #[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class GivenAnswer
 {
     #[ORM\Column(type: UuidType::NAME, unique: true)]
@@ -21,6 +20,7 @@ class GivenAnswer
     #[ORM\Id]
     public private(set) Uuid $id;
 
+    #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     public private(set) \DateTimeImmutable $created;
 
@@ -37,10 +37,4 @@ class GivenAnswer
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         private(set) Answer $answer,
     ) {}
-
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->created = new DateTimeImmutable();
-    }
 }
