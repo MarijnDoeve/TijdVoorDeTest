@@ -23,7 +23,6 @@ use Tvdt\Form\SelectSeasonType;
 use Tvdt\Helpers\Base64;
 use Tvdt\Repository\AnswerRepository;
 use Tvdt\Repository\CandidateRepository;
-use Tvdt\Repository\GivenAnswerRepository;
 use Tvdt\Repository\QuestionRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\SeasonRepository;
@@ -84,7 +83,6 @@ final class QuizController extends AbstractController
         CandidateRepository $candidateRepository,
         QuestionRepository $questionRepository,
         AnswerRepository $answerRepository,
-        GivenAnswerRepository $givenAnswerRepository,
         QuizCandidateRepository $quizCandidateRepository,
     ): Response {
         $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
@@ -104,21 +102,24 @@ final class QuizController extends AbstractController
         }
 
         if ('POST' === $request->getMethod()) {
+            // TODO: Extract saving answer logic to a service
             $answer = $answerRepository->findOneBy(['id' => $request->request->get('answer')]);
 
             if (!$answer instanceof Answer) {
                 throw new BadRequestHttpException('Invalid Answer ID');
             }
-
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
             $this->entityManager->flush();
 
+            // end of extarcting saving answer logic
             return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
         }
 
+        // TODO: Extract getting next question logic to a service
         $question = $questionRepository->findNextQuestionForCandidate($candidate);
 
+        // Keep creating flash here based on return type of service call
         if (!$question instanceof Question) {
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz completed'));
 
@@ -127,6 +128,7 @@ final class QuizController extends AbstractController
 
         $quizCandidateRepository->createIfNotExist($quiz, $candidate);
 
+        // end of extracting getting next question logic
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question, 'season' => $season]);
     }
 }
