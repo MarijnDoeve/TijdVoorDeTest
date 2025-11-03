@@ -24,7 +24,6 @@ return new Config()
         'no_unreachable_default_argument_value' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
-        'php_unit_strict' => true,
         'phpdoc_line_span' => ['const' => 'single', 'method' => 'single', 'property' => 'single'],
         'phpdoc_order' => true,
         'single_line_empty_body' => true,

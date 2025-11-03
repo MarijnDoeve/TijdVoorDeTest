@@ -43,5 +43,5 @@ clean:
 reload-tests:
     @docker compose exec php bin/console --env=test doctrine:database:drop --if-exists --force
     @docker compose exec php bin/console --env=test doctrine:database:create
-    @docker compose exec php bin/console --env=test doctrine:schema:create --quiet
-    @docker compose exec php bin/console --env=test doctrine:fixtures:load --no-interaction --group=test
+    @docker compose exec php bin/console --env=test doctrine:migrations:migrate -n
+    @docker compose exec php bin/console --env=test doctrine:fixtures:load -n --group=test

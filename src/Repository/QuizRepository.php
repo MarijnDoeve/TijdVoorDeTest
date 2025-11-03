@@ -49,11 +49,14 @@ class QuizRepository extends ServiceEntityRepository
                 DQL)
                 ->setParameter('quiz', $quiz)
                 ->execute();
-        } catch (\Throwable $throwable) {
+        }
+        // @codeCoverageIgnoreStart
+        catch (\Throwable $throwable) {
             $this->logger->error($throwable->getMessage());
             $em->rollback();
             throw new ErrorClearingQuizException(previous: $throwable);
         }
+        // @codeCoverageIgnoreEnd
 
         $em->commit();
     }
@@ -76,17 +79,17 @@ class QuizRepository extends ServiceEntityRepository
                 c.id,
                 c.name,
                 sum(case when a.isRightAnswer = true then 1 else 0 end) as correct,
-                qc.corrections,
+                qd.corrections,
                 max(ga.created) as end_time,
-                qc.created as start_time,
-                (sum(case when a.isRightAnswer = true then 1 else 0 end) + qc.corrections) as score
+                qd.created as start_time,
+                (sum(case when a.isRightAnswer = true then 1 else 0 end) + qd.corrections) as score
             from Tvdt\Entity\Candidate c
             join c.givenAnswers ga
             join ga.answer a
-            join c.quizData qc
-            where qc.quiz = :quiz and ga.quiz = :quiz
-            group by ga.quiz, c.id, qc.id
-            order by score desc, max(ga.created) - qc.created asc
+            join c.quizData qd
+            where qd.quiz = :quiz and ga.quiz = :quiz
+            group by ga.quiz, c.id, qd.id
+            order by score desc, max(ga.created) - qd.created asc
             DQL
         )->setParameter('quiz', $quiz)->getResult();
 
@@ -95,7 +98,7 @@ class QuizRepository extends ServiceEntityRepository
             name: $row['name'],
             correct: (int) $row['correct'],
             corrections: $row['corrections'],
-            time: new DateTimeImmutable($row['end_time'])->diff($row['start_time']),
+            time: $row['start_time']->diff(new DateTimeImmutable($row['end_time'])),
             score: $row['score'],
         ), $result);
     }

@@ -108,6 +108,7 @@ final class QuizController extends AbstractController
             if (!$answer instanceof Answer) {
                 throw new BadRequestHttpException('Invalid Answer ID');
             }
+
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
             $this->entityManager->flush();

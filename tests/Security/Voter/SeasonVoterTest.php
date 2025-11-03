@@ -90,6 +90,7 @@ final class SeasonVoterTest extends TestCase
     {
         $user = new User();
         $user->roles = ['ROLE_ADMIN'];
+
         $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
