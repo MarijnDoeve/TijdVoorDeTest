@@ -9,6 +9,7 @@ $finder = new Finder()
     ->in(__DIR__)
     ->exclude('var')
     ->exclude('bin')
+    ->notPath(['config/reference.php'])
 ;
 
 return new Config()
