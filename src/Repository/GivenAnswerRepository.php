@@ -17,13 +17,4 @@ class GivenAnswerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, GivenAnswer::class);
     }
-
-    public function save(GivenAnswer $givenAnswer, bool $flush = true): void
-    {
-        $this->getEntityManager()->persist($givenAnswer);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
 }

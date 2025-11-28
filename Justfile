@@ -20,7 +20,7 @@ migrate: up
     docker compose run --rm php bin/console doctrine:migrations:migrate --no-interaction
 
 fixtures:
-    docker compose exec php bin/console doctrine:fixtures:load --purge-with-truncate --no-interaction
+    docker compose exec php bin/console doctrine:fixtures:load --purge-with-truncate --no-interaction --group=dev
 
 translations:
     docker compose exec php bin/console translation:extract --force --format=xliff --sort=asc --clean nl
@@ -39,3 +39,9 @@ phpstan *args:
 clean:
     docker compose down -v --remove-orphans
     rm -rf vendor var assets/vendor public/assets public/bundles .php-cs-fixer.cache .twig-cs-fixer.cache
+
+reload-tests:
+    @docker compose exec php bin/console --env=test doctrine:database:drop --if-exists --force
+    @docker compose exec php bin/console --env=test doctrine:database:create
+    @docker compose exec php bin/console --env=test doctrine:migrations:migrate -n
+    @docker compose exec php bin/console --env=test doctrine:fixtures:load -n --group=test

@@ -6,13 +6,12 @@ namespace Tvdt\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Safe\DateTimeImmutable;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuizCandidateRepository;
 
 #[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
 class QuizCandidate
 {
@@ -25,6 +24,7 @@ class QuizCandidate
     #[ORM\Column]
     public float $corrections = 0;
 
+    #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     public private(set) \DateTimeImmutable $created;
 
@@ -37,10 +37,4 @@ class QuizCandidate
         #[ORM\ManyToOne(inversedBy: 'quizData')]
         public Candidate $candidate,
     ) {}
-
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->created = new DateTimeImmutable();
-    }
 }

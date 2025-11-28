@@ -27,8 +27,12 @@
         <include>
             <directory>src</directory>
         </include>
+        <exclude>
+            <directory>src/DataFixtures</directory>
+        </exclude>
     </source>
 
     <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
     </extensions>
 </phpunit>

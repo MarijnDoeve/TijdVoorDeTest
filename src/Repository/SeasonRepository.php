@@ -19,6 +19,17 @@ class SeasonRepository extends ServiceEntityRepository
         parent::__construct($registry, Season::class);
     }
 
+    public function findOneBySeasonCode(string $seasonCode): ?Season
+    {
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select s from Tvdt\Entity\Season s
+            where s.seasonCode = :seasonCode
+            DQL)
+            ->setParameter('seasonCode', $seasonCode)
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+    }
+
     /** @return list<Season> Returns an array of Season objects */
     public function getSeasonsForUser(User $user): array
     {

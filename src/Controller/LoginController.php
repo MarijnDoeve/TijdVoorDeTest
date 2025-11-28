@@ -15,17 +15,17 @@ use Tvdt\Enum\FlashType;
 #[AsController]
 final class LoginController extends AbstractController
 {
+    public function __construct(private readonly AuthenticationUtils $authenticationUtils, private readonly TranslatorInterface $translator) {}
+
     #[Route(path: '/login', name: 'tvdt_login_login')]
-    public function login(AuthenticationUtils $authenticationUtils, TranslatorInterface $translator): Response
+    public function login(): Response
     {
         // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
+        $error = $this->authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
+        $lastUsername = $this->authenticationUtils->getLastUsername();
         if ($error instanceof AuthenticationException) {
-            $this->addFlash(FlashType::Danger, $translator->trans($error->getMessageKey(), $error->getMessageData(), 'security'));
+            $this->addFlash(FlashType::Danger, $this->translator->trans($error->getMessageKey(), $error->getMessageData(), 'security'));
         }
 
         return $this->render('backoffice/login/login.html.twig', [

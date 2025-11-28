@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,14 +18,16 @@ use Tvdt\Factory\EliminationFactory;
 
 final class PrepareEliminationController extends AbstractController
 {
+    public function __construct(private readonly EliminationFactory $eliminationFactory) {}
+
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/elimination/prepare',
         name: 'tvdt_prepare_elimination',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
     )]
-    public function index(Season $season, Quiz $quiz, EliminationFactory $eliminationFactory): Response
+    public function index(Season $season, Quiz $quiz): RedirectResponse
     {
-        $elimination = $eliminationFactory->createEliminationFromQuiz($quiz);
+        $elimination = $this->eliminationFactory->createEliminationFromQuiz($quiz);
 
         return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
     }

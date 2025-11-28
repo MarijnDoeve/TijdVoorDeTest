@@ -19,7 +19,6 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
-use Tvdt\Repository\CandidateRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -29,8 +28,9 @@ use Tvdt\Security\Voter\SeasonVoter;
 class QuizController extends AbstractController
 {
     public function __construct(
-        private readonly CandidateRepository $candidateRepository,
+        private readonly QuizRepository $quizRepository,
         private readonly TranslatorInterface $translator,
+        private readonly QuizCandidateRepository $quizCandidateRepository,
     ) {}
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -44,7 +44,7 @@ class QuizController extends AbstractController
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
-            'result' => $this->candidateRepository->getScores($quiz),
+            'result' => $this->quizRepository->getScores($quiz),
         ]);
     }
 
@@ -72,10 +72,10 @@ class QuizController extends AbstractController
         name: 'tvdt_backoffice_quiz_clear',
         requirements: ['quiz' => Requirement::UUID],
     )]
-    public function clearQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
+    public function clearQuiz(Quiz $quiz): RedirectResponse
     {
         try {
-            $quizRepository->clearQuiz($quiz);
+            $this->quizRepository->clearQuiz($quiz);
             $this->addFlash('success', $this->translator->trans('Quiz cleared'));
         } catch (ErrorClearingQuizException) {
             $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
@@ -90,9 +90,9 @@ class QuizController extends AbstractController
         name: 'tvdt_backoffice_quiz_delete',
         requirements: ['quiz' => Requirement::UUID],
     )]
-    public function deleteQuiz(Quiz $quiz, QuizRepository $quizRepository): RedirectResponse
+    public function deleteQuiz(Quiz $quiz): RedirectResponse
     {
-        $quizRepository->deleteQuiz($quiz);
+        $this->quizRepository->deleteQuiz($quiz);
 
         $this->addFlash('success', $this->translator->trans('Quiz deleted'));
 
@@ -105,7 +105,7 @@ class QuizController extends AbstractController
         name: 'tvdt_backoffice_modify_correction',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
     )]
-    public function modifyCorrection(Quiz $quiz, Candidate $candidate, QuizCandidateRepository $quizCandidateRepository, Request $request): RedirectResponse
+    public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
         if (!$request->isMethod('POST')) {
             throw new MethodNotAllowedHttpException(['POST']);
@@ -113,7 +113,7 @@ class QuizController extends AbstractController
 
         $corrections = (float) $request->request->get('corrections');
 
-        $quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
+        $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }

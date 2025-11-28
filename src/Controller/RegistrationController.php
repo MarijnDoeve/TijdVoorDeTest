@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -23,15 +24,12 @@ use Tvdt\Security\EmailVerifier;
 
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator) {}
+    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security, private readonly LoggerInterface $logger, private readonly UserRepository $userRepository) {}
 
     #[Route('/register', name: 'tvdt_register')]
     public function register(
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
-        Security $security,
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -41,7 +39,7 @@ final class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            $user->password = $userPasswordHasher->hashPassword($user, $plainPassword);
+            $user->password = $this->userPasswordHasher->hashPassword($user, $plainPassword);
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -55,10 +53,10 @@ final class RegistrationController extends AbstractController
                         ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
                 );
             } catch (TransportExceptionInterface $e) {
-                $logger->error($e->getMessage());
+                $this->logger->error($e->getMessage());
             }
 
-            $response = $security->login($user, 'form_login', 'main');
+            $response = $this->security->login($user, 'form_login', 'main');
             \assert($response instanceof Response);
 
             return $response;
@@ -70,7 +68,7 @@ final class RegistrationController extends AbstractController
     }
 
     #[Route('/verify/email', name: 'tvdt_verify_email')]
-    public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
+    public function verifyUserEmail(Request $request): RedirectResponse
     {
         $id = $request->query->get('id');
 
@@ -78,7 +76,7 @@ final class RegistrationController extends AbstractController
             return $this->redirectToRoute('tvdt_register');
         }
 
-        $user = $userRepository->find($id);
+        $user = $this->userRepository->find($id);
 
         if (null === $user) {
             return $this->redirectToRoute('tvdt_register');
@@ -88,7 +86,7 @@ final class RegistrationController extends AbstractController
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
         } catch (VerifyEmailExceptionInterface $verifyEmailException) {
-            $this->addFlash('verify_email_error', $translator->trans($verifyEmailException->getReason(), [], 'VerifyEmailBundle'));
+            $this->addFlash('verify_email_error', $this->translator->trans($verifyEmailException->getReason(), [], 'VerifyEmailBundle'));
 
             return $this->redirectToRoute('tvdt_register');
         }

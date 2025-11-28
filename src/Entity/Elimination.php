@@ -6,7 +6,7 @@ namespace Tvdt\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Safe\DateTimeImmutable;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
@@ -30,6 +30,7 @@ class Elimination
     #[ORM\Column(type: Types::JSONB)]
     public array $data = [];
 
+    #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     public private(set) \DateTimeImmutable $created;
 
@@ -54,12 +55,10 @@ class Elimination
 
     public function getScreenColour(?string $name): ?string
     {
-        return $this->data[$name] ?? null;
-    }
+        if (null === $name) {
+            return null;
+        }
 
-    #[ORM\PrePersist]
-    public function setCreatedAtValue(): void
-    {
-        $this->created = new DateTimeImmutable();
+        return $this->data[$name] ?? null;
     }
 }
