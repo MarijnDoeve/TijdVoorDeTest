@@ -26,6 +26,7 @@ final class BackofficeController extends AbstractController
     public function __construct(
         private readonly SeasonRepository $seasonRepository,
         private readonly Security $security,
+        private readonly QuizSpreadsheetService $excel,
     ) {}
 
     #[Route('/backoffice/', name: 'tvdt_backoffice_index')]
@@ -68,9 +69,9 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/template', name: 'tvdt_backoffice_template', priority: 10)]
-    public function getTemplate(QuizSpreadsheetService $excel): StreamedResponse
+    public function getTemplate(): StreamedResponse
     {
-        $response = new StreamedResponse($excel->generateTemplate());
+        $response = new StreamedResponse($this->excel->generateTemplate());
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="template.xlsx"');
 

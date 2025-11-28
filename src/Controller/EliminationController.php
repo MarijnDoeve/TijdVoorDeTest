@@ -26,7 +26,7 @@ use function Symfony\Component\Translation\t;
 #[IsGranted('ROLE_USER')]
 final class EliminationController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly CandidateRepository $candidateRepository) {}
 
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     #[Route('/elimination/{elimination}', name: 'tvdt_elimination', requirements: ['elimination' => Requirement::UUID])]
@@ -50,9 +50,9 @@ final class EliminationController extends AbstractController
 
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     #[Route('/elimination/{elimination}/{candidateHash}', name: 'tvdt_elimination_candidate', requirements: ['elimination' => Requirement::UUID, 'candidateHash' => self::CANDIDATE_HASH_REGEX])]
-    public function candidateScreen(Elimination $elimination, string $candidateHash, CandidateRepository $candidateRepository): Response
+    public function candidateScreen(Elimination $elimination, string $candidateHash): Response
     {
-        $candidate = $candidateRepository->getCandidateByHash($elimination->quiz->season, $candidateHash);
+        $candidate = $this->candidateRepository->getCandidateByHash($elimination->quiz->season, $candidateHash);
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Warning,
                 t('Cound not find candidate with name %name%', ['%name%' => Base64::base64UrlDecode($candidateHash)])->trans($this->translator),

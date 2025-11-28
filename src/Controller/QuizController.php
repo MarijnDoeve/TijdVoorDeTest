@@ -30,10 +30,10 @@ use Tvdt\Repository\SeasonRepository;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository) {}
 
     #[Route(path: '/', name: 'tvdt_quiz_select_season', methods: ['GET', 'POST'])]
-    public function selectSeason(Request $request, SeasonRepository $seasonRepository): Response
+    public function selectSeason(Request $request): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
         $form->handleRequest($request);
@@ -41,7 +41,7 @@ final class QuizController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $seasonCode = $form->get('season_code')->getData();
 
-            if ([] === $seasonRepository->findBy(['seasonCode' => $seasonCode])) {
+            if ([] === $this->seasonRepository->findBy(['seasonCode' => $seasonCode])) {
                 $this->addFlash(FlashType::Warning, $this->translator->trans('Invalid season code'));
 
                 return $this->redirectToRoute('tvdt_quiz_select_season');
@@ -80,12 +80,8 @@ final class QuizController extends AbstractController
         Season $season,
         string $nameHash,
         Request $request,
-        CandidateRepository $candidateRepository,
-        QuestionRepository $questionRepository,
-        AnswerRepository $answerRepository,
-        QuizCandidateRepository $quizCandidateRepository,
     ): Response {
-        $candidate = $candidateRepository->getCandidateByHash($season, $nameHash);
+        $candidate = $this->candidateRepository->getCandidateByHash($season, $nameHash);
 
         if (!$candidate instanceof Candidate) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('Candidate not found'));
@@ -103,7 +99,7 @@ final class QuizController extends AbstractController
 
         if ('POST' === $request->getMethod()) {
             // TODO: Extract saving answer logic to a service
-            $answer = $answerRepository->findOneBy(['id' => $request->request->get('answer')]);
+            $answer = $this->answerRepository->findOneBy(['id' => $request->request->get('answer')]);
 
             if (!$answer instanceof Answer) {
                 throw new BadRequestHttpException('Invalid Answer ID');
@@ -118,7 +114,7 @@ final class QuizController extends AbstractController
         }
 
         // TODO: Extract getting next question logic to a service
-        $question = $questionRepository->findNextQuestionForCandidate($candidate);
+        $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
 
         // Keep creating flash here based on the return type of service call
         if (!$question instanceof Question) {
@@ -127,7 +123,7 @@ final class QuizController extends AbstractController
             return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
-        $quizCandidateRepository->createIfNotExist($quiz, $candidate);
+        $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
 
         // end of extracting getting next question logic
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question, 'season' => $season]);

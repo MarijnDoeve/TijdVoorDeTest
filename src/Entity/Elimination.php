@@ -55,6 +55,10 @@ class Elimination
 
     public function getScreenColour(?string $name): ?string
     {
+        if (null === $name) {
+            return null;
+        }
+
         return $this->data[$name] ?? null;
     }
 }

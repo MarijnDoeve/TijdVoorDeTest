@@ -30,6 +30,7 @@ class SeasonController extends AbstractController
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $em,
+        private readonly QuizSpreadsheetService $quizSpreadsheet,
     ) {}
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -87,7 +88,7 @@ class SeasonController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
         priority: 10,
     )]
-    public function addQuiz(Request $request, Season $season, QuizSpreadsheetService $quizSpreadsheet): Response
+    public function addQuiz(Request $request, Season $season): Response
     {
         $quiz = new Quiz();
         $form = $this->createForm(UploadQuizFormType::class, $quiz);
@@ -98,7 +99,7 @@ class SeasonController extends AbstractController
             /* @var UploadedFile $sheet */
             $sheet = $form->get('sheet')->getData();
 
-            $quizSpreadsheet->xlsxToQuiz($quiz, $sheet);
+            $this->quizSpreadsheet->xlsxToQuiz($quiz, $sheet);
 
             $quiz->season = $season;
             $this->em->persist($quiz);
