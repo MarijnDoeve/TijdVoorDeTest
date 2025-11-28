@@ -278,7 +278,7 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.5" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter interpreter_id="96512cb2-7b9e-4e1d-bfa2-bf7f3be424c8" tool_path="vendor/bin/phpstan" timeout="60000" />
