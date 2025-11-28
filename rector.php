@@ -13,6 +13,7 @@ return RectorConfig::configure()
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
+    ->withSkip([__DIR__.'/config/reference.php'])
     ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/Tvdt_KernelDevDebugContainer.xml')
     ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
     ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class)

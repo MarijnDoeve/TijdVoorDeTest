@@ -56,6 +56,7 @@ class QuizRepository extends ServiceEntityRepository
             $em->rollback();
             throw new ErrorClearingQuizException(previous: $throwable);
         }
+
         // @codeCoverageIgnoreEnd
 
         $em->commit();

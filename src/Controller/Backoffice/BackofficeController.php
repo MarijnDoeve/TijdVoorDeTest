@@ -68,7 +68,7 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/template', name: 'tvdt_backoffice_template', priority: 10)]
-    public function getTemplate(QuizSpreadsheetService $excel): Response
+    public function getTemplate(QuizSpreadsheetService $excel): StreamedResponse
     {
         $response = new StreamedResponse($excel->generateTemplate());
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
