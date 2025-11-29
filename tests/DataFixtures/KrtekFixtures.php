@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tvdt\DataFixtures;
+namespace Tvdt\Tests\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
