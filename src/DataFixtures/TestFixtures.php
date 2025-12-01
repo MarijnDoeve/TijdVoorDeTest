@@ -9,6 +9,7 @@ use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Tvdt\DataFixtures\KrtekFixtures;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 

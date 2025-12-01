@@ -6,8 +6,8 @@ namespace Tvdt\Tests\Repository;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Tvdt\DataFixtures\TestFixtures;
 use Tvdt\Repository\UserRepository;
+use Tvdt\DataFixtures\TestFixtures;
 
 use function PHPUnit\Framework\assertEmpty;
 
