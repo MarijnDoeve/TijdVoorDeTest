@@ -474,7 +474,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         max_host_connections?: int, // The maximum number of connections to a single host.
  *         default_options?: array{
  *             headers?: array<string, mixed>,
- *             vars?: list<mixed>,
+ *             vars?: array<string, mixed>,
  *             max_redirects?: int, // The maximum number of redirects to follow.
  *             http_version?: scalar|null, // The default HTTP version, typically 1.1 or 2.0, leave to null for the best version.
  *             resolve?: array<string, scalar|null>,
@@ -497,7 +497,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *                 md5?: mixed,
  *             },
  *             crypto_method?: scalar|null, // The minimum version of TLS to accept; must be one of STREAM_CRYPTO_METHOD_TLSv*_CLIENT constants.
- *             extra?: list<mixed>,
+ *             extra?: array<string, mixed>,
  *             rate_limiter?: scalar|null, // Rate limiter name to use for throttling requests. // Default: null
  *             caching?: bool|array{ // Caching configuration.
  *                 enabled?: bool, // Default: false
@@ -550,7 +550,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *                 md5?: mixed,
  *             },
  *             crypto_method?: scalar|null, // The minimum version of TLS to accept; must be one of STREAM_CRYPTO_METHOD_TLSv*_CLIENT constants.
- *             extra?: list<mixed>,
+ *             extra?: array<string, mixed>,
  *             rate_limiter?: scalar|null, // Rate limiter name to use for throttling requests. // Default: null
  *             caching?: bool|array{ // Caching configuration.
  *                 enabled?: bool, // Default: false
@@ -1303,89 +1303,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  * @psalm-type SymfonycastsVerifyEmailConfig = array{
  *     lifetime?: int, // The length of time in seconds that a signed URI is valid for after it is created. // Default: 3600
  * }
- * @psalm-type SymfonycastsSassConfig = array{
- *     root_sass?: list<scalar|null>,
- *     binary?: scalar|null, // The Sass binary to use // Default: null
- *     sass_options?: array{
- *         style?: "compressed"|"expanded", // The style of the generated CSS: compressed or expanded. // Default: "expanded"
- *         charset?: bool, // Whether to include the charset declaration in the generated Sass.
- *         error_css?: bool, // Emit a CSS file when an error occurs.
- *         source_map?: bool, // Whether to generate source maps. // Default: true
- *         embed_sources?: bool, // Embed source file contents in source maps.
- *         embed_source_map?: bool, // Embed source map contents in CSS. // Default: "%kernel.debug%"
- *         load_path?: list<scalar|null>,
- *         quiet?: bool, // Don't print warnings.
- *         quiet_deps?: bool, // Don't print compiler warnings from dependencies.
- *         stop_on_error?: bool, // Don't compile more files once an error is encountered.
- *         trace?: bool, // Print full Dart stack traces for exceptions.
- *     },
- *     embed_sourcemap?: bool|null, // Deprecated: Option "embed_sourcemap" at "symfonycasts_sass.embed_sourcemap" is deprecated. Use "sass_options.embed_source_map" instead". // Default: null
- * }
- * @psalm-type StimulusConfig = array{
- *     controller_paths?: list<scalar|null>,
- *     controllers_json?: scalar|null, // Default: "%kernel.project_dir%/assets/controllers.json"
- * }
- * @psalm-type TurboConfig = array{
- *     broadcast?: bool|array{
- *         enabled?: bool, // Default: true
- *         entity_template_prefixes?: list<scalar|null>,
- *         doctrine_orm?: bool|array{ // Enable the Doctrine ORM integration
- *             enabled?: bool, // Default: true
- *         },
- *     },
- *     default_transport?: scalar|null, // Default: "default"
- * }
- * @psalm-type StofDoctrineExtensionsConfig = array{
- *     orm?: array<string, array{ // Default: []
- *         translatable?: scalar|null, // Default: false
- *         timestampable?: scalar|null, // Default: false
- *         blameable?: scalar|null, // Default: false
- *         sluggable?: scalar|null, // Default: false
- *         tree?: scalar|null, // Default: false
- *         loggable?: scalar|null, // Default: false
- *         ip_traceable?: scalar|null, // Default: false
- *         sortable?: scalar|null, // Default: false
- *         softdeleteable?: scalar|null, // Default: false
- *         uploadable?: scalar|null, // Default: false
- *         reference_integrity?: scalar|null, // Default: false
- *     }>,
- *     mongodb?: array<string, array{ // Default: []
- *         translatable?: scalar|null, // Default: false
- *         timestampable?: scalar|null, // Default: false
- *         blameable?: scalar|null, // Default: false
- *         sluggable?: scalar|null, // Default: false
- *         tree?: scalar|null, // Default: false
- *         loggable?: scalar|null, // Default: false
- *         ip_traceable?: scalar|null, // Default: false
- *         sortable?: scalar|null, // Default: false
- *         softdeleteable?: scalar|null, // Default: false
- *         uploadable?: scalar|null, // Default: false
- *         reference_integrity?: scalar|null, // Default: false
- *     }>,
- *     class?: array{
- *         translatable?: scalar|null, // Default: "Gedmo\\Translatable\\TranslatableListener"
- *         timestampable?: scalar|null, // Default: "Gedmo\\Timestampable\\TimestampableListener"
- *         blameable?: scalar|null, // Default: "Gedmo\\Blameable\\BlameableListener"
- *         sluggable?: scalar|null, // Default: "Gedmo\\Sluggable\\SluggableListener"
- *         tree?: scalar|null, // Default: "Gedmo\\Tree\\TreeListener"
- *         loggable?: scalar|null, // Default: "Gedmo\\Loggable\\LoggableListener"
- *         sortable?: scalar|null, // Default: "Gedmo\\Sortable\\SortableListener"
- *         softdeleteable?: scalar|null, // Default: "Gedmo\\SoftDeleteable\\SoftDeleteableListener"
- *         uploadable?: scalar|null, // Default: "Gedmo\\Uploadable\\UploadableListener"
- *         reference_integrity?: scalar|null, // Default: "Gedmo\\ReferenceIntegrity\\ReferenceIntegrityListener"
- *     },
- *     uploadable?: array{
- *         default_file_path?: scalar|null, // Default: null
- *         mime_type_guesser_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\MimeTypeGuesserAdapter"
- *         default_file_info_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\UploadedFileInfo"
- *         validate_writable_directory?: bool, // Default: true
- *     },
- *     default_locale?: scalar|null, // Default: "en"
- *     translation_fallback?: bool, // Default: false
- *     persist_default_translation?: bool, // Default: false
- *     skip_translation_on_load?: bool, // Default: false
- *     metadata_cache_pool?: scalar|null, // Default: null
- * }
  * @psalm-type SentryConfig = array{
  *     dsn?: scalar|null, // If this value is not provided, the SDK will try to read it from the SENTRY_DSN environment variable. If that variable also does not exist, the SDK will not send any events.
  *     register_error_listener?: bool, // Default: true
@@ -1463,11 +1380,94 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         },
  *     },
  * }
+ * @psalm-type SymfonycastsSassConfig = array{
+ *     root_sass?: list<scalar|null>,
+ *     binary?: scalar|null, // The Sass binary to use // Default: null
+ *     sass_options?: array{
+ *         style?: "compressed"|"expanded", // The style of the generated CSS: compressed or expanded. // Default: "expanded"
+ *         charset?: bool, // Whether to include the charset declaration in the generated Sass.
+ *         error_css?: bool, // Emit a CSS file when an error occurs.
+ *         source_map?: bool, // Whether to generate source maps. // Default: true
+ *         embed_sources?: bool, // Embed source file contents in source maps.
+ *         embed_source_map?: bool, // Embed source map contents in CSS. // Default: "%kernel.debug%"
+ *         load_path?: list<scalar|null>,
+ *         quiet?: bool, // Don't print warnings.
+ *         quiet_deps?: bool, // Don't print compiler warnings from dependencies.
+ *         stop_on_error?: bool, // Don't compile more files once an error is encountered.
+ *         trace?: bool, // Print full Dart stack traces for exceptions.
+ *     },
+ *     embed_sourcemap?: bool|null, // Deprecated: Option "embed_sourcemap" at "symfonycasts_sass.embed_sourcemap" is deprecated. Use "sass_options.embed_source_map" instead". // Default: null
+ * }
+ * @psalm-type StimulusConfig = array{
+ *     controller_paths?: list<scalar|null>,
+ *     controllers_json?: scalar|null, // Default: "%kernel.project_dir%/assets/controllers.json"
+ * }
+ * @psalm-type TurboConfig = array{
+ *     broadcast?: bool|array{
+ *         enabled?: bool, // Default: true
+ *         entity_template_prefixes?: list<scalar|null>,
+ *         doctrine_orm?: bool|array{ // Enable the Doctrine ORM integration
+ *             enabled?: bool, // Default: true
+ *         },
+ *     },
+ *     default_transport?: scalar|null, // Default: "default"
+ * }
  * @psalm-type DamaDoctrineTestConfig = array{
  *     enable_static_connection?: mixed, // Default: true
  *     enable_static_meta_data_cache?: bool, // Default: true
  *     enable_static_query_cache?: bool, // Default: true
  *     connection_keys?: list<mixed>,
+ * }
+ * @psalm-type StofDoctrineExtensionsConfig = array{
+ *     orm?: array<string, array{ // Default: []
+ *         translatable?: scalar|null, // Default: false
+ *         timestampable?: scalar|null, // Default: false
+ *         blameable?: scalar|null, // Default: false
+ *         sluggable?: scalar|null, // Default: false
+ *         tree?: scalar|null, // Default: false
+ *         loggable?: scalar|null, // Default: false
+ *         ip_traceable?: scalar|null, // Default: false
+ *         sortable?: scalar|null, // Default: false
+ *         softdeleteable?: scalar|null, // Default: false
+ *         uploadable?: scalar|null, // Default: false
+ *         reference_integrity?: scalar|null, // Default: false
+ *     }>,
+ *     mongodb?: array<string, array{ // Default: []
+ *         translatable?: scalar|null, // Default: false
+ *         timestampable?: scalar|null, // Default: false
+ *         blameable?: scalar|null, // Default: false
+ *         sluggable?: scalar|null, // Default: false
+ *         tree?: scalar|null, // Default: false
+ *         loggable?: scalar|null, // Default: false
+ *         ip_traceable?: scalar|null, // Default: false
+ *         sortable?: scalar|null, // Default: false
+ *         softdeleteable?: scalar|null, // Default: false
+ *         uploadable?: scalar|null, // Default: false
+ *         reference_integrity?: scalar|null, // Default: false
+ *     }>,
+ *     class?: array{
+ *         translatable?: scalar|null, // Default: "Gedmo\\Translatable\\TranslatableListener"
+ *         timestampable?: scalar|null, // Default: "Gedmo\\Timestampable\\TimestampableListener"
+ *         blameable?: scalar|null, // Default: "Gedmo\\Blameable\\BlameableListener"
+ *         sluggable?: scalar|null, // Default: "Gedmo\\Sluggable\\SluggableListener"
+ *         tree?: scalar|null, // Default: "Gedmo\\Tree\\TreeListener"
+ *         loggable?: scalar|null, // Default: "Gedmo\\Loggable\\LoggableListener"
+ *         sortable?: scalar|null, // Default: "Gedmo\\Sortable\\SortableListener"
+ *         softdeleteable?: scalar|null, // Default: "Gedmo\\SoftDeleteable\\SoftDeleteableListener"
+ *         uploadable?: scalar|null, // Default: "Gedmo\\Uploadable\\UploadableListener"
+ *         reference_integrity?: scalar|null, // Default: "Gedmo\\ReferenceIntegrity\\ReferenceIntegrityListener"
+ *     },
+ *     uploadable?: array{
+ *         default_file_path?: scalar|null, // Default: null
+ *         mime_type_guesser_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\MimeTypeGuesserAdapter"
+ *         default_file_info_class?: scalar|null, // Default: "Stof\\DoctrineExtensionsBundle\\Uploadable\\UploadedFileInfo"
+ *         validate_writable_directory?: bool, // Default: true
+ *     },
+ *     default_locale?: scalar|null, // Default: "en"
+ *     translation_fallback?: bool, // Default: false
+ *     persist_default_translation?: bool, // Default: false
+ *     skip_translation_on_load?: bool, // Default: false
+ *     metadata_cache_pool?: scalar|null, // Default: null
  * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
