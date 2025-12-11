@@ -28,7 +28,7 @@
         "symfony/flex": "^2.10.0",
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
-        "symfony/mailer": "7.4.*",
+        "symfony/mailer": "8.0.*",
         "symfony/property-access": "7.4.*",
         "symfony/property-info": "7.4.*",
         "symfony/runtime": "7.4.*",
