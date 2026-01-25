@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	file \
 	gettext \
 	git \
-    && rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
 	install-php-extensions \
@@ -62,8 +62,8 @@ ENV APP_ENV=dev XDEBUG_MODE=off
 
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    bash-completion \
-    && rm -rf /var/lib/apt/lists/*
+	bash-completion \
+	&& rm -rf /var/lib/apt/lists/*
 
 COPY --link frankenphp/console-complete.bash /usr/share/bash-completion/completions/console
 COPY --link frankenphp/composer-complete.bash /usr/share/bash-completion/completions/composer
@@ -72,7 +72,7 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 RUN set -eux; \
 	install-php-extensions \
-		xdebug/xdebug@3.5.0alpha3 \
+		xdebug/xdebug@3.5.0 \
 	;
 
 COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
@@ -109,6 +109,6 @@ RUN set -eux; \
 	composer dump-env prod; \
 	composer run-script --no-dev post-install-cmd; \
 	chmod +x bin/console; \
-    bin/console sass:build; \
-    bin/console asset-map:compile --no-debug --quiet --no-ansi; \
-    sync;
+	bin/console sass:build; \
+	bin/console asset-map:compile --no-debug --quiet --no-ansi; \
+	sync;

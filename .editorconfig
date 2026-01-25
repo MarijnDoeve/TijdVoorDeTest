@@ -54,7 +54,7 @@ indent_size = 4
 [{compose,docker-compose}.*.{yaml,yml}]
 indent_size = 2
 
-[*.*Dockerfile]
+[{*.*Dockerfile,Dockerfile}]
 indent_style = tab
 
 [{*.*Caddyfile,Caddyfile}]
