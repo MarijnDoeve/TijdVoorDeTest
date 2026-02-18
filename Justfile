@@ -45,3 +45,9 @@ reload-tests:
     @docker compose exec php bin/console --env=test doctrine:database:create
     @docker compose exec php bin/console --env=test doctrine:migrations:migrate -n
     @docker compose exec php bin/console --env=test doctrine:fixtures:load -n --group=test
+
+trust-cert:
+    sudo security add-trusted-cer -d \
+    -r trustRoot \
+    -k "$HOME/Library/Keychains/login.keychain" \
+    ./frankenphp/data/caddy/pki/authorities/local/root.crt

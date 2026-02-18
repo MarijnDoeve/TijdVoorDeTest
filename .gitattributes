@@ -15,3 +15,4 @@ composer.lock text eol=lf merge=ours
 
 *.ico binary
 *.png binary
+config/reference.php linguist-generated
