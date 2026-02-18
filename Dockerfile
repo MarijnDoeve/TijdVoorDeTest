@@ -87,7 +87,6 @@ FROM frankenphp_base AS frankenphp_prod
 RUN rm -rf /var/lib/apt/lists/*
 
 ENV APP_ENV=prod
-ENV FRANKENPHP_CONFIG="import worker.Caddyfile"
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
