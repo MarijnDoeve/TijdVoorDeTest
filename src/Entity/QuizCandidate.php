@@ -24,6 +24,9 @@ class QuizCandidate
     #[ORM\Column]
     public float $corrections = 0;
 
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
+    public int $penaltySeconds = 0;
+
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     public private(set) \DateTimeImmutable $created;

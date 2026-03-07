@@ -117,4 +117,23 @@ class QuizController extends AbstractController
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
+        name: 'tvdt_backoffice_modify_penalty',
+        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+    )]
+    public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
+    {
+        if (!$request->isMethod('POST')) {
+            throw new MethodNotAllowedHttpException(['POST']);
+        }
+
+        $penalty = (int) $request->request->get('penalty');
+
+        $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
 }

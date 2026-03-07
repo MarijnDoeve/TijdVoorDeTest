@@ -84,6 +84,7 @@
                 <th scope="col">{{ 'Candidate'|trans }}</th>
                 <th style="width: 15%" scope="col">{{ 'Correct Answers'|trans }}</th>
                 <th style="width: 20%" scope="col">{{ 'Corrections'|trans }}</th>
+                <th style="width: 20%" scope="col">{{ 'Penalty'|trans }}</th>
                 <th style="width: 10%" scope="col">{{ 'Score'|trans }}</th>
                 <th style="width: 20%" scope="col">{{ 'Time'|trans }}</th>
             </tr>
@@ -101,6 +102,21 @@
                                     <input class="form-control form-control-sm" type="number"
                                            value="{{ candidate.corrections }}" step="0.5"
                                            name="corrections">
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-sm btn-primary" type="submit">{{ 'Save'|trans }}</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post"
+                              action="{{ path('tvdt_backoffice_modify_penalty', {quiz: quiz.id, candidate: candidate.id}) }}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <input class="form-control form-control-sm" type="number"
+                                           value="{{ candidate.penaltySeconds }}" step="1"
+                                           name="penalty">
                                 </div>
                                 <div class="col-2">
                                     <button class="btn btn-sm btn-primary" type="submit">{{ 'Save'|trans }}</button>

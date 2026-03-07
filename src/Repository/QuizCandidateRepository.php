@@ -44,4 +44,15 @@ class QuizCandidateRepository extends ServiceEntityRepository
         $quizCandidate->corrections = $corrections;
         $this->getEntityManager()->flush();
     }
+
+    public function setPenaltyForCandidate(Quiz $quiz, Candidate $candidate, int $penalty): void
+    {
+        $quizCandidate = $this->findOneBy(['candidate' => $candidate, 'quiz' => $quiz]);
+        if (!$quizCandidate instanceof QuizCandidate) {
+            throw new \InvalidArgumentException('Quiz candidate not found');
+        }
+
+        $quizCandidate->penaltySeconds = $penalty;
+        $this->getEntityManager()->flush();
+    }
 }

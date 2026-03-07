@@ -81,6 +81,7 @@ class QuizRepository extends ServiceEntityRepository
                 c.name,
                 sum(case when a.isRightAnswer = true then 1 else 0 end) as correct,
                 qd.corrections,
+                qd.penaltySeconds,
                 max(ga.created) as end_time,
                 qd.created as start_time,
                 (sum(case when a.isRightAnswer = true then 1 else 0 end) + qd.corrections) as score
@@ -99,6 +100,7 @@ class QuizRepository extends ServiceEntityRepository
             name: $row['name'],
             correct: (int) $row['correct'],
             corrections: $row['corrections'],
+            penaltySeconds: $row['penaltySeconds'],
             time: $row['start_time']->diff(new DateTimeImmutable($row['end_time'])),
             score: $row['score'],
         ), $result);
