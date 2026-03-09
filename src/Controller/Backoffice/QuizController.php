@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
@@ -41,10 +42,121 @@ class QuizController extends AbstractController
     )]
     public function index(Season $season, Quiz $quiz): Response
     {
+        return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/overview',
+        name: 'tvdt_backoffice_quiz_overview',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+    )]
+    public function overview(Season $season, Quiz $quiz): Response
+    {
+        $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
+
+        return $this->render('backoffice/quiz.html.twig', [
+            'season' => $season,
+            'quiz' => $fetchedQuiz,
+            'activeTab' => 'overview',
+            'template' => 'backoffice/quiz/tab_overview.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/result',
+        name: 'tvdt_backoffice_quiz_result',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+    )]
+    public function result(Season $season, Quiz $quiz): Response
+    {
+        $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
+
+        return $this->render('backoffice/quiz.html.twig', [
+            'season' => $season,
+            'quiz' => $fetchedQuiz,
+            'result' => $this->quizRepository->getScores($quiz),
+            'activeTab' => 'result',
+            'template' => 'backoffice/quiz/tab_result.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates',
+        name: 'tvdt_backoffice_quiz_candidates',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+    )]
+    public function candidates(Season $season, Quiz $quiz): Response
+    {
+        $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
+        assert($fetchedQuiz->questions->count() > 0);
+        $firstQuestion = $fetchedQuiz->questions->first();
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_question', [
+            'seasonCode' => $season->seasonCode,
+            'quiz' => $quiz->id,
+            'question' => $firstQuestion->id,
+        ]);
+    }
+
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
+        name: 'tvdt_backoffice_quiz_candidates_question',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+        methods: ['GET']
+    )]
+    public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
+    {
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
-            'result' => $this->quizRepository->getScores($quiz),
+            'question' => $question,
+            'candidates' => $season->candidates,
+            'activeTab' => 'candidates',
+            'template' => 'backoffice/quiz/tab_candidates.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
+        name: 'tvdt_backoffice_quiz_candidates_question_save',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+        methods: ['POST']
+    )]
+    public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request, EntityManagerInterface $em): RedirectResponse
+    {
+        $candidateAnswers = $request->request->all('candidate_answer');
+
+        // Clear existing candidate-answer associations for this question
+        foreach ($question->answers as $answer) {
+            $answer->candidates->clear();
+        }
+
+        // Add new associations
+        foreach ($candidateAnswers as $candidateId => $answerIds) {
+            $candidate = $em->getRepository(Candidate::class)->find($candidateId);
+
+            foreach ((array) $answerIds as $answerId) {
+                $answer = $em->getRepository(\Tvdt\Entity\Answer::class)->find($answerId);
+                if ($answer && $candidate) {
+                    $answer->addCandidate($candidate);
+                }
+            }
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', $this->translator->trans('Candidate answers saved'));
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_question', [
+            'seasonCode' => $season->seasonCode,
+            'quiz' => $quiz->id,
+            'question' => $question->id,
         ]);
     }
 

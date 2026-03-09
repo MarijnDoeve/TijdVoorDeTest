@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Safe\DateTimeImmutable;
 use Safe\Exceptions\DatetimeException;
+use Symfony\Component\Uid\Uuid;
 use Tvdt\Dto\Result;
 use Tvdt\Entity\Quiz;
 use Tvdt\Exception\ErrorClearingQuizException;
@@ -104,5 +105,15 @@ class QuizRepository extends ServiceEntityRepository
             time: $row['start_time']->diff(new DateTimeImmutable($row['end_time'])),
             score: $row['score'],
         ), $result);
+    }
+
+    public function fetchWithQuestions(Uuid $id): Quiz
+    {
+        return $this->getEntityManager()->createQuery(<<<dql
+            select q, qz, a from Tvdt\Entity\Quiz q
+            join q.questions qz
+            join qz.answers a
+            where q.id = :id
+            dql)->setParameter('id', $id)->getSingleResult();
     }
 }

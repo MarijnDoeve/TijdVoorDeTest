@@ -57,8 +57,8 @@
         <source>Candidates</source>
         <target>Kandidaten</target>
       </trans-unit>
-      <trans-unit id="FNY513f" resname="Clear quiz...">
-        <source>Clear quiz...</source>
+      <trans-unit id="J1c2y63" resname="Clear Quiz...">
+        <source>Clear Quiz...</source>
         <target>Test leegmaken...</target>
       </trans-unit>
       <trans-unit id="sFpB4C2" resname="Correct Answers">
@@ -149,13 +149,13 @@
         <source>Name</source>
         <target>Naam</target>
       </trans-unit>
-      <trans-unit id="wd1MvZW" resname="No">
-        <source>No</source>
-        <target>Nee</target>
-      </trans-unit>
       <trans-unit id="gefhnBC" resname="Next">
         <source>Next</source>
         <target>Volgende</target>
+      </trans-unit>
+      <trans-unit id="wd1MvZW" resname="No">
+        <source>No</source>
+        <target>Nee</target>
       </trans-unit>
       <trans-unit id="nOHriCl" resname="No active quiz">
         <source>No active quiz</source>
@@ -169,6 +169,10 @@
         <source>Number of dropouts:</source>
         <target>Aantal afvallers:</target>
       </trans-unit>
+      <trans-unit id="HmgPmMV" resname="Overview">
+        <source>Overview</source>
+        <target>Overzicht</target>
+      </trans-unit>
       <trans-unit id="PywqOf4" resname="Owner(s)">
         <source>Owner(s)</source>
         <target>Eigena(a)r(en)</target>
@@ -176,6 +180,10 @@
       <trans-unit id="GqmFSHc" resname="Password">
         <source>Password</source>
         <target>Wachtwoord</target>
+      </trans-unit>
+      <trans-unit id="1ne1Zlc" resname="Penalty">
+        <source>Penalty</source>
+        <target>Straf</target>
       </trans-unit>
       <trans-unit id="VbgD9L8" resname="Please Confirm">
         <source>Please Confirm</source>
@@ -248,6 +256,10 @@
       <trans-unit id="Z9CSKpk" resname="Repeat Password">
         <source>Repeat Password</source>
         <target>Herhaal wachtwoord</target>
+      </trans-unit>
+      <trans-unit id="7UvBPrb" resname="Results &amp; Elimination">
+        <source>Results &amp; Elimination</source>
+        <target><![CDATA[Resultaat & Eliminatie]]></target>
       </trans-unit>
       <trans-unit id="z9OKodR" resname="Save">
         <source>Save</source>

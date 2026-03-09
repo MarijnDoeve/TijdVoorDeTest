@@ -57,4 +57,10 @@ class Answer
     {
         $this->candidates->removeElement($candidate);
     }
+
+    public function __toString(): string
+    {
+        return $this->text;
+    }
+
 }

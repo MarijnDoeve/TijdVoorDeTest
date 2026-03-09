@@ -1,0 +1,107 @@
+<h4 class="py-2">Quick actions</h4>
+<div class="py-2 btn-group" data-controller="bo--quiz">
+
+    {% if quiz is same as (season.activeQuiz) %}
+        <a class="btn btn-secondary"
+           href="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}">{{ 'Deactivate Quiz'|trans }}</a>
+    {% else %}
+        <a class="btn btn-primary"
+           href="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
+    {% endif %}
+    <button class="btn btn-danger" data-action="click->bo--quiz#clearQuiz">
+        {{ 'Clear Quiz...'|trans }}
+    </button>
+    <button class="btn btn-danger" data-action="click->bo--quiz#deleteQuiz">
+        {{ 'Delete Quiz...'|trans }}
+    </button>
+</div>
+
+<div id="questions">
+    <h4 class="py-2">{{ 'Questions'|trans }}</h4>
+    <div class="accordion">
+        {%~ for question in quiz.questions ~%}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#question-{{ loop.index0 }}"
+                            aria-controls="question-{{ loop.index0 }}">
+                        {% set questionErrors = question.getErrors %}
+                        {%~ if questionErrors -%}
+                            <span data-bs-toggle="tooltip"
+                                  title="{{ questionErrors }}"
+                                  class="badge text-bg-danger rounded-pill me-2">!</span>
+                        {% endif %}
+                        {{~ loop.index -}}. {{ question.question -}}
+                    </button>
+                </h2>
+                <div id="question-{{ loop.index0 }}"
+                     class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <ul>
+                            {%~ for answer in question.answers %}
+                                <li{% if answer.isRightAnswer %} class="text-decoration-underline"{% endif %}>
+                                    {{ answer.text }}
+                                    {% if answer.candidates|length > 0 %}
+                                        <small class="text-muted">
+                                            ({{ answer.candidates|map(c => c.name)|join(', ') }})
+                                        </small>
+                                    {% endif %}
+                                </li>
+                            {%~ else %}
+                                {{ 'There are no answers for this question'|trans -}}
+                            {%~ endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {{ 'EMPTY'|trans }}
+        {% endfor %}
+    </div>
+</div>
+
+{# Modal Clear #}
+<div class="modal fade" id="clearQuizModal" data-bs-backdrop="static"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ 'Please Confirm'|trans }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Are you sure you want to clear all the results? This will also delete al the eliminations.'|trans }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
+                <a href="{{ path('tvdt_backoffice_quiz_clear', {quiz: quiz.id}) }}"
+                   class="btn btn-danger">{{ 'Yes'|trans }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Modal Delete #}
+<div class="modal fade" id="deleteQuizModal" data-bs-backdrop="static"
+     tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ 'Please Confirm'|trans }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Are you sure you want to delete this quiz?'|trans }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
+                <a href="{{ path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}) }}"
+                   class="btn btn-danger">{{ 'Yes'|trans }}</a>
+            </div>
+        </div>
+    </div>
+</div>
