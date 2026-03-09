@@ -53,11 +53,12 @@ class QuizController extends AbstractController
     )]
     public function overview(Season $season, Quiz $quiz): Response
     {
-        $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
+        $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
 
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $fetchedQuiz,
+            'questionErrors' => $fetchedQuiz->getQuestionErrors(),
             'activeTab' => 'overview',
             'template' => 'backoffice/quiz/tab_overview.html.twig',
         ]);

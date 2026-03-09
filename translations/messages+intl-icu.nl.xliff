@@ -21,6 +21,10 @@
         <source>Add Candidates</source>
         <target>Voeg kandidaten toe</target>
       </trans-unit>
+      <trans-unit id="g4GCvSW" resname="Add Quiz">
+        <source>Add Quiz</source>
+        <target>Test toevoegen</target>
+      </trans-unit>
       <trans-unit id="ehB6pAw" resname="Add a quiz to %name%">
         <source>Add a quiz to %name%</source>
         <target>Voeg een test toe aan %name%</target>
@@ -35,11 +39,11 @@
       </trans-unit>
       <trans-unit id="Qu1euq_" resname="Are you sure you want to clear all the results? This will also delete al the eliminations.">
         <source>Are you sure you want to clear all the results? This will also delete al the eliminations.</source>
-        <target>Weet je zeker datatype je de resultaten will leegmaken? Dit gooit ook alle eliminaties weg.</target>
+        <target>Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.</target>
       </trans-unit>
       <trans-unit id="Ec4twG8" resname="Are you sure you want to delete this quiz?">
         <source>Are you sure you want to delete this quiz?</source>
-        <target>Weet je zeker datatype je deze test will verwijderen?</target>
+        <target>Weet je zeker dat je deze test wilt verwijderen?</target>
       </trans-unit>
       <trans-unit id=".QFPbFe" resname="Back">
         <source>Back</source>
@@ -48,6 +52,10 @@
       <trans-unit id="T6TIfj7" resname="Candidate">
         <source>Candidate</source>
         <target>Kandidaat</target>
+      </trans-unit>
+      <trans-unit id="Wk50LUM" resname="Candidate answers saved">
+        <source>Candidate answers saved</source>
+        <target>Kandidaatantwoorden opgeslagen</target>
       </trans-unit>
       <trans-unit id="TiTLBGW" resname="Candidate not found">
         <source>Candidate not found</source>
@@ -115,11 +123,31 @@
       </trans-unit>
       <trans-unit id="HNMwvRn" resname="Error clearing quiz">
         <source>Error clearing quiz</source>
-        <target>Fout bij leegmaken test</target>
+        <target>Fout bij het leegmaken van de test</target>
       </trans-unit>
       <trans-unit id="OGiIhMH" resname="Green">
         <source>Green</source>
         <target>Groen</target>
+      </trans-unit>
+      <trans-unit id="b7rTx0P" resname="Help text for adding a quiz">
+        <source>Help text for adding a quiz</source>
+        <target>Upload een XLSX-bestand met vragen en antwoorden voor je test.</target>
+      </trans-unit>
+      <trans-unit id="0byYjDw" resname="Help text for adding candidates">
+        <source>Help text for adding candidates</source>
+        <target>Voeg kandidaten toe aan dit seizoen. Eén naam per regel.</target>
+      </trans-unit>
+      <trans-unit id="SipST._" resname="Help text for creating a season">
+        <source>Help text for creating a season</source>
+        <target>Maak een nieuw seizoen aan om tests en kandidaten te beheren.</target>
+      </trans-unit>
+      <trans-unit id="Q0rWWbg" resname="Help text for preparing elimination">
+        <source>Help text for preparing elimination</source>
+        <target>Kies welke kandidaten groen of rood krijgen voor de eliminatie.</target>
+      </trans-unit>
+      <trans-unit id="ExFLJqx" resname="Home">
+        <source>Home</source>
+        <target>Home</target>
       </trans-unit>
       <trans-unit id="k1X7w12" resname="Invalid season code">
         <source>Invalid season code</source>
@@ -161,6 +189,10 @@
         <source>No active quiz</source>
         <target>Geen actieve test</target>
       </trans-unit>
+      <trans-unit id="oNXT2zu" resname="No quizzes">
+        <source>No quizzes</source>
+        <target>Geen tests</target>
+      </trans-unit>
       <trans-unit id="swW4qFE" resname="No results">
         <source>No results</source>
         <target>Geen resultaten</target>
@@ -175,7 +207,7 @@
       </trans-unit>
       <trans-unit id="PywqOf4" resname="Owner(s)">
         <source>Owner(s)</source>
-        <target>Eigena(a)r(en)</target>
+        <target>Eigenaar(s)</target>
       </trans-unit>
       <trans-unit id="GqmFSHc" resname="Password">
         <source>Password</source>
@@ -183,11 +215,19 @@
       </trans-unit>
       <trans-unit id="1ne1Zlc" resname="Penalty">
         <source>Penalty</source>
-        <target>Straf</target>
+        <target>Straftijd</target>
       </trans-unit>
       <trans-unit id="VbgD9L8" resname="Please Confirm">
         <source>Please Confirm</source>
-        <target>Bevestig Alsjeblieft</target>
+        <target>Bevestig alsjeblieft</target>
+      </trans-unit>
+      <trans-unit id="ConfAns1" resname="Confirm Answers">
+        <source>Confirm Answers</source>
+        <target>Bevestig antwoorden</target>
+      </trans-unit>
+      <trans-unit id="ShowNum1" resname="Show Numbers">
+        <source>Show Numbers</source>
+        <target>Toon nummers</target>
       </trans-unit>
       <trans-unit id="6EclFME" resname="Please Confirm your Email">
         <source>Please Confirm your Email</source>
@@ -204,6 +244,14 @@
       <trans-unit id="YG9Osau" resname="Prepare Custom Elimination">
         <source>Prepare Custom Elimination</source>
         <target>Bereid aangepaste eliminatie voor</target>
+      </trans-unit>
+      <trans-unit id="xe_UxWT" resname="Prepare Elimination">
+        <source>Prepare Elimination</source>
+        <target>Bereid eliminatie voor</target>
+      </trans-unit>
+      <trans-unit id="ouNrIYq" resname="Previous">
+        <source>Previous</source>
+        <target>Vorige</target>
       </trans-unit>
       <trans-unit id="Rx5irUP" resname="Questions">
         <source>Questions</source>
@@ -267,7 +315,7 @@
       </trans-unit>
       <trans-unit id="8HUcmWU" resname="Save and start elimination">
         <source>Save and start elimination</source>
-        <target>Opslaan en start eliminatie</target>
+        <target>Opslaan en eliminatie starten</target>
       </trans-unit>
       <trans-unit id="uRWqG15" resname="Score">
         <source>Score</source>

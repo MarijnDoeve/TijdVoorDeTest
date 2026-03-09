@@ -116,4 +116,21 @@ class QuizRepository extends ServiceEntityRepository
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
     }
+
+    /**
+     * Fetch quiz with all relations needed for error checking.
+     * This includes: questions, answers, answer candidates, and season candidates.
+     */
+    public function fetchWithQuestionsAndCandidates(Uuid $id): Quiz
+    {
+        return $this->getEntityManager()->createQuery(<<<dql
+            select q, qz, a, ac, s, sc from Tvdt\Entity\Quiz q
+            join q.questions qz
+            join qz.answers a
+            left join a.candidates ac
+            join q.season s
+            left join s.candidates sc
+            where q.id = :id
+            dql)->setParameter('id', $id)->getSingleResult();
+    }
 }

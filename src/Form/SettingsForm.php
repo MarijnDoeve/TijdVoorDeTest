@@ -17,12 +17,16 @@ class SettingsForm extends AbstractType
     {
         $builder
             ->add('showNumbers', options: [
+                'label' => 'Show Numbers',
                 'label_attr' => ['class' => 'checkbox-switch'],
                 'attr' => ['role' => 'switch', 'switch' => null]])
             ->add('confirmAnswers', options: [
+                'label' => 'Confirm Answers',
                 'label_attr' => ['class' => 'checkbox-switch'],
                 'attr' => ['role' => 'switch', 'switch' => null]])
-            ->add('save', SubmitType::class)
+            ->add('save', SubmitType::class, [
+                'label' => 'Save',
+            ])
         ;
     }
 

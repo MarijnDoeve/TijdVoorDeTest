@@ -1,5 +1,5 @@
-<h4 class="py-2">Quick actions</h4>
-<div class="py-2 btn-group" data-controller="bo--quiz">
+<h4 class="mb-3">Quick actions</h4>
+<div class="mb-3 btn-group" data-controller="bo--quiz">
 
     {% if quiz is same as (season.activeQuiz) %}
         <a class="btn btn-secondary"
@@ -16,8 +16,7 @@
     </button>
 </div>
 
-<div id="questions">
-    <h4 class="py-2">{{ 'Questions'|trans }}</h4>
+<h4 class="mb-3">{{ 'Questions'|trans }}</h4>
     <div class="accordion">
         {%~ for question in quiz.questions ~%}
             <div class="accordion-item">
@@ -27,12 +26,8 @@
                             data-bs-toggle="collapse"
                             data-bs-target="#question-{{ loop.index0 }}"
                             aria-controls="question-{{ loop.index0 }}">
-                        {% set questionErrors = question.getErrors %}
-                        {%~ if questionErrors -%}
-                            <span data-bs-toggle="tooltip"
-                                  title="{{ questionErrors }}"
-                                  class="badge text-bg-danger rounded-pill me-2">!</span>
-                        {% endif %}
+                        {% set questionError = questionErrors[question.id.toString] ?? null %}
+                        <span class="badge rounded-pill me-2{% if questionError %} text-bg-danger{% else %} invisible{% endif %}"{% if questionError %} data-bs-toggle="tooltip" title="{{ questionError }}"{% endif %}>!</span>
                         {{~ loop.index -}}. {{ question.question -}}
                     </button>
                 </h2>
@@ -60,7 +55,6 @@
             {{ 'EMPTY'|trans }}
         {% endfor %}
     </div>
-</div>
 
 {# Modal Clear #}
 <div class="modal fade" id="clearQuizModal" data-bs-backdrop="static"

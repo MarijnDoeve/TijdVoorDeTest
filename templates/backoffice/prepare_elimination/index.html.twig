@@ -1,20 +1,17 @@
 {% extends 'backoffice/base.html.twig' %}
-{% block body %}
-    <div class="row">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">Home</a></li>
-                <li class="breadcrumb-item"><a
-                        href="{{ path('tvdt_backoffice_season', {seasonCode: elimination.quiz.season.seasonCode}) }}">{{ elimination.quiz.season.name }}</a>
-                </li>
-                <li class="breadcrumb-item"><a
-                        href="{{ path('tvdt_backoffice_quiz', {seasonCode: elimination.quiz.season.seasonCode, quiz: elimination.quiz.id}) }}">{{ elimination.quiz.name }}</a>
-                </li>
 
-                <li class="breadcrumb-item active" aria-current="page">Prepare Elimination</li>
-            </ol>
-        </nav>
-    </div>
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_season', {seasonCode: elimination.quiz.season.seasonCode}) }}">{{ elimination.quiz.season.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_quiz', {seasonCode: elimination.quiz.season.seasonCode, quiz: elimination.quiz.id}) }}">{{ elimination.quiz.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'Prepare Elimination'|trans }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
     <div class="row">
         <div class="col-12 col-md-6">
             <form method="post">
@@ -32,7 +29,7 @@
                         </div>
                     </div>
                 {% endfor %}
-                <div class="btn-group py-2">
+                <div class="btn-group mb-3">
                     <button type="submit" class="btn btn-primary" name="start" value="0">{{ 'Save'|trans }}</button>
                     <button type="submit" class="btn btn-success" name="start"
                             value="1">{{ 'Save and start elimination'|trans }}</button>
@@ -42,7 +39,7 @@
             </form>
         </div>
         <div class="col-12 col-md-6">
-            <p>Hier kan dus weer wat uitleg komen</p>
+            <p class="mb-3">{{ 'Help text for preparing elimination'|trans }}</p>
         </div>
     </div>
 {% endblock %}
