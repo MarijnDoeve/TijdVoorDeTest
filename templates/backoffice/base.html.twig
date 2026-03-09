@@ -9,7 +9,9 @@
             {% block breadcrumbs %}{% endblock %}
         </div>
         {{ include('flashes.html.twig') }}
-        {% block body %}
-        {% endblock body %}
+        <div class="mb-5">
+            {% block body %}
+            {% endblock body %}
+        </div>
     </div>
 {% endblock %}
