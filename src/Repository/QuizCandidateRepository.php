@@ -6,6 +6,7 @@ namespace Tvdt\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Safe\DateTimeImmutable;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
@@ -33,7 +34,7 @@ class QuizCandidateRepository extends ServiceEntityRepository
 
             // If QuizCandidate exists but hasn't started yet, set the started timestamp
             if (null === $quizCandidate->started) {
-                $quizCandidate->started = new \DateTimeImmutable();
+                $quizCandidate->started = new DateTimeImmutable();
                 $this->getEntityManager()->flush();
             }
 
@@ -41,7 +42,7 @@ class QuizCandidateRepository extends ServiceEntityRepository
         }
 
         $quizCandidate = new QuizCandidate($quiz, $candidate);
-        $quizCandidate->started = new \Safe\DateTimeImmutable();
+        $quizCandidate->started = new DateTimeImmutable();
         $this->getEntityManager()->persist($quizCandidate);
         $this->getEntityManager()->flush();
 

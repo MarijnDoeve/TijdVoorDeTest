@@ -96,15 +96,19 @@ class QuizRepository extends ServiceEntityRepository
             DQL
         )->setParameter('quiz', $quiz)->getResult();
 
-        return array_map(static fn (array $row): Result => new Result(
-            id: $row['id'],
-            name: $row['name'],
-            correct: (int) $row['correct'],
-            corrections: $row['corrections'],
-            penaltySeconds: $row['penaltySeconds'],
-            time: $row['start_time']->diff(new DateTimeImmutable($row['end_time'])),
-            score: $row['score'],
-        ), $result);
+        return array_map(static function (array $row): Result {
+            \assert($row['start_time'] instanceof \DateTimeImmutable);
+
+            return new Result(
+                id: $row['id'],
+                name: $row['name'],
+                correct: (int) $row['correct'],
+                corrections: $row['corrections'],
+                penaltySeconds: $row['penaltySeconds'],
+                time: $row['start_time']->diff(new DateTimeImmutable($row['end_time'])),
+                score: $row['score'],
+            );
+        }, $result);
     }
 
     public function fetchWithQuestions(Uuid $id): Quiz

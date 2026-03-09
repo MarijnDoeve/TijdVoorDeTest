@@ -155,9 +155,9 @@ class Quiz
                 }
             }
 
-            if ($missing !== [] || $duplicates !== []) {
+            if ([] !== $missing || [] !== $duplicates) {
                 $errors = [];
-                if ($missing !== []) {
+                if ([] !== $missing) {
                     // If all active candidates are missing, show a special message
                     if (\count($missing) === \count($activeCandidates)) {
                         $errors[] = 'No candidates assigned to this question';
@@ -166,7 +166,7 @@ class Quiz
                     }
                 }
 
-                if ($duplicates !== []) {
+                if ([] !== $duplicates) {
                     $errors[] = 'Duplicate candidates: '.implode(', ', $duplicates);
                 }
 

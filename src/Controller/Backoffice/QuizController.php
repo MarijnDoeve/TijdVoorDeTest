@@ -96,6 +96,7 @@ class QuizController extends AbstractController
         $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
         \assert($fetchedQuiz->questions->count() > 0);
         $firstQuestion = $fetchedQuiz->questions->first();
+        \assert($firstQuestion instanceof Question);
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_question', [
             'seasonCode' => $season->seasonCode,
@@ -264,7 +265,7 @@ class QuizController extends AbstractController
             'candidate' => $candidate,
         ]);
 
-        if (!$quizCandidate instanceof \Tvdt\Entity\QuizCandidate) {
+        if (!$quizCandidate instanceof QuizCandidate) {
             // Create new QuizCandidate if it doesn't exist (inactive by default when first toggling)
             $quizCandidate = new QuizCandidate($quiz, $candidate);
             $quizCandidate->active = false;
