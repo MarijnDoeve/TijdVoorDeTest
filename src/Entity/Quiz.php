@@ -135,6 +135,7 @@ class Quiz
                     if (!isset($candidateCounts[$candidateId])) {
                         $candidateCounts[$candidateId] = ['name' => $candidate->name, 'count' => 0];
                     }
+
                     ++$candidateCounts[$candidateId]['count'];
                 }
             }
@@ -154,9 +155,9 @@ class Quiz
                 }
             }
 
-            if (!empty($missing) || !empty($duplicates)) {
+            if ($missing !== [] || $duplicates !== []) {
                 $errors = [];
-                if (!empty($missing)) {
+                if ($missing !== []) {
                     // If all active candidates are missing, show a special message
                     if (\count($missing) === \count($activeCandidates)) {
                         $errors[] = 'No candidates assigned to this question';
@@ -164,7 +165,8 @@ class Quiz
                         $errors[] = 'Missing candidates: '.implode(', ', $missing);
                     }
                 }
-                if (!empty($duplicates)) {
+
+                if ($duplicates !== []) {
                     $errors[] = 'Duplicate candidates: '.implode(', ', $duplicates);
                 }
 

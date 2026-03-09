@@ -264,7 +264,7 @@ class QuizController extends AbstractController
             'candidate' => $candidate,
         ]);
 
-        if (!$quizCandidate) {
+        if (!$quizCandidate instanceof \Tvdt\Entity\QuizCandidate) {
             // Create new QuizCandidate if it doesn't exist (inactive by default when first toggling)
             $quizCandidate = new QuizCandidate($quiz, $candidate);
             $quizCandidate->active = false;
