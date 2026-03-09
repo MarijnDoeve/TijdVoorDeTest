@@ -72,6 +72,7 @@ class Quiz
     /**
      * Get errors for all questions in the quiz.
      * Returns an array where keys are question IDs and values are error messages.
+     *
      * @return array<string, string>
      */
     public function getQuestionErrors(): array
@@ -91,7 +92,7 @@ class Quiz
 
         foreach ($this->questions as $question) {
             $error = $this->getQuestionError($question, $hasCandidateRelations);
-            if ($error !== null) {
+            if (null !== $error) {
                 $errors[$question->id->toString()] = $error;
             }
         }
@@ -117,7 +118,14 @@ class Quiz
 
         // Only validate candidate-answer relations if at least one exists in the quiz
         if ($hasCandidateRelations) {
-            $seasonCandidates = $this->season->candidates;
+            // Get only active candidates for this quiz
+            $activeCandidates = [];
+            foreach ($this->candidateData as $quizCandidate) {
+                if ($quizCandidate->active) {
+                    $activeCandidates[] = $quizCandidate->candidate;
+                }
+            }
+
             $candidateCounts = [];
 
             // Count how many times each candidate appears in answers
@@ -127,19 +135,19 @@ class Quiz
                     if (!isset($candidateCounts[$candidateId])) {
                         $candidateCounts[$candidateId] = ['name' => $candidate->name, 'count' => 0];
                     }
-                    $candidateCounts[$candidateId]['count']++;
+                    ++$candidateCounts[$candidateId]['count'];
                 }
             }
 
-            // Check for missing and duplicate candidates
+            // Check for missing and duplicate candidates (only active ones)
             $missing = [];
             $duplicates = [];
 
-            foreach ($seasonCandidates as $candidate) {
+            foreach ($activeCandidates as $candidate) {
                 $candidateId = $candidate->id->toString();
                 $count = $candidateCounts[$candidateId]['count'] ?? 0;
 
-                if ($count === 0) {
+                if (0 === $count) {
                     $missing[] = $candidate->name;
                 } elseif ($count > 1) {
                     $duplicates[] = $candidate->name;
@@ -149,16 +157,17 @@ class Quiz
             if (!empty($missing) || !empty($duplicates)) {
                 $errors = [];
                 if (!empty($missing)) {
-                    // If all candidates are missing, show a special message
-                    if (count($missing) === $seasonCandidates->count()) {
+                    // If all active candidates are missing, show a special message
+                    if (\count($missing) === \count($activeCandidates)) {
                         $errors[] = 'No candidates assigned to this question';
                     } else {
-                        $errors[] = 'Missing candidates: ' . implode(', ', $missing);
+                        $errors[] = 'Missing candidates: '.implode(', ', $missing);
                     }
                 }
                 if (!empty($duplicates)) {
-                    $errors[] = 'Duplicate candidates: ' . implode(', ', $duplicates);
+                    $errors[] = 'Duplicate candidates: '.implode(', ', $duplicates);
                 }
+
                 return implode('. ', $errors);
             }
         }

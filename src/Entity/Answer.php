@@ -62,5 +62,4 @@ class Answer
     {
         return $this->text;
     }
-
 }

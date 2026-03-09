@@ -15,9 +15,11 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
+use Tvdt\Entity\Answer;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
+use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
 use Tvdt\Repository\QuizCandidateRepository;
@@ -92,7 +94,7 @@ class QuizController extends AbstractController
     public function candidates(Season $season, Quiz $quiz): Response
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
-        assert($fetchedQuiz->questions->count() > 0);
+        \assert($fetchedQuiz->questions->count() > 0);
         $firstQuestion = $fetchedQuiz->questions->first();
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_question', [
@@ -102,13 +104,12 @@ class QuizController extends AbstractController
         ]);
     }
 
-
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
         name: 'tvdt_backoffice_quiz_candidates_question',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
-        methods: ['GET']
+        methods: ['GET'],
     )]
     public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
     {
@@ -127,7 +128,7 @@ class QuizController extends AbstractController
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
         name: 'tvdt_backoffice_quiz_candidates_question_save',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
-        methods: ['POST']
+        methods: ['POST'],
     )]
     public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request, EntityManagerInterface $em): RedirectResponse
     {
@@ -143,7 +144,7 @@ class QuizController extends AbstractController
             $candidate = $em->getRepository(Candidate::class)->find($candidateId);
 
             foreach ((array) $answerIds as $answerId) {
-                $answer = $em->getRepository(\Tvdt\Entity\Answer::class)->find($answerId);
+                $answer = $em->getRepository(Answer::class)->find($answerId);
                 if ($answer && $candidate) {
                     $answer->addCandidate($candidate);
                 }
@@ -248,5 +249,34 @@ class QuizController extends AbstractController
         $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/toggle',
+        name: 'tvdt_backoffice_toggle_candidate',
+        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+    )]
+    public function toggleCandidate(Quiz $quiz, Candidate $candidate, EntityManagerInterface $em): RedirectResponse
+    {
+        $quizCandidate = $this->quizCandidateRepository->findOneBy([
+            'quiz' => $quiz,
+            'candidate' => $candidate,
+        ]);
+
+        if (!$quizCandidate) {
+            // Create new QuizCandidate if it doesn't exist (inactive by default when first toggling)
+            $quizCandidate = new QuizCandidate($quiz, $candidate);
+            $quizCandidate->active = false;
+            $em->persist($quizCandidate);
+        } else {
+            $quizCandidate->active = !$quizCandidate->active;
+        }
+
+        $em->flush();
+
+        $this->addFlash('success', $this->translator->trans('Candidate status updated'));
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id, '_fragment' => 'candidates']);
     }
 }

@@ -56,6 +56,67 @@
         {% endfor %}
     </div>
 
+<h4 class="mb-3 mt-4" id="candidates">{{ 'Candidates'|trans }}</h4>
+<table class="table table-hover mb-3">
+    <thead>
+        <tr>
+            <th scope="col">{{ 'Name'|trans }}</th>
+            <th scope="col">{{ 'Quiz Status'|trans }}</th>
+            <th scope="col">{{ 'Candidate Status'|trans }}</th>
+            <th scope="col">{{ 'Actions'|trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidate in season.candidates %}
+            {% set quizCandidate = null %}
+            {% for qc in quiz.candidateData %}
+                {% if qc.candidate.id.toString == candidate.id.toString %}
+                    {% set quizCandidate = qc %}
+                {% endif %}
+            {% endfor %}
+
+            {% set givenAnswersCount = 0 %}
+            {% for givenAnswer in candidate.givenAnswers %}
+                {% if givenAnswer.quiz.id.toString == quiz.id.toString %}
+                    {% set givenAnswersCount = givenAnswersCount + 1 %}
+                {% endif %}
+            {% endfor %}
+
+            <tr>
+                <td>{{ candidate.name }}</td>
+                <td>
+                    {% if quizCandidate and quizCandidate.started %}
+                        {% if givenAnswersCount >= quiz.questions|length %}
+                            <span class="badge text-bg-success">{{ 'Completed'|trans }}</span>
+                        {% else %}
+                            <span class="badge text-bg-warning">{{ 'In Progress'|trans }} ({{ givenAnswersCount }}/{{ quiz.questions|length }})</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge text-bg-secondary">{{ 'Not Started'|trans }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if quizCandidate == null or quizCandidate.active %}
+                        <span class="badge text-bg-success">{{ 'Active'|trans }}</span>
+                    {% else %}
+                        <span class="badge text-bg-secondary">{{ 'Inactive'|trans }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('tvdt_backoffice_toggle_candidate', {quiz: quiz.id, candidate: candidate.id}) }}"
+                       class="btn btn-sm btn-outline-secondary">
+                        {% if quizCandidate == null or quizCandidate.active %}
+                            {{ 'Deactivate'|trans }}
+                        {% else %}
+                            {{ 'Activate'|trans }}
+                        {% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {# Modal Clear #}
 <div class="modal fade" id="clearQuizModal" data-bs-backdrop="static"
      tabindex="-1"

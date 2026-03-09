@@ -27,6 +27,12 @@ class QuizCandidate
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
     public int $penaltySeconds = 0;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    public bool $active = true;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    public ?\DateTimeImmutable $started = null;
+
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     public private(set) \DateTimeImmutable $created;

@@ -84,15 +84,15 @@ class QuizRepository extends ServiceEntityRepository
                 qd.corrections,
                 qd.penaltySeconds,
                 max(ga.created) as end_time,
-                qd.created as start_time,
+                qd.started as start_time,
                 (sum(case when a.isRightAnswer = true then 1 else 0 end) + qd.corrections) as score
             from Tvdt\Entity\Candidate c
             join c.givenAnswers ga
             join ga.answer a
             join c.quizData qd
-            where qd.quiz = :quiz and ga.quiz = :quiz
+            where qd.quiz = :quiz and ga.quiz = :quiz and qd.started is not null
             group by ga.quiz, c.id, qd.id
-            order by score desc, max(ga.created) - qd.created asc
+            order by score desc, max(ga.created) - qd.started asc
             DQL
         )->setParameter('quiz', $quiz)->getResult();
 
@@ -124,12 +124,14 @@ class QuizRepository extends ServiceEntityRepository
     public function fetchWithQuestionsAndCandidates(Uuid $id): Quiz
     {
         return $this->getEntityManager()->createQuery(<<<dql
-            select q, qz, a, ac, s, sc from Tvdt\Entity\Quiz q
+            select q, qz, a, ac, s, sc, qc, ga from Tvdt\Entity\Quiz q
             join q.questions qz
             join qz.answers a
             left join a.candidates ac
             join q.season s
             left join s.candidates sc
+            left join q.candidateData qc
+            left join sc.givenAnswers ga with ga.quiz = q
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
     }
