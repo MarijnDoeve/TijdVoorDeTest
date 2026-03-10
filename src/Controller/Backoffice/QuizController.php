@@ -57,10 +57,31 @@ class QuizController extends AbstractController
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
 
+        // Create indexed lookup for quiz candidates by candidate ID
+        $quizCandidatesByCandidateId = [];
+        foreach ($fetchedQuiz->candidateData as $qc) {
+            $quizCandidatesByCandidateId[$qc->candidate->id->toString()] = $qc;
+        }
+
+        // Get given answers counts efficiently via database query
+        $givenAnswersCountByCandidateId = $this->quizRepository->getGivenAnswersCountPerCandidate($quiz);
+
+        // Pre-compute candidate data to avoid nested loops in template
+        $candidateData = [];
+        foreach ($season->candidates as $candidate) {
+            $candidateIdString = $candidate->id->toString();
+            $candidateData[] = [
+                'candidate' => $candidate,
+                'quizCandidate' => $quizCandidatesByCandidateId[$candidateIdString] ?? null,
+                'givenAnswersCount' => $givenAnswersCountByCandidateId[$candidateIdString] ?? 0,
+            ];
+        }
+
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $fetchedQuiz,
             'questionErrors' => $fetchedQuiz->getQuestionErrors(),
+            'candidateData' => $candidateData,
             'activeTab' => 'overview',
             'template' => 'backoffice/quiz/tab_overview.html.twig',
         ]);
@@ -87,11 +108,48 @@ class QuizController extends AbstractController
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
-        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates',
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates-list',
+        name: 'tvdt_backoffice_quiz_candidates_tab',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+    )]
+    public function candidatesTab(Season $season, Quiz $quiz): Response
+    {
+        // Create indexed lookup for quiz candidates by candidate ID
+        $quizCandidatesByCandidateId = [];
+        foreach ($quiz->candidateData as $qc) {
+            $quizCandidatesByCandidateId[$qc->candidate->id->toString()] = $qc;
+        }
+
+        // Get given answers counts efficiently via database query
+        $givenAnswersCountByCandidateId = $this->quizRepository->getGivenAnswersCountPerCandidate($quiz);
+
+        // Pre-compute candidate data to avoid nested loops in template
+        $candidateData = [];
+        foreach ($season->candidates as $candidate) {
+            $candidateIdString = $candidate->id->toString();
+            $candidateData[] = [
+                'candidate' => $candidate,
+                'quizCandidate' => $quizCandidatesByCandidateId[$candidateIdString] ?? null,
+                'givenAnswersCount' => $givenAnswersCountByCandidateId[$candidateIdString] ?? 0,
+            ];
+        }
+
+        return $this->render('backoffice/quiz.html.twig', [
+            'season' => $season,
+            'quiz' => $quiz,
+            'candidateData' => $candidateData,
+            'activeTab' => 'candidates',
+            'template' => 'backoffice/quiz/tab_candidates_list.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/quiz/{quiz}/answer-mapping',
         name: 'tvdt_backoffice_quiz_candidates',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
     )]
-    public function candidates(Season $season, Quiz $quiz): Response
+    public function answerMapping(Season $season, Quiz $quiz): Response
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
         \assert($fetchedQuiz->questions->count() > 0);
@@ -119,7 +177,7 @@ class QuizController extends AbstractController
             'quiz' => $quiz,
             'question' => $question,
             'candidates' => $season->candidates,
-            'activeTab' => 'candidates',
+            'activeTab' => 'answers',
             'template' => 'backoffice/quiz/tab_candidates.html.twig',
         ]);
     }
@@ -278,6 +336,6 @@ class QuizController extends AbstractController
 
         $this->addFlash('success', $this->translator->trans('Candidate status updated'));
 
-        return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id, '_fragment' => 'candidates']);
+        return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_tab', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 }

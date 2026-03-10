@@ -128,15 +128,40 @@ class QuizRepository extends ServiceEntityRepository
     public function fetchWithQuestionsAndCandidates(Uuid $id): Quiz
     {
         return $this->getEntityManager()->createQuery(<<<dql
-            select q, qz, a, ac, s, sc, qc, ga from Tvdt\Entity\Quiz q
+            select q, qz, a, ac, s, sc, qc from Tvdt\Entity\Quiz q
             join q.questions qz
             join qz.answers a
             left join a.candidates ac
             join q.season s
             left join s.candidates sc
             left join q.candidateData qc
-            left join sc.givenAnswers ga with ga.quiz = q
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
+    }
+
+    /**
+     * Get given answers count per candidate for a quiz.
+     *
+     * @return array<string, int> Array with candidate ID as key and count as value
+     */
+    public function getGivenAnswersCountPerCandidate(Quiz $quiz): array
+    {
+        $results = $this->getEntityManager()->createQuery(<<<DQL
+            select c.id as candidateId, count(ga.id) as answerCount
+            from Tvdt\Entity\Candidate c
+            left join c.givenAnswers ga with ga.quiz = :quiz
+            where c.season = :season
+            group by c.id
+            DQL
+        )->setParameter('quiz', $quiz)
+         ->setParameter('season', $quiz->season)
+         ->getResult();
+
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[$row['candidateId']->toString()] = (int) $row['answerCount'];
+        }
+
+        return $counts;
     }
 }

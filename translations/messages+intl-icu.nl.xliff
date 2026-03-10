@@ -49,6 +49,10 @@
         <source>Already have an account? Log in</source>
         <target>Heb je al een account? Log in</target>
       </trans-unit>
+      <trans-unit id="3A2JPqn" resname="Answer Mapping">
+        <source>Answer Mapping</source>
+        <target>Antwoord-kandidaat koppeling</target>
+      </trans-unit>
       <trans-unit id="Qu1euq_" resname="Are you sure you want to clear all the results? This will also delete al the eliminations.">
         <source>Are you sure you want to clear all the results? This will also delete al the eliminations.</source>
         <target>Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.</target>

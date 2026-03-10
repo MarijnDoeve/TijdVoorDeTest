@@ -15,8 +15,9 @@
 {% block body %}
     {% set tabs = [
         {id: 'overview', label: 'Overview'|trans, route: 'tvdt_backoffice_quiz_overview'},
+        {id: 'candidates', label: 'Candidates'|trans, route: 'tvdt_backoffice_quiz_candidates_tab'},
         {id: 'result', label: 'Results & Elimination'|trans, route: 'tvdt_backoffice_quiz_result'},
-        {id: 'candidates', label: 'Candidates'|trans, route: 'tvdt_backoffice_quiz_candidates'},
+        {id: 'answers', label: 'Answer Mapping'|trans, route: 'tvdt_backoffice_quiz_candidates'},
     ] %}
 
     <h2 class="mb-3">{{ 'Quiz'|trans }}: {{ season.name }} - {{ quiz.name }}</h2>

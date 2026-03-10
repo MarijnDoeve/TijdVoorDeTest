@@ -90,8 +90,18 @@ class Quiz
             }
         }
 
+        // Pre-compute active candidates once for all questions
+        $activeCandidates = [];
+        if ($hasCandidateRelations) {
+            foreach ($this->candidateData as $quizCandidate) {
+                if ($quizCandidate->active) {
+                    $activeCandidates[] = $quizCandidate->candidate;
+                }
+            }
+        }
+
         foreach ($this->questions as $question) {
-            $error = $this->getQuestionError($question, $hasCandidateRelations);
+            $error = $this->getQuestionError($question, $hasCandidateRelations, $activeCandidates);
             if (null !== $error) {
                 $errors[$question->id->toString()] = $error;
             }
@@ -100,7 +110,10 @@ class Quiz
         return $errors;
     }
 
-    private function getQuestionError(Question $question, bool $hasCandidateRelations): ?string
+    /**
+     * @param list<Candidate> $activeCandidates
+     */
+    private function getQuestionError(Question $question, bool $hasCandidateRelations, array $activeCandidates): ?string
     {
         if (0 === \count($question->answers)) {
             return 'This question has no answers';
@@ -118,13 +131,6 @@ class Quiz
 
         // Only validate candidate-answer relations if at least one exists in the quiz
         if ($hasCandidateRelations) {
-            // Get only active candidates for this quiz
-            $activeCandidates = [];
-            foreach ($this->candidateData as $quizCandidate) {
-                if ($quizCandidate->active) {
-                    $activeCandidates[] = $quizCandidate->candidate;
-                }
-            }
 
             $candidateCounts = [];
 
