@@ -35,6 +35,9 @@ rector *args:
 phpstan *args:
     docker compose exec php vendor/bin/phpstan analyse {{ args }}
 
+test *args:
+    docker compose exec php vendor/bin/phpunit {{ args }}
+
 [confirm]
 clean:
     docker compose down -v --remove-orphans

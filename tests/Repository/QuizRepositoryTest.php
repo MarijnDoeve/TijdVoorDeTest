@@ -61,6 +61,7 @@ final class QuizRepositoryTest extends DatabaseTestCase
 
         // Start Quiz
         $qc = new QuizCandidate($quiz, $candidate);
+        $qc->started = $clock->now();
         $this->entityManager->persist($qc);
         $this->entityManager->flush();
 
@@ -99,7 +100,9 @@ final class QuizRepositoryTest extends DatabaseTestCase
         $this->assertInstanceOf(Quiz::class, $quiz);
 
         $qc1 = new QuizCandidate($quiz, $candidate1);
+        $qc1->started = $clock->now();
         $qc2 = new QuizCandidate($quiz, $candidate2);
+        $qc2->started = $clock->now();
         $this->entityManager->persist($qc1);
         $this->entityManager->persist($qc2);
         $this->entityManager->flush();
@@ -142,6 +145,8 @@ final class QuizRepositoryTest extends DatabaseTestCase
         $this->assertInstanceOf(Quiz::class, $quiz);
 
         $qc = new QuizCandidate($quiz, $candidate);
+        $qc->started = $clock->now();
+
         $this->entityManager->persist($qc);
         $this->entityManager->flush();
 
@@ -178,9 +183,11 @@ final class QuizRepositoryTest extends DatabaseTestCase
         $this->assertInstanceOf(Quiz::class, $quiz);
 
         $qc1 = new QuizCandidate($quiz, $candidate1);
+        $qc1->started = $clock->now();
         $this->entityManager->persist($qc1);
         $clock->sleep(10);
         $qc2 = new QuizCandidate($quiz, $candidate2);
+        $qc2->started = $clock->now();
         $this->entityManager->persist($qc2);
         $this->entityManager->flush();
 

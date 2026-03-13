@@ -2,9 +2,13 @@ import {Controller} from '@hotwired/stimulus';
 
 export default class extends Controller {
   next() {
-    const currentUrl = window.location.href;
-    const urlParts = currentUrl.split('/');
-    urlParts.pop();
-    window.location.href = urlParts.join('/');
+    const currentUrl = new URL(window.location.href);
+    const pathParts = currentUrl.pathname.split('/');
+    // Remove the last segment
+    pathParts.pop();
+    // Update the pathname
+    currentUrl.pathname = pathParts.join('/');
+    // Navigate
+    window.location.href = currentUrl.href;
   }
 }

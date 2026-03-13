@@ -110,9 +110,7 @@ class Quiz
         return $errors;
     }
 
-    /**
-     * @param list<Candidate> $activeCandidates
-     */
+    /** @param list<Candidate> $activeCandidates */
     private function getQuestionError(Question $question, bool $hasCandidateRelations, array $activeCandidates): ?string
     {
         if (0 === \count($question->answers)) {
@@ -131,7 +129,6 @@ class Quiz
 
         // Only validate candidate-answer relations if at least one exists in the quiz
         if ($hasCandidateRelations) {
-
             $candidateCounts = [];
 
             // Count how many times each candidate appears in answers
