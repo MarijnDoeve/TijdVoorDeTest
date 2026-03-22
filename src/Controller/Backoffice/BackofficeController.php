@@ -27,6 +27,7 @@ final class BackofficeController extends AbstractController
         private readonly SeasonRepository $seasonRepository,
         private readonly Security $security,
         private readonly QuizSpreadsheetService $excel,
+        private readonly EntityManagerInterface $em,
     ) {}
 
     #[Route('/backoffice/', name: 'tvdt_backoffice_index')]
@@ -45,7 +46,7 @@ final class BackofficeController extends AbstractController
     }
 
     #[Route('/backoffice/season/add', name: 'tvdt_backoffice_season_add', priority: 10)]
-    public function addSeason(Request $request, EntityManagerInterface $em): Response
+    public function addSeason(Request $request): Response
     {
         $season = new Season();
         $form = $this->createForm(CreateSeasonFormType::class, $season);
@@ -59,8 +60,8 @@ final class BackofficeController extends AbstractController
             $season->addOwner($user);
             $season->generateSeasonCode();
 
-            $em->persist($season);
-            $em->flush();
+            $this->em->persist($season);
+            $this->em->flush();
 
             return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }

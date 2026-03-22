@@ -24,12 +24,11 @@ use Tvdt\Security\EmailVerifier;
 
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security, private readonly LoggerInterface $logger, private readonly UserRepository $userRepository) {}
+    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security, private readonly LoggerInterface $logger, private readonly UserRepository $userRepository, private readonly EntityManagerInterface $entityManager) {}
 
     #[Route('/register', name: 'tvdt_register')]
     public function register(
         Request $request,
-        EntityManagerInterface $entityManager,
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -41,8 +40,8 @@ final class RegistrationController extends AbstractController
 
             $user->password = $this->userPasswordHasher->hashPassword($user, $plainPassword);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
             try {
                 // generate a signed url and email it to the user

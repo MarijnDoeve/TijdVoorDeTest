@@ -14,9 +14,7 @@ use Tvdt\Dto\Result;
 use Tvdt\Entity\Quiz;
 use Tvdt\Exception\ErrorClearingQuizException;
 
-/**
- * @extends ServiceEntityRepository<Quiz>
- */
+/** @extends ServiceEntityRepository<Quiz> */
 class QuizRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
@@ -55,7 +53,7 @@ class QuizRepository extends ServiceEntityRepository
         catch (\Throwable $throwable) {
             $this->logger->error($throwable->getMessage());
             $em->rollback();
-            throw new ErrorClearingQuizException(previous: $throwable);
+            throw new ErrorClearingQuizException(message: $throwable->getMessage(), code: $throwable->getCode(), previous: $throwable);
         }
 
         // @codeCoverageIgnoreEnd

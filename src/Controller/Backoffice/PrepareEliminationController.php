@@ -18,7 +18,7 @@ use Tvdt\Factory\EliminationFactory;
 
 final class PrepareEliminationController extends AbstractController
 {
-    public function __construct(private readonly EliminationFactory $eliminationFactory) {}
+    public function __construct(private readonly EliminationFactory $eliminationFactory, private readonly EntityManagerInterface $em) {}
 
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/elimination/prepare',
@@ -37,11 +37,11 @@ final class PrepareEliminationController extends AbstractController
         name: 'tvdt_prepare_elimination_view',
         requirements: ['elimination' => Requirement::UUID],
     )]
-    public function viewElimination(Elimination $elimination, Request $request, EntityManagerInterface $em): Response
+    public function viewElimination(Elimination $elimination, Request $request): Response
     {
         if ('POST' === $request->getMethod()) {
             $elimination->updateFromInputBag($request->request);
-            $em->flush();
+            $this->em->flush();
 
             if ($request->request->getBoolean('start')) {
                 return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);

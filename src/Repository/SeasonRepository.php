@@ -9,9 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 
-/**
- * @extends ServiceEntityRepository<Season>
- */
+/** @extends ServiceEntityRepository<Season> */
 class SeasonRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

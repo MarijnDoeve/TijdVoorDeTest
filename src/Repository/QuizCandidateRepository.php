@@ -11,9 +11,7 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
 
-/**
- * @extends ServiceEntityRepository<QuizCandidate>
- */
+/** @extends ServiceEntityRepository<QuizCandidate> */
 class QuizCandidateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
