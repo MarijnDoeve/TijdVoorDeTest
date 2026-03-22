@@ -10,6 +10,7 @@ services:
       MAILER_SENDER: ${MAILER_SENDER}
       SENTRY_DSN: ${SENTRY_DSN}
       SENTRY_RELEASE: ${IMAGE_TAG}
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tvdt.rule=Host(`tijdvoordetest.nl`)"
