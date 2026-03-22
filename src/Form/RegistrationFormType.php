@@ -15,9 +15,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Entity\User;
 
-/**
- * @extends AbstractType<User>
- */
+/** @extends AbstractType<User> */
 class RegistrationFormType extends AbstractType
 {
     public function __construct(private readonly TranslatorInterface $translator) {}

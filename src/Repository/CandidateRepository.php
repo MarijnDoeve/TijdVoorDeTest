@@ -11,9 +11,7 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Season;
 use Tvdt\Helpers\Base64;
 
-/**
- * @extends ServiceEntityRepository<Candidate>
- */
+/** @extends ServiceEntityRepository<Candidate> */
 class CandidateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

@@ -9,9 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
 
-/**
- * @extends ServiceEntityRepository<Question>
- */
+/** @extends ServiceEntityRepository<Question> */
 class QuestionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

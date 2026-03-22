@@ -35,6 +35,7 @@ class QuizController extends AbstractController
         private readonly QuizRepository $quizRepository,
         private readonly TranslatorInterface $translator,
         private readonly QuizCandidateRepository $quizCandidateRepository,
+        private readonly EntityManagerInterface $em,
     ) {}
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -190,12 +191,13 @@ class QuizController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request, EntityManagerInterface $em): RedirectResponse
+    public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request): RedirectResponse
     {
         if (false === $season->quizzes->contains($quiz)
             || false === $quiz->questions->contains($question)) {
             throw new BadRequestHttpException('Invalid quiz or question');
         }
+
         $candidateAnswers = $request->request->all('candidate_answer');
 
         // Clear existing candidate-answer associations for this question
@@ -209,14 +211,14 @@ class QuizController extends AbstractController
 
         // Add new associations
         foreach ($candidateAnswers as $candidateId => $answerIds) {
-            $candidate = $em->getRepository(Candidate::class)->find($candidateId);
+            $candidate = $this->em->getRepository(Candidate::class)->find($candidateId);
 
             if (false === $season->candidates->contains($candidate)) {
                 throw new BadRequestHttpException('Invalid candidate');
             }
 
             foreach ((array) $answerIds as $answerId) {
-                $answer = $em->getRepository(Answer::class)->find($answerId);
+                $answer = $this->em->getRepository(Answer::class)->find($answerId);
 
                 if (false === $question->answers->contains($answer)) {
                     throw new BadRequestHttpException('Invalid answer');
@@ -228,7 +230,7 @@ class QuizController extends AbstractController
             }
         }
 
-        $em->flush();
+        $this->em->flush();
 
         $this->addFlash('success', $this->translator->trans('Candidate answers saved'));
 
@@ -245,10 +247,10 @@ class QuizController extends AbstractController
         name: 'tvdt_backoffice_enable',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
     )]
-    public function enableQuiz(Season $season, ?Quiz $quiz, EntityManagerInterface $em): RedirectResponse
+    public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
     {
         $season->activeQuiz = $quiz;
-        $em->flush();
+        $this->em->flush();
 
         if ($quiz instanceof Quiz) {
             return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
@@ -335,7 +337,7 @@ class QuizController extends AbstractController
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
         methods: ['GET'],
     )]
-    public function toggleCandidate(Quiz $quiz, Candidate $candidate, EntityManagerInterface $em): RedirectResponse
+    public function toggleCandidate(Quiz $quiz, Candidate $candidate): RedirectResponse
     {
         $quizCandidate = $this->quizCandidateRepository->findOneBy([
             'quiz' => $quiz,
@@ -346,12 +348,12 @@ class QuizController extends AbstractController
             // Create new QuizCandidate if it doesn't exist (inactive by default when first toggling)
             $quizCandidate = new QuizCandidate($quiz, $candidate);
             $quizCandidate->active = false;
-            $em->persist($quizCandidate);
+            $this->em->persist($quizCandidate);
         } else {
             $quizCandidate->active = !$quizCandidate->active;
         }
 
-        $em->flush();
+        $this->em->flush();
 
         $this->addFlash('success', $this->translator->trans('Candidate status updated'));
 

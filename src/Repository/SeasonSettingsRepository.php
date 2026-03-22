@@ -8,9 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Tvdt\Entity\SeasonSettings;
 
-/**
- * @extends ServiceEntityRepository<SeasonSettings>
- */
+/** @extends ServiceEntityRepository<SeasonSettings> */
 class SeasonSettingsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
