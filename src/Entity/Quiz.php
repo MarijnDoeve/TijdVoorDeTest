@@ -68,4 +68,115 @@ class Quiz
 
         return $this;
     }
+
+    /**
+     * Get errors for all questions in the quiz.
+     * Returns an array where keys are question IDs and values are error messages.
+     *
+     * @return array<string, string>
+     */
+    public function getQuestionErrors(): array
+    {
+        $errors = [];
+
+        // Check if any answer in the entire quiz has candidate relations
+        $hasCandidateRelations = false;
+        foreach ($this->questions as $question) {
+            foreach ($question->answers as $answer) {
+                if ($answer->candidates->count() > 0) {
+                    $hasCandidateRelations = true;
+                    break 2;
+                }
+            }
+        }
+
+        // Pre-compute active candidates once for all questions
+        $activeCandidates = [];
+        if ($hasCandidateRelations) {
+            foreach ($this->candidateData as $quizCandidate) {
+                if ($quizCandidate->active) {
+                    $activeCandidates[] = $quizCandidate->candidate;
+                }
+            }
+        }
+
+        foreach ($this->questions as $question) {
+            $error = $this->getQuestionError($question, $hasCandidateRelations, $activeCandidates);
+            if (null !== $error) {
+                $errors[$question->id->toString()] = $error;
+            }
+        }
+
+        return $errors;
+    }
+
+    /** @param list<Candidate> $activeCandidates */
+    private function getQuestionError(Question $question, bool $hasCandidateRelations, array $activeCandidates): ?string
+    {
+        if (0 === \count($question->answers)) {
+            return 'This question has no answers';
+        }
+
+        $correctAnswers = $question->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->count();
+
+        if (0 === $correctAnswers) {
+            return 'This question has no correct answers';
+        }
+
+        if ($correctAnswers > 1) {
+            return 'This question has multiple correct answers';
+        }
+
+        // Only validate candidate-answer relations if at least one exists in the quiz
+        if ($hasCandidateRelations) {
+            $candidateCounts = [];
+
+            // Count how many times each candidate appears in answers
+            foreach ($question->answers as $answer) {
+                foreach ($answer->candidates as $candidate) {
+                    $candidateId = $candidate->id->toString();
+                    if (!isset($candidateCounts[$candidateId])) {
+                        $candidateCounts[$candidateId] = ['name' => $candidate->name, 'count' => 0];
+                    }
+
+                    ++$candidateCounts[$candidateId]['count'];
+                }
+            }
+
+            // Check for missing and duplicate candidates (only active ones)
+            $missing = [];
+            $duplicates = [];
+
+            foreach ($activeCandidates as $candidate) {
+                $candidateId = $candidate->id->toString();
+                $count = $candidateCounts[$candidateId]['count'] ?? 0;
+
+                if (0 === $count) {
+                    $missing[] = $candidate->name;
+                } elseif ($count > 1) {
+                    $duplicates[] = $candidate->name;
+                }
+            }
+
+            if ([] !== $missing || [] !== $duplicates) {
+                $errors = [];
+                if ([] !== $missing) {
+                    // If all active candidates are missing, show a special message
+                    if (\count($missing) === \count($activeCandidates)) {
+                        $errors[] = 'No candidates assigned to this question';
+                    } else {
+                        $errors[] = 'Missing candidates: '.implode(', ', $missing);
+                    }
+                }
+
+                if ([] !== $duplicates) {
+                    $errors[] = 'Duplicate candidates: '.implode(', ', $duplicates);
+                }
+
+                return implode('. ', $errors);
+            }
+        }
+
+        return null;
+    }
 }

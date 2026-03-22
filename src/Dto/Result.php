@@ -13,6 +13,7 @@ final readonly class Result
         public string $name,
         public int $correct,
         public float $corrections,
+        public int $penaltySeconds,
         public \DateInterval $time,
         public float $score,
     ) {}

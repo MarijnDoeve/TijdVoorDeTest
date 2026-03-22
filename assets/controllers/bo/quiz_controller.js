@@ -1,17 +1,28 @@
 import {Controller} from '@hotwired/stimulus';
-import * as bootstrap from 'bootstrap'
+import {Tooltip, Modal} from 'bootstrap';
 
 export default class extends Controller {
+  static targets = ['clearModal', 'deleteModal'];
+
   connect() {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    this.tooltips = [];
+    const tooltipTriggerList = this.element.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].forEach(tooltipTriggerEl => {
+      this.tooltips.push(Tooltip.getOrCreateInstance(tooltipTriggerEl));
+    });
+  }
+
+  disconnect() {
+    this.tooltips.forEach(tooltip => tooltip.dispose());
   }
 
   clearQuiz() {
-    new bootstrap.Modal('#clearQuizModal').show();
+    const modal = Modal.getOrCreateInstance(this.clearModalTarget);
+    modal.show();
   }
 
   deleteQuiz() {
-    new bootstrap.Modal('#deleteQuizModal').show();
+    const modal = Modal.getOrCreateInstance(this.deleteModalTarget);
+    modal.show();
   }
 }

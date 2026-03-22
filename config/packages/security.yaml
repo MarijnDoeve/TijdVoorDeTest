@@ -5,12 +5,10 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         tvdt_user_provider:
             entity:
                 class: Tvdt\Entity\User
                 property: email
-        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
@@ -26,15 +24,7 @@ security:
                 default_target_path: tvdt_backoffice_index
             logout:
                 path: tvdt_login_logout
-                # where to redirect after logout
-                # target: tvdt_any_route
             
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-    
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/backoffice, roles: ROLE_USER }

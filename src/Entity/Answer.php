@@ -13,7 +13,7 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\AnswerRepository;
 
 #[ORM\Entity(repositoryClass: AnswerRepository::class)]
-class Answer
+class Answer implements \Stringable
 {
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
@@ -56,5 +56,10 @@ class Answer
     public function removeCandidate(Candidate $candidate): void
     {
         $this->candidates->removeElement($candidate);
+    }
+
+    public function __toString(): string
+    {
+        return $this->text;
     }
 }

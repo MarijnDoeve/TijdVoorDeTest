@@ -13,7 +13,7 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuestionRepository;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
-class Question
+class Question implements \Stringable
 {
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
@@ -54,22 +54,8 @@ class Question
         return $this;
     }
 
-    public function getErrors(): ?string
+    public function __toString(): string
     {
-        if (0 === \count($this->answers)) {
-            return 'This question has no answers';
-        }
-
-        $correctAnswers = $this->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->count();
-
-        if (0 === $correctAnswers) {
-            return 'This question has no correct answers';
-        }
-
-        if ($correctAnswers > 1) {
-            return 'This question has multiple correct answers';
-        }
-
-        return null;
+        return $this->question ?? '';
     }
 }

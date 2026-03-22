@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-GB"
+reviews:
+  sequence_diagrams: false
+  path_filters:
+    - "!config/reference.php"

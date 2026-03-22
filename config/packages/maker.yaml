@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+when@dev:
+    maker:
+        root_namespace: 'Tvdt'
+        generate_final_classes: true
+        generate_final_entities: false

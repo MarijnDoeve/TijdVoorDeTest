@@ -99,6 +99,14 @@ final class QuizController extends AbstractController
 
         if ('POST' === $request->getMethod()) {
             // TODO: Extract saving answer logic to a service
+            // Check if candidate is inactive for this quiz
+            $quizCandidate = $this->quizCandidateRepository->findOneBy(['quiz' => $quiz, 'candidate' => $candidate]);
+            if (null !== $quizCandidate && !$quizCandidate->active) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('You are not allowed to answer this quiz'));
+
+                return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
+            }
+
             $answer = $this->answerRepository->findOneBy(['id' => $request->request->get('answer')]);
 
             if (!$answer instanceof Answer) {
@@ -123,7 +131,14 @@ final class QuizController extends AbstractController
             return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
-        $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
+        $result = $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
+
+        // Check if candidate is inactive
+        if (null === $result) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('You are not allowed to answer this quiz'));
+
+            return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
+        }
 
         // end of extracting getting next question logic
         return $this->render('quiz/question.twig', ['candidate' => $candidate, 'question' => $question, 'season' => $season]);

@@ -1,17 +1,26 @@
 {% extends 'backoffice/base.html.twig' %}
 
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'Create a season'|trans }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
     <div class="row">
         <div class="col-md-6 col-12">
-            <h2 class="py-2">{{ 'Create a season'|trans }}</h2>
+            <h2 class="mb-3">{{ 'Create a season'|trans }}</h2>
             {{ form_start(form) }}
             {{ form_row(form.name) }}
             <button type="submit" class="btn btn-primary">{{ 'Submit'|trans }}</button>
             {{ form_end(form) }}
         </div>
         <div class="col-md-6 col-12">
-            <p class="pt-5">
-                Hier kan nog tekst komen met wat uitleg
+            <p class="mb-3">
+                {{ 'Help text for creating a season'|trans }}
             </p>
         </div>
     </div>

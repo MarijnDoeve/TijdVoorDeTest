@@ -1,37 +1,47 @@
 {% extends 'backoffice/base.html.twig' %}
 {% block title %}{{ parent() }}{{ season.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ season.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
 {% block body %}
-    <h2 class="py-2">{{ 'Season'|trans }}: {{ season.name }}</h2>
+    <h2 class="mb-3">{{ 'Season'|trans }}: {{ season.name }}</h2>
     <div class="row">
         <div class="col-md-6 col-12">
-            <div class="d-flex flex-row align-items-center">
-                <h4 class="py-2 pe-2">{{ 'Quizzes'|trans }}</h4>
+            <div class="d-flex flex-row align-items-center mb-3">
+                <h4 class="mb-0 pe-2">{{ 'Quizzes'|trans }}</h4>
                 <a class="link"
                    href="{{ path('tvdt_backoffice_quiz_add', {seasonCode: season.seasonCode}) }}">{{ 'Add'|trans }}</a>
             </div>
-            <div class="list-group">
+            <div class="list-group mb-3">
                 {% for quiz in season.quizzes %}
                     <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
                        href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
                 {% else %}
-                    No quizzes
+                    {{ 'No quizzes'|trans }}
                 {% endfor %}
             </div>
         </div>
         <div class="col-md-3 col-12">
-            <div class="d-flex flex-row align-items-center">
-                <h4 class="py-2 pe-2">{{ 'Candidates'|trans }}</h4>
+            <div class="d-flex flex-row align-items-center mb-3">
+                <h4 class="mb-0 pe-2">{{ 'Candidates'|trans }}</h4>
                 <a class="link"
                    href="{{ path('tvdt_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}
                 </a>
             </div>
-            <ul>
+            <ul class="mb-3">
                 {% for candidate in season.candidates %}
                     <li>{{ candidate.name }}</li>{% endfor %}
             </ul>
 
-            <div class="d-flex flex-row align-items-center">
-                <h4 class="py-2 pe-2">{{ 'Settings'|trans }}</h4>
+            <div class="d-flex flex-row align-items-center mb-3">
+                <h4 class="mb-0 pe-2">{{ 'Settings'|trans }}</h4>
             </div>
             {{ form(form) }}
         </div>

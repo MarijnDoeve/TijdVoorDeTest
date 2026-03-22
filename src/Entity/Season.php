@@ -30,6 +30,7 @@ class Season
 
     /** @var Collection<int, Quiz> */
     #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     public private(set) Collection $quizzes;
 
     /** @var Collection<int, Candidate> */
@@ -39,6 +40,7 @@ class Season
 
     /** @var Collection<int, User> */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'seasons')]
+    #[ORM\OrderBy(['email' => 'ASC'])]
     public private(set) Collection $owners;
 
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
