@@ -95,11 +95,15 @@ class QuizSpreadsheetService
             $arrCounter = 1;
 
             while (true) {
-                if (null === $questionArr[$arrCounter]) {
-                    if (1 === $answerCounter) {
-                        $errors[] = \sprintf('Question %d has no answers', $answerCounter);
-                    }
+                try {
+                    if (null === $questionArr[$arrCounter]) {
+                        if (1 === $answerCounter) {
+                            $errors[] = \sprintf('Question %d has no answers', $answerCounter);
+                        }
 
+                        break;
+                    }
+                } catch (\ErrorException) {
                     break;
                 }
 
@@ -130,6 +134,6 @@ class QuizSpreadsheetService
 
     private function isSpreadsheetFile(File $file): bool
     {
-        return 'xlsx' === $file->getExtension();
+        return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' === $file->getMimeType();
     }
 }
