@@ -61,6 +61,19 @@ The project uses `just` as the primary task runner. Always prefer `just` command
 - CSS/Sass is in `assets/styles/`.
 - Assets are compiled on-the-fly or mapped; do not look for a `node_modules` folder.
 
+## Key Components
+### Controllers
+- **Backoffice**: Located in `src/Controller/Backoffice`, handles season and quiz management.
+- **Quiz**: `src/Controller/QuizController` handles the candidate-facing side of quizzes.
+- **Elimination**: `src/Controller/EliminationController` handles elimination screens.
+
+### Services
+- **QuizSpreadsheetService**: Handles importing quizzes from XLSX files.
+
+### Base Classes & Enums
+- **AbstractController**: Base class for all controllers, containing common regexes and flash helpers.
+- **FlashType Enum**: Used for consistent flash messaging (`FlashType::Success`, `FlashType::Danger`, etc.).
+
 ## Key Files
 - `composer.json`: Dependency management.
 - `importmap.php`: JavaScript module mapping.

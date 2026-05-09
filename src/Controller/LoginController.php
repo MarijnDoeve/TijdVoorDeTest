@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Enum\FlashType;
@@ -20,6 +21,10 @@ final class LoginController extends AbstractController
     #[Route(path: '/login', name: 'tvdt_login_login')]
     public function login(): Response
     {
+        if ($this->getUser() instanceof UserInterface) {
+            return $this->redirectToRoute('tvdt_backoffice_index');
+        }
+
         // get the login error if there is one
         $error = $this->authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
