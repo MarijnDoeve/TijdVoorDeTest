@@ -30,6 +30,7 @@ class QuestionRepository extends ServiceEntityRepository
                 and q1.quiz = :quiz
             )
             and qz = :quiz
+            order by q.ordering
             DQL)
             ->setMaxResults(1)
             ->setParameter('candidate', $candidate)
