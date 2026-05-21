@@ -24,7 +24,10 @@ security:
                 default_target_path: tvdt_backoffice_index
             logout:
                 path: tvdt_login_logout
-            
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
+
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/backoffice, roles: ROLE_USER }
