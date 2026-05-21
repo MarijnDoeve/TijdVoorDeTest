@@ -7,9 +7,24 @@ version: 2
 updates:
   - package-ecosystem: "composer" # See documentation for possible values
     directory: "/" # Location of package manifests
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "symfony/*"
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+      symfony:
+        patterns:
+          - "symfony/*"
+      twig:
+        patterns:
+          - "twig/*"
   - package-ecosystem: "docker"
-    directtory: "/"
+    directory: "/"
     schedule:
       interval: "daily"
