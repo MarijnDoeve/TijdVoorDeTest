@@ -111,7 +111,8 @@ final class QuizController extends AbstractController
             if (!$answer instanceof Answer) {
                 $this->addFlash(FlashType::Danger, $this->translator->trans('Please select an answer'));
 
-                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);            }
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
+            }
 
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);

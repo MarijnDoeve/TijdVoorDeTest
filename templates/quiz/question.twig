@@ -19,7 +19,8 @@
         {% else %}
             {% for answer in question.answers %}
                 <div class="py-1">
-                    <input type="radio" class="btn-check" name="answer" id="answer-{{ loop.index0 }}" autocomplete="off"
+                    <input required="required" type="radio" class="btn-check" name="answer"
+                           id="answer-{{ loop.index0 }}" autocomplete="off"
                            value="{{ answer.id }}">
                     <label class="btn btn-outline-secondary" for="answer-{{ loop.index0 }}">{{ answer.text }}</label>
                 </div>
