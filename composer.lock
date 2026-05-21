@@ -1839,16 +1839,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v4.4.0",
+            "version": "v4.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "cba0aaccc746ba2aefedc33c277b482e2ce139a0"
+                "reference": "98154bfecbb0d4d84386eec0ec5c0818280efa94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/cba0aaccc746ba2aefedc33c277b482e2ce139a0",
-                "reference": "cba0aaccc746ba2aefedc33c277b482e2ce139a0",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/98154bfecbb0d4d84386eec0ec5c0818280efa94",
+                "reference": "98154bfecbb0d4d84386eec0ec5c0818280efa94",
                 "shasum": ""
             },
             "require": {
@@ -1864,12 +1864,12 @@
                 "doctrine/orm": "~2.14||~3.0",
                 "ekino/phpstan-banned-code": "^3.2.0",
                 "friendsofphp/php-cs-fixer": "^3.94.2",
-                "phpstan/phpstan": "^2.1.40",
+                "phpstan/phpstan": "^2.1.46",
                 "phpstan/phpstan-deprecation-rules": "^2.0.4",
                 "phpstan/phpstan-doctrine": "^2.0.20",
                 "phpstan/phpstan-phpunit": "^2.0.16",
                 "phpunit/phpunit": "^10.5.63||^11.5",
-                "rector/rector": "^2.3.8",
+                "rector/rector": "^2.4.1",
                 "symfony/cache": "^6.4||^7.0",
                 "symfony/var-exporter": "^6.4||^7.0"
             },
@@ -1924,6 +1924,7 @@
                 "ltree",
                 "macaddr",
                 "martin-georgiev",
+                "math-functions",
                 "money",
                 "multirange",
                 "network-types",
@@ -1938,6 +1939,7 @@
                 "soundex",
                 "spatial",
                 "text-search",
+                "trigonometry",
                 "tsquery",
                 "tsvector",
                 "uuid",
@@ -1947,7 +1949,7 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v4.4.0"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v4.5.1"
             },
             "funding": [
                 {
@@ -1959,7 +1961,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-21T18:11:34+00:00"
+            "time": "2026-04-19T11:31:03+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
