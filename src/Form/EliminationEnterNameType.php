@@ -22,7 +22,7 @@ class EliminationEnterNameType extends AbstractType
                     'required' => true,
                     'label' => $this->translator->trans('Enter name'),
                     'translation_domain' => false,
-                    'attr' => ['autofocus' => true],
+                    'attr' => ['autofocus' => true, 'autocomplete' => 'off'],
                 ],
             )
         ;

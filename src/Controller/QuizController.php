@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Entity\Answer;
@@ -110,14 +109,16 @@ final class QuizController extends AbstractController
             $answer = $this->answerRepository->findOneBy(['id' => $request->request->get('answer')]);
 
             if (!$answer instanceof Answer) {
-                throw new BadRequestHttpException('Invalid Answer ID');
+                $this->addFlash(FlashType::Danger, $this->translator->trans('Please select an answer'));
+
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
             }
 
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
             $this->entityManager->flush();
 
-            // end of extarcting saving answer logic
+            // end of extracting saving answer logic
             return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
         }
 

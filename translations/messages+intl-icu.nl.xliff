@@ -53,7 +53,7 @@
         <source>Answer Mapping</source>
         <target>Antwoord-kandidaat koppeling</target>
       </trans-unit>
-      <trans-unit id="Qu1euq_" resname="Are you sure you want to clear all the results? This will also delete al the eliminations.">
+      <trans-unit id="2wGfW1D" resname="Are you sure you want to clear all the results? This will also delete all the eliminations.">
         <source>Are you sure you want to clear all the results? This will also delete all the eliminations.</source>
         <target>Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.</target>
       </trans-unit>
@@ -272,6 +272,10 @@
       <trans-unit id="6EclFME" resname="Please Confirm your Email">
         <source>Please Confirm your Email</source>
         <target>Bevestig je e-mailadres alsjeblieft</target>
+      </trans-unit>
+      <trans-unit id="mq1QYAv" resname="Please select an answer">
+        <source>Please select an answer</source>
+        <target>Selecteer een antwoorden alsjeblieft</target>
       </trans-unit>
       <trans-unit id="lSX_PHJ" resname="Please sign in">
         <source>Please sign in</source>
