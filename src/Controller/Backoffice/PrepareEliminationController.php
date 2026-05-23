@@ -40,6 +40,10 @@ final class PrepareEliminationController extends AbstractController
     public function viewElimination(Elimination $elimination, Request $request): Response
     {
         if ('POST' === $request->getMethod()) {
+            if (!$this->isCsrfTokenValid('prepare_elimination', $request->request->get('_token'))) {
+                throw $this->createAccessDeniedException();
+            }
+
             $elimination->updateFromInputBag($request->request);
             $this->em->flush();
 

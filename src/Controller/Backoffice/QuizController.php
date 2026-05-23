@@ -193,6 +193,10 @@ class QuizController extends AbstractController
     )]
     public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('candidate_answer', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (false === $season->quizzes->contains($quiz)
             || false === $quiz->questions->contains($question)) {
             throw new BadRequestHttpException('Invalid quiz or question');
@@ -304,6 +308,10 @@ class QuizController extends AbstractController
             throw new MethodNotAllowedHttpException(['POST']);
         }
 
+        if (!$this->isCsrfTokenValid('candidate_correction', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         $corrections = (float) $request->request->get('corrections');
 
         $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
@@ -321,6 +329,10 @@ class QuizController extends AbstractController
     {
         if (!$request->isMethod('POST')) {
             throw new MethodNotAllowedHttpException(['POST']);
+        }
+
+        if (!$this->isCsrfTokenValid('candidate_penalty', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
         }
 
         $penalty = (int) $request->request->get('penalty');

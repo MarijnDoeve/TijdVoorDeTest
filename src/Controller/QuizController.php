@@ -97,6 +97,10 @@ final class QuizController extends AbstractController
         }
 
         if ('POST' === $request->getMethod()) {
+            if (!$this->isCsrfTokenValid('question', $request->request->get('token'))) {
+                throw $this->createAccessDeniedException();
+            }
+
             // TODO: Extract saving answer logic to a service
             // Check if candidate is inactive for this quiz
             $quizCandidate = $this->quizCandidateRepository->findOneBy(['quiz' => $quiz, 'candidate' => $candidate]);
