@@ -1,5 +1,5 @@
 <div data-controller="bo--quiz">
-    <h4 class="mb-3">Quick actions</h4>
+    <h4 class="mb-3">{{ 'Quick actions'|trans }}</h4>
     <div class="mb-3 btn-group">
 
         {% if quiz is same as (season.activeQuiz) %}
@@ -28,7 +28,8 @@
                             data-bs-target="#question-{{ loop.index0 }}"
                             aria-controls="question-{{ loop.index0 }}">
                         {% set questionError = questionErrors[question.id.toString] ?? null %}
-                        <span class="badge rounded-pill me-2{% if questionError %} text-bg-danger{% else %} invisible{% endif %}"{% if questionError %} data-bs-toggle="tooltip" title="{{ questionError }}"{% endif %}>!</span>
+                        <span
+                            class="badge rounded-pill me-2{% if questionError %} text-bg-danger{% else %} invisible{% endif %}"{% if questionError %} data-bs-toggle="tooltip" title="{{ questionError }}"{% endif %}>!</span>
                         {{~ loop.index -}}. {{ question.question -}}
                     </button>
                 </h2>

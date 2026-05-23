@@ -37,9 +37,9 @@
         <source>Add Quiz</source>
         <target>Test toevoegen</target>
       </trans-unit>
-      <trans-unit id="ehB6pAw" resname="Add a quiz to %name%">
-        <source>Add a quiz to %name%</source>
-        <target>Voeg een test toe aan %name%</target>
+      <trans-unit id="apgpM9w" resname="Add a quiz to {name}">
+        <source>Add a quiz to {name}</source>
+        <target>Voeg een test toe aan {name}</target>
       </trans-unit>
       <trans-unit id="qiXD5ve" resname="All Seasons">
         <source>All Seasons</source>
@@ -109,13 +109,13 @@
         <source>Corrections</source>
         <target>Jokers</target>
       </trans-unit>
-      <trans-unit id="Lu7u8U2" resname="Cound not find candidate with name %name%">
-        <source>Cound not find candidate with name %name%</source>
-        <target>Kon kandidaat met naam %name% niet vinden</target>
+      <trans-unit id="9JHLsoe" resname="Could not find candidate with name {name}">
+        <source>Could not find candidate with name {name}</source>
+        <target>Kon kandidaat met naam {name} niet vinden</target>
       </trans-unit>
-      <trans-unit id="YQUiB4T" resname="Cound not find candidate with name %name% in elimination.">
-        <source>Cound not find candidate with name %name% in elimination.</source>
-        <target>Kon geen kandidaat vinden met de naam %name% in de eliminatie</target>
+      <trans-unit id="h589jDz" resname="Could not find candidate with name {name} in elimination.">
+        <source>Could not find candidate with name {name} in elimination.</source>
+        <target>Kon geen kandidaat vinden met de naam {name} in de eliminatie</target>
       </trans-unit>
       <trans-unit id="0DvmToq" resname="Create a season">
         <source>Create a season</source>
@@ -300,6 +300,10 @@
       <trans-unit id="Rx5irUP" resname="Questions">
         <source>Questions</source>
         <target>Vragen</target>
+      </trans-unit>
+      <trans-unit id="1jiUI_8" resname="Quick actions">
+        <source>Quick actions</source>
+        <target>Snelle acties</target>
       </trans-unit>
       <trans-unit id="0tv0gq." resname="Quiz">
         <source>Quiz</source>

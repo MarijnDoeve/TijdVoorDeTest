@@ -7,15 +7,19 @@ namespace Tvdt\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\EliminationRepository;
 
+#[Gedmo\SoftDeleteable]
 #[ORM\Entity(repositoryClass: EliminationRepository::class)]
-#[ORM\HasLifecycleCallbacks]
 class Elimination
 {
+    use SoftDeleteableEntity;
+    use TimestampableEntity;
     public const string SCREEN_GREEN = 'green';
 
     public const string SCREEN_RED = 'red';
@@ -29,10 +33,6 @@ class Elimination
     /** @var array<string, mixed> */
     #[ORM\Column(type: Types::JSONB)]
     public array $data = [];
-
-    #[Gedmo\Timestampable(on: 'create')]
-    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
-    public private(set) \DateTimeImmutable $created;
 
     public function __construct(
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]

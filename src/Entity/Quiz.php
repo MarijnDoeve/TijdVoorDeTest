@@ -42,7 +42,7 @@ class Quiz
 
     /** @var Collection<int, Elimination> */
     #[ORM\OneToMany(targetEntity: Elimination::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
-    #[ORM\OrderBy(['created' => 'DESC'])]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     public private(set) Collection $eliminations;
 
     public function __construct()
