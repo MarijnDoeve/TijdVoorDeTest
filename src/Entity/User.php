@@ -89,13 +89,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    /** @see UserInterface */
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
     public function addSeason(Season $season): static
     {
         if (!$this->seasons->contains($season)) {

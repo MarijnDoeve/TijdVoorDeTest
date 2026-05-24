@@ -15,12 +15,15 @@ concurrency:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,6 +51,10 @@ jobs:
         run: docker compose exec -T php vendor/bin/php-cs-fixer check --diff --show-progress=none
       - name: Twig Coding Style
         run: docker compose exec -T php vendor/bin/twig-cs-fixer check
+      - name: Static Analysis (PHPStan)
+        run: docker compose exec -T php vendor/bin/phpstan analyse --no-progress --no-ansi --error-format=github
+      - name: Rector
+        run: docker compose exec -T php vendor/bin/rector process --dry-run --no-progress-bar --output-format=github
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
       - name: Check Mercure reachability
@@ -60,12 +67,21 @@ jobs:
       - name: Load fixtures
         run: docker compose exec -T php bin/console -e test doctrine:fixtures:load --no-interaction --group=test
       - name: Run PHPUnit
-        run: docker compose exec -T php vendor/bin/phpunit
+        run: docker compose exec -T php vendor/bin/phpunit --log-junit var/phpunit/junit.xml
+      - name: Publish PHPUnit test results
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: var/phpunit/junit.xml
+          check_name: PHPUnit
       - name: Doctrine Schema Validator
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
   
   build-deploy:
     name: Build and deploy to ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
+    permissions:
+      contents: read
+      packages: write
     environment:
       name: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
       url: ${{ vars.URL }}

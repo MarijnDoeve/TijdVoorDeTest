@@ -7,14 +7,18 @@ namespace Tvdt\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Repository\QuizCandidateRepository;
 
+#[Gedmo\SoftDeleteable]
 #[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
-#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'])]
+#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'], options: ['where' => '(deleted_at IS NULL)'])]
 class QuizCandidate
 {
+    use SoftDeleteableEntity;
+
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

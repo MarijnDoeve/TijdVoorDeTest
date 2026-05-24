@@ -12,6 +12,7 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
+use Tvdt\Entity\SeasonSettings;
 
 final class KrtekFixtures extends Fixture implements FixtureGroupInterface
 {
@@ -47,6 +48,11 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $season->addQuiz($quiz1);
         $season->activeQuiz = $quiz1;
         $season->addQuiz($this->createQuiz2($season));
+
+        \assert($season->settings instanceof SeasonSettings);
+
+        $season->settings->confirmAnswers = true;
+        $season->settings->showNumbers = true;
 
         $manager->flush();
 

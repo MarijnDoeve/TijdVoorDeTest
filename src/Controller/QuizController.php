@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\Candidate;
@@ -70,10 +71,12 @@ final class QuizController extends AbstractController
         return $this->render('quiz/enter_name.twig', ['season' => $season, 'form' => $form]);
     }
 
+    #[IsCsrfTokenValid('question', tokenKey: 'token', methods: ['POST'])]
     #[Route(
         path: '/{seasonCode:season}/{nameHash}',
         name: 'tvdt_quiz_quiz_page',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'nameHash' => self::CANDIDATE_HASH_REGEX],
+        methods: ['GET', 'POST'],
     )]
     public function quizPage(
         Season $season,
@@ -96,7 +99,7 @@ final class QuizController extends AbstractController
             return $this->redirectToRoute('tvdt_quiz_enter_name', ['seasonCode' => $season->seasonCode]);
         }
 
-        if ('POST' === $request->getMethod()) {
+        if ($request->isMethod('POST')) {
             // TODO: Extract saving answer logic to a service
             // Check if candidate is inactive for this quiz
             $quizCandidate = $this->quizCandidateRepository->findOneBy(['quiz' => $quiz, 'candidate' => $candidate]);
@@ -110,6 +113,12 @@ final class QuizController extends AbstractController
 
             if (!$answer instanceof Answer) {
                 $this->addFlash(FlashType::Danger, $this->translator->trans('Please select an answer'));
+
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
+            }
+
+            if ($answer->question !== $this->questionRepository->findNextQuestionForCandidate($candidate)) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('You cannot answer this question'));
 
                 return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
             }

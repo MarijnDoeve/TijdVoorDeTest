@@ -15,6 +15,7 @@
     <div class="row">
         <div class="col-12 col-md-6">
             <form method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
                 {%~ for candidate, colour in elimination.data %}
                     <div class="row mb-3">
                         <label for="colour-{{ candidate|lower }}" class="col-4 col-form-label">{{ candidate }}</label>

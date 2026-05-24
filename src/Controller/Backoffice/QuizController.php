@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
@@ -184,6 +184,7 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid('candidate_answer')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
@@ -241,11 +242,13 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid('enable_quiz')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
         name: 'tvdt_backoffice_enable',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
+        methods: ['POST'],
     )]
     public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
     {
@@ -259,11 +262,13 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
     }
 
+    #[IsCsrfTokenValid('clear_quiz')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/clear',
         name: 'tvdt_backoffice_quiz_clear',
         requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function clearQuiz(Quiz $quiz): RedirectResponse
     {
@@ -277,11 +282,13 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('delete_quiz')]
     #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/delete',
         name: 'tvdt_backoffice_quiz_delete',
         requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function deleteQuiz(Quiz $quiz): RedirectResponse
     {
@@ -292,18 +299,16 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
+    #[IsCsrfTokenValid('candidate_correction')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
         name: 'tvdt_backoffice_modify_correction',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$request->isMethod('POST')) {
-            throw new MethodNotAllowedHttpException(['POST']);
-        }
-
         $corrections = (float) $request->request->get('corrections');
 
         $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
@@ -311,18 +316,16 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('candidate_penalty')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
         name: 'tvdt_backoffice_modify_penalty',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$request->isMethod('POST')) {
-            throw new MethodNotAllowedHttpException(['POST']);
-        }
-
         $penalty = (int) $request->request->get('penalty');
 
         $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
@@ -330,12 +333,13 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('toggle_candidate')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/toggle',
         name: 'tvdt_backoffice_toggle_candidate',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
-        methods: ['GET'],
+        methods: ['POST'],
     )]
     public function toggleCandidate(Quiz $quiz, Candidate $candidate): RedirectResponse
     {
