@@ -15,14 +15,15 @@ concurrency:
 
 permissions:
   contents: read
-  packages: write
-  checks: write
-  pull-requests: write
 
 jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,6 +79,9 @@ jobs:
   
   build-deploy:
     name: Build and deploy to ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
+    permissions:
+      contents: read
+      packages: write
     environment:
       name: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
       url: ${{ vars.URL }}
