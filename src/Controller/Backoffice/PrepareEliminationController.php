@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
@@ -20,35 +21,30 @@ final class PrepareEliminationController extends AbstractController
 {
     public function __construct(private readonly EliminationFactory $eliminationFactory, private readonly EntityManagerInterface $em) {}
 
+    #[IsCsrfTokenValid('prepare_elimination')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/elimination/prepare',
         name: 'tvdt_prepare_elimination',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function index(Season $season, Quiz $quiz, Request $request): RedirectResponse
+    public function index(Season $season, Quiz $quiz): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('prepare_elimination', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $elimination = $this->eliminationFactory->createEliminationFromQuiz($quiz);
 
         return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
     }
 
+    #[IsCsrfTokenValid('prepare_elimination', methods: ['POST'])]
     #[Route(
         '/backoffice/elimination/{elimination}',
         name: 'tvdt_prepare_elimination_view',
         requirements: ['elimination' => Requirement::UUID],
+        methods: ['GET', 'POST'],
     )]
     public function viewElimination(Elimination $elimination, Request $request): Response
     {
-        if ('POST' === $request->getMethod()) {
-            if (!$this->isCsrfTokenValid('prepare_elimination', $request->request->get('_token'))) {
-                throw $this->createAccessDeniedException();
-            }
-
+        if ($request->isMethod('POST')) {
             $elimination->updateFromInputBag($request->request);
             $this->em->flush();
 
@@ -57,6 +53,8 @@ final class PrepareEliminationController extends AbstractController
             }
 
             $this->addFlash('success', 'Elimination updated');
+
+            return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
         }
 
         return $this->render('backoffice/prepare_elimination/index.html.twig', [

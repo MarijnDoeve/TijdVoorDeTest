@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
@@ -183,6 +184,7 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid('candidate_answer')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/candidates/{question}',
@@ -192,10 +194,6 @@ class QuizController extends AbstractController
     )]
     public function saveCandidateAnswers(Season $season, Quiz $quiz, Question $question, Request $request): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('candidate_answer', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         if (false === $season->quizzes->contains($quiz)
             || false === $quiz->questions->contains($question)) {
             throw new BadRequestHttpException('Invalid quiz or question');
@@ -244,6 +242,7 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[IsCsrfTokenValid('enable_quiz')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
@@ -251,12 +250,8 @@ class QuizController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
         methods: ['POST'],
     )]
-    public function enableQuiz(Season $season, ?Quiz $quiz, Request $request): RedirectResponse
+    public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('enable_quiz', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $season->activeQuiz = $quiz;
         $this->em->flush();
 
@@ -267,6 +262,7 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
     }
 
+    #[IsCsrfTokenValid('clear_quiz')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/clear',
@@ -274,12 +270,8 @@ class QuizController extends AbstractController
         requirements: ['quiz' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function clearQuiz(Quiz $quiz, Request $request): RedirectResponse
+    public function clearQuiz(Quiz $quiz): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('clear_quiz', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         try {
             $this->quizRepository->clearQuiz($quiz);
             $this->addFlash('success', $this->translator->trans('Quiz cleared'));
@@ -290,6 +282,7 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('delete_quiz')]
     #[IsGranted(SeasonVoter::DELETE, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/delete',
@@ -297,12 +290,8 @@ class QuizController extends AbstractController
         requirements: ['quiz' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function deleteQuiz(Quiz $quiz, Request $request): RedirectResponse
+    public function deleteQuiz(Quiz $quiz): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('delete_quiz', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $this->quizRepository->deleteQuiz($quiz);
 
         $this->addFlash('success', $this->translator->trans('Quiz deleted'));
@@ -310,6 +299,7 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
+    #[IsCsrfTokenValid('candidate_correction')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
@@ -319,10 +309,6 @@ class QuizController extends AbstractController
     )]
     public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('candidate_correction', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $corrections = (float) $request->request->get('corrections');
 
         $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
@@ -330,6 +316,7 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('candidate_penalty')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
@@ -339,10 +326,6 @@ class QuizController extends AbstractController
     )]
     public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('candidate_penalty', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $penalty = (int) $request->request->get('penalty');
 
         $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
@@ -350,6 +333,7 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
+    #[IsCsrfTokenValid('toggle_candidate')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
         '/backoffice/quiz/{quiz}/candidate/{candidate}/toggle',
@@ -357,12 +341,8 @@ class QuizController extends AbstractController
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function toggleCandidate(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
+    public function toggleCandidate(Quiz $quiz, Candidate $candidate): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid('toggle_candidate', $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
         $quizCandidate = $this->quizCandidateRepository->findOneBy([
             'quiz' => $quiz,
             'candidate' => $candidate,
