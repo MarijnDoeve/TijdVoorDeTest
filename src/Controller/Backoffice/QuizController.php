@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -316,13 +315,10 @@ class QuizController extends AbstractController
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
         name: 'tvdt_backoffice_modify_correction',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$request->isMethod('POST')) {
-            throw new MethodNotAllowedHttpException(['POST']);
-        }
-
         if (!$this->isCsrfTokenValid('candidate_correction', $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
@@ -339,13 +335,10 @@ class QuizController extends AbstractController
         '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
         name: 'tvdt_backoffice_modify_penalty',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
     )]
     public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
-        if (!$request->isMethod('POST')) {
-            throw new MethodNotAllowedHttpException(['POST']);
-        }
-
         if (!$this->isCsrfTokenValid('candidate_penalty', $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
         }
