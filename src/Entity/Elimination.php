@@ -20,6 +20,7 @@ class Elimination
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+
     public const string SCREEN_GREEN = 'green';
 
     public const string SCREEN_RED = 'red';

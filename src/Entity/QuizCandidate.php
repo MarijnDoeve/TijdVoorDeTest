@@ -18,6 +18,7 @@ use Tvdt\Repository\QuizCandidateRepository;
 class QuizCandidate
 {
     use SoftDeleteableEntity;
+
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
