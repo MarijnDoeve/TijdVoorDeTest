@@ -14,7 +14,7 @@ use Tvdt\Repository\QuizCandidateRepository;
 
 #[Gedmo\SoftDeleteable]
 #[ORM\Entity(repositoryClass: QuizCandidateRepository::class)]
-#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'], options: ['where' => 'deleted_at IS NULL'])]
+#[ORM\UniqueConstraint(columns: ['candidate_id', 'quiz_id'], options: ['where' => '(deleted_at IS NULL)'])]
 class QuizCandidate
 {
     use SoftDeleteableEntity;
