@@ -35,14 +35,16 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ path('tvdt_backoffice_toggle_candidate', {quiz: quiz.id, candidate: candidate.id}) }}"
-                       class="btn btn-sm btn-outline-secondary">
-                        {% if quizCandidate == null or quizCandidate.active %}
-                            {{ 'Deactivate'|trans }}
-                        {% else %}
-                            {{ 'Activate'|trans }}
-                        {% endif %}
-                    </a>
+                    <form action="{{ path('tvdt_backoffice_toggle_candidate', {quiz: quiz.id, candidate: candidate.id}) }}" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token('toggle_candidate') }}">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            {% if quizCandidate == null or quizCandidate.active %}
+                                {{ 'Deactivate'|trans }}
+                            {% else %}
+                                {{ 'Activate'|trans }}
+                            {% endif %}
+                        </button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}

@@ -3,16 +3,24 @@
     <div class="mb-3 btn-group">
 
         {% if quiz is same as (season.activeQuiz) %}
-            <a class="btn btn-secondary"
-               href="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}">{{ 'Deactivate Quiz'|trans }}</a>
+            <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
+                <button type="submit" class="btn btn-secondary rounded-0 rounded-start">
+                    {{ 'Deactivate Quiz'|trans }}
+                </button>
+            </form>
         {% else %}
-            <a class="btn btn-primary"
-               href="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ 'Make active'|trans }}</a>
+            <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
+                <button type="submit" class="btn btn-primary rounded-0 rounded-start">
+                    {{ 'Make active'|trans }}
+                </button>
+            </form>
         {% endif %}
         <button class="btn btn-danger" data-action="click->bo--quiz#clearQuiz">
             {{ 'Clear Quiz...'|trans }}
         </button>
-        <button class="btn btn-danger" data-action="click->bo--quiz#deleteQuiz">
+        <button class="btn btn-danger rounded-0 rounded-end" data-action="click->bo--quiz#deleteQuiz">
             {{ 'Delete Quiz...'|trans }}
         </button>
     </div>
@@ -74,8 +82,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
-                    <a href="{{ path('tvdt_backoffice_quiz_clear', {quiz: quiz.id}) }}"
-                       class="btn btn-danger">{{ 'Yes'|trans }}</a>
+                    <form action="{{ path('tvdt_backoffice_quiz_clear', {quiz: quiz.id}) }}" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token('clear_quiz') }}">
+                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -97,8 +107,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
-                    <a href="{{ path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}) }}"
-                       class="btn btn-danger">{{ 'Yes'|trans }}</a>
+                    <form action="{{ path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}) }}" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_quiz') }}">
+                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
+                    </form>
                 </div>
             </div>
         </div>

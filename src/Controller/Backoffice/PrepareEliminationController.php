@@ -24,9 +24,14 @@ final class PrepareEliminationController extends AbstractController
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/elimination/prepare',
         name: 'tvdt_prepare_elimination',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID],
+        methods: ['POST'],
     )]
-    public function index(Season $season, Quiz $quiz): RedirectResponse
+    public function index(Season $season, Quiz $quiz, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('prepare_elimination', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         $elimination = $this->eliminationFactory->createEliminationFromQuiz($quiz);
 
         return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);

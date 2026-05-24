@@ -250,9 +250,14 @@ class QuizController extends AbstractController
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/enable',
         name: 'tvdt_backoffice_enable',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
+        methods: ['POST'],
     )]
-    public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
+    public function enableQuiz(Season $season, ?Quiz $quiz, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('enable_quiz', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         $season->activeQuiz = $quiz;
         $this->em->flush();
 
@@ -268,9 +273,14 @@ class QuizController extends AbstractController
         '/backoffice/quiz/{quiz}/clear',
         name: 'tvdt_backoffice_quiz_clear',
         requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
     )]
-    public function clearQuiz(Quiz $quiz): RedirectResponse
+    public function clearQuiz(Quiz $quiz, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('clear_quiz', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         try {
             $this->quizRepository->clearQuiz($quiz);
             $this->addFlash('success', $this->translator->trans('Quiz cleared'));
@@ -286,9 +296,14 @@ class QuizController extends AbstractController
         '/backoffice/quiz/{quiz}/delete',
         name: 'tvdt_backoffice_quiz_delete',
         requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
     )]
-    public function deleteQuiz(Quiz $quiz): RedirectResponse
+    public function deleteQuiz(Quiz $quiz, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('delete_quiz', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->quizRepository->deleteQuiz($quiz);
 
         $this->addFlash('success', $this->translator->trans('Quiz deleted'));
@@ -347,10 +362,14 @@ class QuizController extends AbstractController
         '/backoffice/quiz/{quiz}/candidate/{candidate}/toggle',
         name: 'tvdt_backoffice_toggle_candidate',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
-        methods: ['GET'],
+        methods: ['POST'],
     )]
-    public function toggleCandidate(Quiz $quiz, Candidate $candidate): RedirectResponse
+    public function toggleCandidate(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('toggle_candidate', $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         $quizCandidate = $this->quizCandidateRepository->findOneBy([
             'quiz' => $quiz,
             'candidate' => $candidate,

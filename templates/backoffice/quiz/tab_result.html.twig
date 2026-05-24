@@ -2,8 +2,10 @@
 <div class="btn-toolbar mb-3" role="toolbar">
     <div class="btn-group me-2">
         {# <a class="btn btn-primary">{{ 'Start Elimination'|trans }}</a> #}
-        <a href="{{ path('tvdt_prepare_elimination', {seasonCode: season.seasonCode, quiz: quiz.id}) }}"
-           class="btn btn-secondary">{{ 'Prepare Custom Elimination'|trans }}</a>
+        <form action="{{ path('tvdt_prepare_elimination', {seasonCode: season.seasonCode, quiz: quiz.id}) }}" method="POST">
+            <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
+            <button type="submit" class="btn btn-secondary rounded-0 rounded-start">{{ 'Prepare Custom Elimination'|trans }}</button>
+        </form>
         {%~ if not quiz.eliminations.empty %}
             <button class="btn btn-secondary dropdown-toggle"
                     data-bs-toggle="dropdown">{{ 'Load Prepared Elimination'|trans }}</button>
