@@ -433,6 +433,10 @@
         <source>You are not allowed to answer this quiz</source>
         <target>Je mag deze test niet beantwoorden</target>
       </trans-unit>
+      <trans-unit id="78moQnF" resname="You cannot answer this question">
+        <source>You cannot answer this question</source>
+        <target>Je kan deze vraag niet beantwoorden</target>
+      </trans-unit>
       <trans-unit id="0afY1NF" resname="You have no seasons yet.">
         <source>You have no seasons yet.</source>
         <target>Je hebt nog geen seizoenen.</target>

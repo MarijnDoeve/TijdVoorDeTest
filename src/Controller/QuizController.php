@@ -117,6 +117,12 @@ final class QuizController extends AbstractController
                 return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
             }
 
+            if ($answer->question !== $this->questionRepository->findNextQuestionForCandidate($candidate)) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('You cannot answer this question'));
+
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
+            }
+
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
             $this->entityManager->flush();
