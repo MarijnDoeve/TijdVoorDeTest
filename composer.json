@@ -24,7 +24,7 @@
         "symfony/brevo-mailer": "8.1.*",
         "symfony/console": "8.1.*",
         "symfony/dotenv": "8.1.*",
-        "symfony/flex": "^2.10.0",
+        "symfony/flex": "^2.11.0",
         "symfony/form": "8.1.*",
         "symfony/framework-bundle": "8.1.*",
         "symfony/mailer": "8.1.*",
@@ -45,7 +45,7 @@
         "thecodingmachine/safe": "^3.4.0",
         "twig/extra-bundle": "^3.24.0",
         "twig/intl-extra": "^3.24.0",
-        "twig/twig": "^3.24.0"
+        "twig/twig": "^3.27.1"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.6",
