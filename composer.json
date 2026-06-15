@@ -65,7 +65,7 @@
         "symfony/stopwatch": "8.1.*",
         "symfony/web-profiler-bundle": "8.1.*",
         "thecodingmachine/phpstan-safe-rule": "^1.4.3",
-        "vincentlanglet/twig-cs-fixer": "^3.14.0"
+        "vincentlanglet/twig-cs-fixer": "^4.0.0"
     },
     "config": {
         "allow-plugins": {
