@@ -10,8 +10,10 @@ use Safe\Exceptions\UrlException;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Season;
 use Tvdt\Helpers\Base64;
+use Tvdt\Tests\Repository\CandidateRepositoryTest;
 
-/** @extends ServiceEntityRepository<Candidate> */
+/** @extends ServiceEntityRepository<Candidate>
+ * @see CandidateRepositoryTest */
 class CandidateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

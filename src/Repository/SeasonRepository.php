@@ -8,8 +8,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
+use Tvdt\Tests\Repository\SeasonRepositoryTest;
 
-/** @extends ServiceEntityRepository<Season> */
+/** @extends ServiceEntityRepository<Season>
+ * @see SeasonRepositoryTest */
 class SeasonRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

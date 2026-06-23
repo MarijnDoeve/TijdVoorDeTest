@@ -12,7 +12,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Tvdt\Entity\Season;
 use Tvdt\Repository\SeasonRepository;
 use Tvdt\Repository\UserRepository;
+use Tvdt\Tests\Command\ClaimSeasonCommandTest;
 
+/** @see ClaimSeasonCommandTest */
 #[AsCommand(
     name: 'tvdt:claim-season',
     description: 'Give a user owner rights on a season',

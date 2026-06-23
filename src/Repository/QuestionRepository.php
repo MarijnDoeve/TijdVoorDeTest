@@ -8,8 +8,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
+use Tvdt\Tests\Repository\QuestionRepositoryTest;
 
-/** @extends ServiceEntityRepository<Question> */
+/** @extends ServiceEntityRepository<Question>
+ * @see QuestionRepositoryTest */
 class QuestionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

@@ -9,8 +9,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Tvdt\Entity\User;
+use Tvdt\Tests\Repository\UserRepositoryTest;
 
-/** @extends ServiceEntityRepository<User> */
+/** @extends ServiceEntityRepository<User>
+ * @see UserRepositoryTest */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)

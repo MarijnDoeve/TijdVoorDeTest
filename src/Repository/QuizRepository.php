@@ -13,8 +13,10 @@ use Symfony\Component\Uid\Uuid;
 use Tvdt\Dto\Result;
 use Tvdt\Entity\Quiz;
 use Tvdt\Exception\ErrorClearingQuizException;
+use Tvdt\Tests\Repository\QuizRepositoryTest;
 
-/** @extends ServiceEntityRepository<Quiz> */
+/** @extends ServiceEntityRepository<Quiz>
+ * @see QuizRepositoryTest */
 class QuizRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)

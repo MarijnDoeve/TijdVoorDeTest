@@ -9,7 +9,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Tvdt\Repository\UserRepository;
+use Tvdt\Tests\Command\MakeAdminCommandTest;
 
+/** @see MakeAdminCommandTest */
 #[AsCommand(
     name: 'tvdt:make-admin',
     description: 'Give a user the role admin',

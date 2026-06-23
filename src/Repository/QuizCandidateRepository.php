@@ -10,8 +10,10 @@ use Safe\DateTimeImmutable;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
+use Tvdt\Tests\Repository\QuizCandidateRepositoryTest;
 
-/** @extends ServiceEntityRepository<QuizCandidate> */
+/** @extends ServiceEntityRepository<QuizCandidate>
+ * @see QuizCandidateRepositoryTest */
 class QuizCandidateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

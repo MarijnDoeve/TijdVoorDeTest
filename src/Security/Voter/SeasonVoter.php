@@ -14,8 +14,10 @@ use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
+use Tvdt\Tests\Security\Voter\SeasonVoterTest;
 
-/** @extends Voter<string, Season|Elimination|Quiz|Candidate|Answer|Question> */
+/** @extends Voter<string, Season|Elimination|Quiz|Candidate|Answer|Question>
+ * @see SeasonVoterTest */
 final class SeasonVoter extends Voter
 {
     public const string EDIT = 'SEASON_EDIT';

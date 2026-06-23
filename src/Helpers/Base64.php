@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tvdt\Helpers;
 
 use Safe\Exceptions\UrlException;
+use Tvdt\Tests\Helpers\Base64Test;
 
+/** @see Base64Test */
 class Base64
 {
     public static function base64UrlEncode(string $input): string
