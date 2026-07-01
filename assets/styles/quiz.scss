@@ -1,14 +1,17 @@
-html, body {
+html {
     height: 100%;
+}
+
+body {
+    min-height: 100%;
     background-image: url("../img/background.png");
-    background-position: center center;
+    background-position: center;
     background-repeat: no-repeat;
     background-color: black;
     color: white;
-
-    display: grid;
-    align-items: center;
-    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .elimination-screen {
