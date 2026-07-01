@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Service;
 
+use PhpOffice\PhpSpreadsheet\Reader;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\File;
 use Tvdt\Entity\Answer;
@@ -140,6 +142,65 @@ final class QuizSpreadsheetServiceTest extends TestCase
         }
     }
 
+    /** @return array<string, array{int, string, int, string, int, int}> */
+    public static function answerCountHeaderProvider(): array
+    {
+        // Columns (0-based): Question=0, Answer1=1, Correct=2, Answer2=3, Correct=4, …
+        // Answer N is at index 1+2*(N-1) = 2N-1, Correct N at 2+2*(N-1) = 2N.
+        return [
+            '2 answers → 2 header pairs' => [2,  'Answer 2',  3,  'Correct', 4,  5],
+            '6 answers → 6 header pairs' => [6,  'Answer 6',  11, 'Correct', 12, 13],
+            '7 answers → 7 header pairs' => [7,  'Answer 7',  13, 'Correct', 14, 15],
+            '10 answers → 10 header pairs' => [10, 'Answer 10', 19, 'Correct', 20, 21],
+        ];
+    }
+
+    #[DataProvider('answerCountHeaderProvider')]
+    public function testQuizToXlsxHeaderCountMatchesAnswerCount(
+        int $answerCount,
+        string $lastAnswerHeader,
+        int $lastAnswerIndex,
+        string $lastCorrectHeader,
+        int $lastCorrectIndex,
+        int $absentIndex,
+    ): void {
+        $path = $this->captureXlsx($this->subject->quizToXlsx($this->makeQuizWithAnswerCounts($answerCount)));
+        $headers = $this->readFirstRow($path);
+
+        $this->assertSame($lastAnswerHeader, $headers[$lastAnswerIndex]);
+        $this->assertSame($lastCorrectHeader, $headers[$lastCorrectIndex]);
+        $this->assertArrayNotHasKey($absentIndex, $headers);
+    }
+
+    public function testQuizToXlsxHeadersMatchMaxAnswersAcrossQuestions(): void
+    {
+        $quiz = new Quiz();
+        $quiz->addQuestion($this->makeQuestion('Short', 3));
+        $quiz->addQuestion($this->makeQuestion('Long', 7));
+        $quiz->addQuestion($this->makeQuestion('Medium', 5));
+
+        $path = $this->captureXlsx($this->subject->quizToXlsx($quiz));
+        $headers = $this->readFirstRow($path);
+
+        $this->assertSame('Answer 7', $headers[13]);
+        $this->assertSame('Correct', $headers[14]);
+        $this->assertArrayNotHasKey(15, $headers);
+    }
+
+    public function testQuizToXlsxRoundTripWithSevenAnswers(): void
+    {
+        $original = $this->makeQuizWithAnswerCounts(7);
+        $path = $this->captureXlsx($this->subject->quizToXlsx($original));
+
+        $imported = new Quiz();
+        $this->subject->xlsxToQuiz($imported, new File($path));
+
+        $this->assertCount(1, $imported->questions);
+        /** @var Question $question */
+        $question = $imported->questions->first();
+        $this->assertCount(7, $question->answers);
+    }
+
     private function makeQuiz(): Quiz
     {
         $quiz = new Quiz();
@@ -161,6 +222,36 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $quiz->addQuestion($q2);
 
         return $quiz;
+    }
+
+    private function makeQuizWithAnswerCounts(int ...$counts): Quiz
+    {
+        $quiz = new Quiz();
+        foreach ($counts as $i => $count) {
+            $quiz->addQuestion($this->makeQuestion("Question $i", $count));
+        }
+
+        return $quiz;
+    }
+
+    private function makeQuestion(string $text, int $answerCount): Question
+    {
+        $question = new Question();
+        $question->question = $text;
+        $question->ordering = 1;
+        for ($i = 1; $i <= $answerCount; ++$i) {
+            $question->addAnswer(new Answer("Answer $i", isRightAnswer: false));
+        }
+
+        return $question;
+    }
+
+    /** @return array<int, string|null> */
+    private function readFirstRow(string $path): array
+    {
+        $rows = (new Reader\Xlsx())->setReadDataOnly(true)->load($path)->getActiveSheet()->toArray(formatData: false);
+
+        return $rows[0] ?? [];
     }
 
     private function captureXlsx(\Closure $closure): string

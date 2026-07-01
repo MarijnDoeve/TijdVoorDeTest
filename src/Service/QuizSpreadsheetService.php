@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Service;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer;
@@ -94,22 +95,14 @@ class QuizSpreadsheetService
             $answerCounter = 1;
             $arrCounter = 1;
 
-            while (true) {
-                try {
-                    if (null === $questionArr[$arrCounter]) {
-                        if (1 === $answerCounter) {
-                            $errors[] = \sprintf('Question %d has no answers', $answerCounter);
-                        }
-
-                        break;
-                    }
-                } catch (\ErrorException) {
-                    break;
-                }
-
+            while (\array_key_exists($arrCounter, $questionArr) && null !== $questionArr[$arrCounter]) {
                 $answer = new Answer((string) $questionArr[$arrCounter++], (bool) $questionArr[$arrCounter++]);
                 $answer->ordering = $answerCounter++;
                 $question->addAnswer($answer);
+            }
+
+            if (1 === $answerCounter) {
+                $errors[] = \sprintf('Question %d has no answers', $answerCounter);
             }
 
             $quiz->addQuestion($question);
@@ -125,39 +118,39 @@ class QuizSpreadsheetService
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->getStyle('1:1')->getFont()->setBold(true);
-
-        $sheet->setCellValue('A1', 'Question');
-        $sheet->getColumnDimension('A')->setWidth(30);
-        $sheet->getStyle('A:A')->getAlignment()->setWrapText(true);
-
-        $counter = 1;
-        foreach (range('B', 'L', 2) as $column) {
-            $sheet->setCellValue($column.'1', 'Answer '.$counter++);
-            $sheet->getColumnDimension($column)->setWidth(30);
-            $sheet->getStyle($column.':'.$column)->getAlignment()->setWrapText(true);
-        }
-
-        foreach (range('C', 'M', 2) as $column) {
-            $sheet->setCellValue($column.'1', 'Correct');
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
-
-        $answerColumns = range('B', 'L', 2);
-        $correctColumns = range('C', 'M', 2);
-
+        // Write data rows first so we know the maximum answer count.
+        $maxAnswers = 0;
         $row = 2;
         foreach ($quiz->questions as $question) {
             $sheet->setCellValue('A'.$row, $question->question);
 
             $col = 0;
             foreach ($question->answers as $answer) {
-                $sheet->setCellValue($answerColumns[$col].$row, $answer->text);
-                $sheet->setCellValue($correctColumns[$col].$row, $answer->isRightAnswer);
+                $sheet->setCellValue(Coordinate::stringFromColumnIndex(2 + 2 * $col).$row, $answer->text);
+                $sheet->setCellValue(Coordinate::stringFromColumnIndex(3 + 2 * $col).$row, $answer->isRightAnswer);
                 ++$col;
             }
 
+            $maxAnswers = max($maxAnswers, $col);
             ++$row;
+        }
+
+        // Write headers last, sized to the widest question.
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+        $sheet->setCellValue('A1', 'Question');
+        $sheet->getColumnDimension('A')->setWidth(30);
+        $sheet->getStyle('A:A')->getAlignment()->setWrapText(true);
+
+        for ($i = 0; $i < $maxAnswers; ++$i) {
+            $answerCol = Coordinate::stringFromColumnIndex(2 + 2 * $i);
+            $correctCol = Coordinate::stringFromColumnIndex(3 + 2 * $i);
+
+            $sheet->setCellValue($answerCol.'1', 'Answer '.($i + 1));
+            $sheet->getColumnDimension($answerCol)->setWidth(30);
+            $sheet->getStyle($answerCol.':'.$answerCol)->getAlignment()->setWrapText(true);
+
+            $sheet->setCellValue($correctCol.'1', 'Correct');
+            $sheet->getColumnDimension($correctCol)->setAutoSize(true);
         }
 
         return $this->toXlsx($spreadsheet);
