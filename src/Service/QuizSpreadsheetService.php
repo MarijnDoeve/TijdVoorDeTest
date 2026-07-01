@@ -120,9 +120,47 @@ class QuizSpreadsheetService
         }
     }
 
-    public function quizToXlsx(Quiz $quiz): void
+    public function quizToXlsx(Quiz $quiz): \Closure
     {
-        throw new \Exception('Not implemented');
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+
+        $sheet->setCellValue('A1', 'Question');
+        $sheet->getColumnDimension('A')->setWidth(30);
+        $sheet->getStyle('A:A')->getAlignment()->setWrapText(true);
+
+        $counter = 1;
+        foreach (range('B', 'L', 2) as $column) {
+            $sheet->setCellValue($column.'1', 'Answer '.$counter++);
+            $sheet->getColumnDimension($column)->setWidth(30);
+            $sheet->getStyle($column.':'.$column)->getAlignment()->setWrapText(true);
+        }
+
+        foreach (range('C', 'M', 2) as $column) {
+            $sheet->setCellValue($column.'1', 'Correct');
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $answerColumns = range('B', 'L', 2);
+        $correctColumns = range('C', 'M', 2);
+
+        $row = 2;
+        foreach ($quiz->questions as $question) {
+            $sheet->setCellValue('A'.$row, $question->question);
+
+            $col = 0;
+            foreach ($question->answers as $answer) {
+                $sheet->setCellValue($answerColumns[$col].$row, $answer->text);
+                $sheet->setCellValue($correctColumns[$col].$row, $answer->isRightAnswer);
+                ++$col;
+            }
+
+            ++$row;
+        }
+
+        return $this->toXlsx($spreadsheet);
     }
 
     private function toXlsx(Spreadsheet $spreadsheet): \Closure

@@ -49,6 +49,11 @@
         </button>
     </div>
 
+    <a class="btn btn-outline-secondary mb-3"
+       href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
+        {{ 'Export to XLSX'|trans }}
+    </a>
+
     <h4 class="mb-3">{{ 'Questions'|trans }}</h4>
     <div class="accordion">
         {%~ for question in quiz.questions ~%}
