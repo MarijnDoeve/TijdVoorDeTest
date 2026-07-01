@@ -127,6 +127,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $question = new Question();
         $question->question = 'Unanswered question';
         $question->ordering = 1;
+
         $quiz->addQuestion($question);
 
         $path = $this->captureXlsx($this->subject->quizToXlsx($quiz));
@@ -134,8 +135,8 @@ final class QuizSpreadsheetServiceTest extends TestCase
         try {
             $this->subject->xlsxToQuiz(new Quiz(), new File($path));
             $this->fail('Expected SpreadsheetDataException to be thrown');
-        } catch (SpreadsheetDataException $e) {
-            $this->assertNotEmpty($e->errors);
+        } catch (SpreadsheetDataException $spreadsheetDataException) {
+            $this->assertNotEmpty($spreadsheetDataException->errors);
         }
     }
 
