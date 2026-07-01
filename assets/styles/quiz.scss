@@ -1,17 +1,23 @@
 html {
     height: 100%;
-}
-
-body {
-    min-height: 100%;
     background-image: url("../img/background.png");
     background-position: center;
     background-repeat: no-repeat;
     background-color: black;
     color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    align-items: center;
+}
+
+body {
+    height: 100%;
+    background-image: url("../img/background.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: black;
+    display: grid;
+    align-content: center;
+    justify-self: center;
 }
 
 .elimination-screen {
