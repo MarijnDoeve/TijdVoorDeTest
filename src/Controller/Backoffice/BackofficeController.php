@@ -6,6 +6,7 @@ namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -93,7 +94,7 @@ final class BackofficeController extends AbstractController
     {
         $response = new StreamedResponse($this->excel->quizToXlsx($quiz));
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment; filename="'.$quiz->name.'.xlsx"');
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $quiz->name.'.xlsx'));
 
         return $response;
     }
