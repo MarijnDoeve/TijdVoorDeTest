@@ -106,14 +106,17 @@ jobs:
           REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
+            SENTRY_VERSION="${TAG#v}"
             {
               echo "tag=$TAG"
+              echo "sentry_version=$SENTRY_VERSION"
               echo "full_name=ghcr.io/${REPO_LOWER}:$TAG"
             } >> "$GITHUB_OUTPUT"
           else
             SHORT_SHA=$(git rev-parse --short HEAD)
             {
               echo "tag=$SHORT_SHA"
+              echo "sentry_version=$SHORT_SHA"
               echo "full_name=ghcr.io/${REPO_LOWER}:$SHORT_SHA"
             } >> "$GITHUB_OUTPUT"
           fi
@@ -139,7 +142,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          release: ${{steps.meta.outputs.tag}}
+          release: ${{steps.meta.outputs.sentry_version}}
           environment: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
 
       - name: Trigger Portainer Deployment
