@@ -262,7 +262,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
     {
         $quiz = new Quiz();
         foreach ($counts as $i => $count) {
-            $quiz->addQuestion($this->makeQuestion('Question ' . $i, $count));
+            $quiz->addQuestion($this->makeQuestion('Question '.$i, $count));
         }
 
         return $quiz;
@@ -274,7 +274,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $question->question = $text;
         $question->ordering = 1;
         for ($i = 1; $i <= $answerCount; ++$i) {
-            $question->addAnswer(new Answer('Answer ' . $i, isRightAnswer: false));
+            $question->addAnswer(new Answer('Answer '.$i, isRightAnswer: false));
         }
 
         return $question;
