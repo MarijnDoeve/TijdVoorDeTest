@@ -102,7 +102,7 @@ class QuizSpreadsheetService
             }
 
             if (1 === $answerCounter) {
-                $errors[] = \sprintf('Question %d has no answers', $answerCounter);
+                $errors[] = \sprintf('Question %d has no answers', $question->ordering);
             }
 
             $quiz->addQuestion($question);
