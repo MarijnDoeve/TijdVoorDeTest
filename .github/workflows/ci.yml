@@ -17,12 +17,11 @@ permissions:
   contents: read
 
 jobs:
-  tests:
-    name: Tests
+  quality:
+    name: Code Quality
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
-      checks: write
-      pull-requests: write
       contents: read
     steps:
       - name: Checkout
@@ -40,26 +39,68 @@ jobs:
             compose.yaml
             compose.override.yaml
           set: |
-            *.cache-from=type=gha,scope=${{github.ref}}
+            *.cache-from=type=gha,scope=${{github.ref}}-quality
             *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{github.ref}},mode=max
+            *.cache-to=type=gha,scope=${{github.ref}}-quality,mode=${{ github.event_name == 'pull_request' && 'min' || 'max' }}
       - name: Start services
         run: docker compose up php database --wait --no-build
+      - name: Warm up dev cache
+        run: docker compose exec -T php bin/console cache:warmup --env=dev
       - name: Lint Twig templates
+        id: twig_lint
+        continue-on-error: true
         run: docker compose exec -T php bin/console lint:twig --format=github templates
       - name: Coding Style
+        id: cs
+        continue-on-error: true
         run: docker compose exec -T php vendor/bin/php-cs-fixer check --diff --show-progress=none
       - name: Twig Coding Style
+        id: twig_cs
+        continue-on-error: true
         run: docker compose exec -T php vendor/bin/twig-cs-fixer check
       - name: Static Analysis (PHPStan)
+        id: phpstan
+        continue-on-error: true
         run: docker compose exec -T php vendor/bin/phpstan analyse --no-progress --no-ansi --error-format=github
       - name: Rector
+        id: rector
+        continue-on-error: true
         run: docker compose exec -T php vendor/bin/rector process --dry-run --no-progress-bar --output-format=github
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
-      - name: Check Mercure reachability
-        if: false
-        run: curl -vkI --fail-with-body https://localhost/.well-known/mercure?topic=test
+      - name: Assert all checks passed
+        if: always()
+        run: |
+          outcomes="${{ steps.twig_lint.outcome }} ${{ steps.cs.outcome }} ${{ steps.twig_cs.outcome }} ${{ steps.phpstan.outcome }} ${{ steps.rector.outcome }}"
+          if echo "$outcomes" | grep -q "failure"; then exit 1; fi
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker images
+        uses: docker/bake-action@v5
+        with:
+          pull: true
+          load: true
+          files: |
+            compose.yaml
+            compose.override.yaml
+          set: |
+            *.cache-from=type=gha,scope=${{github.ref}}-tests
+            *.cache-from=type=gha,scope=refs/heads/main
+            *.cache-to=type=gha,scope=${{github.ref}}-tests,mode=${{ github.event_name == 'pull_request' && 'min' || 'max' }}
+      - name: Start services
+        run: docker compose up php database --wait --no-build
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
@@ -76,7 +117,7 @@ jobs:
           check_name: PHPUnit
       - name: Doctrine Schema Validator
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
-  
+
   build-deploy:
     name: Build and deploy to ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
     permissions:
@@ -85,8 +126,9 @@ jobs:
     environment:
       name: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || (github.ref == 'refs/heads/main' && 'acceptance' || '') }}
       url: ${{ vars.URL }}
-    needs: tests
+    needs: [quality, tests]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: (github.ref == 'refs/heads/main' && false) || startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
@@ -150,4 +192,4 @@ jobs:
         env:
           PORTAINER_WEBHOOK: ${{secrets.PORTAINER_WEBHOOK}}
         run: |
-          curl -v -X POST "$PORTAINER_WEBHOOK"?IMAGE_TAG=${{steps.meta.outputs.tag}} --fail-with-body
+          curl -v -X POST "${PORTAINER_WEBHOOK}?IMAGE_TAG=${{steps.meta.outputs.tag}}" --fail-with-body
