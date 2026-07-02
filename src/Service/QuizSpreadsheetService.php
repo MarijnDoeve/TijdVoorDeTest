@@ -18,39 +18,39 @@ class QuizSpreadsheetService
 {
     public function generateTemplate(bool $fillExample = true): \Closure
     {
-        $spreadsheet = new Spreadsheet();
-
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->getStyle('1:1')->getFont()->setBold(true);
-
-        $sheet->setCellValue('A1', 'Question');
-        $sheet->getColumnDimension('A')->setWidth(30);
-        $sheet->getStyle('A:A')->getAlignment()->setWrapText(true);
-
-        $counter = 1;
-        foreach (range('B', 'L', 2) as $column) {
-            $sheet->setCellValue($column.'1', 'Answer '.$counter++);
-            $sheet->getColumnDimension($column)->setWidth(30);
-            $sheet->getStyle($column.':'.$column)->getAlignment()->setWrapText(true);
-        }
-
-        foreach (range('C', 'M', 2) as $column) {
-            $sheet->setCellValue($column.'1', 'Correct');
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
+        $quiz = new Quiz();
 
         if ($fillExample) {
-            $sheet->setCellValue('B2', 'Man');
-            $sheet->setCellValue('C2', true);
+            $geslacht = new Question();
+            $geslacht->question = 'Is de mol een man of een vrouw?';
+            $geslacht->ordering = 1;
+            $geslacht->addAnswer(new Answer('Man', true));
+            $geslacht->addAnswer(new Answer('Vrouw'));
+            $quiz->addQuestion($geslacht);
 
-            $sheet->setCellValue('D2', 'Vrouw');
-            $sheet->setCellValue('E2', false);
-
-            $sheet->setCellValue('A2', 'Is de mol een man of een vrouw?');
+            $identiteit = new Question();
+            $identiteit->question = 'Wie is de mol?';
+            $identiteit->ordering = 2;
+            foreach ([
+                ['Emma', false],
+                ['Jan', false],
+                ['Sara', false],
+                ['Piet', false],
+                ['Lisa', true],
+                ['Kees', false],
+                ['Anna', false],
+                ['Henk', false],
+                ['Nina', false],
+                ['Joost', false],
+            ] as $i => [$name, $correct]) {
+                $answer = new Answer($name, $correct);
+                $answer->ordering = $i + 1;
+                $identiteit->addAnswer($answer);
+            }
+            $quiz->addQuestion($identiteit);
         }
 
-        return $this->toXlsx($spreadsheet);
+        return $this->quizToXlsx($quiz);
     }
 
     /** @throws SpreadsheetDataException */

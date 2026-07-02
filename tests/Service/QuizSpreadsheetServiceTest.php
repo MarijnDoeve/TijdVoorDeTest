@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Service;
 
 use PhpOffice\PhpSpreadsheet\Reader;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -69,12 +71,17 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $quiz = new Quiz();
         $this->subject->xlsxToQuiz($quiz, new File($path));
 
-        $this->assertCount(1, $quiz->questions);
+        $this->assertCount(2, $quiz->questions);
 
-        /** @var Question $question */
-        $question = $quiz->questions->first();
-        $this->assertSame('Is de mol een man of een vrouw?', $question->question);
-        $this->assertCount(2, $question->answers);
+        /** @var Question $first */
+        $first = $quiz->questions->first();
+        $this->assertSame('Is de mol een man of een vrouw?', $first->question);
+        $this->assertCount(2, $first->answers);
+
+        /** @var Question $second */
+        $second = $quiz->questions->last();
+        $this->assertSame('Wie is de mol?', $second->question);
+        $this->assertCount(10, $second->answers);
     }
 
     public function testQuizToXlsxEmptyQuizImportsWithNoQuestions(): void
@@ -140,6 +147,33 @@ final class QuizSpreadsheetServiceTest extends TestCase
         } catch (SpreadsheetDataException $spreadsheetDataException) {
             $this->assertNotEmpty($spreadsheetDataException->errors);
         }
+    }
+
+    public function testXlsxToQuizStopsAtBlankRow(): void
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Question');
+        $sheet->setCellValue('B1', 'Answer 1');
+        $sheet->setCellValue('C1', 'Correct');
+        $sheet->setCellValue('A2', 'First question');
+        $sheet->setCellValue('B2', 'Yes');
+        $sheet->setCellValue('C2', true);
+        // Row 3 intentionally blank — should halt parsing
+        $sheet->setCellValue('A4', 'Second question');
+        $sheet->setCellValue('B4', 'No');
+        $sheet->setCellValue('C4', false);
+
+        $path = $this->createTempPath('.xlsx');
+        ob_start();
+        (new Writer\Xlsx($spreadsheet))->save('php://output');
+        file_put_contents($path, ob_get_clean());
+
+        $quiz = new Quiz();
+        $this->subject->xlsxToQuiz($quiz, new File($path));
+
+        $this->assertCount(1, $quiz->questions);
+        $this->assertSame('First question', $quiz->questions->first()->question);
     }
 
     /** @return array<string, array{int, string, int, string, int, int}> */
