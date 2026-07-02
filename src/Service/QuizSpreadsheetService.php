@@ -47,6 +47,7 @@ class QuizSpreadsheetService
                 $answer->ordering = $i + 1;
                 $identiteit->addAnswer($answer);
             }
+
             $quiz->addQuestion($identiteit);
         }
 

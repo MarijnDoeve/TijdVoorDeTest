@@ -166,27 +166,27 @@ final class QuizSpreadsheetServiceTest extends TestCase
 
         $path = $this->createTempPath('.xlsx');
         ob_start();
-        (new Writer\Xlsx($spreadsheet))->save('php://output');
+        new Writer\Xlsx($spreadsheet)->save('php://output');
         file_put_contents($path, ob_get_clean());
 
         $quiz = new Quiz();
         $this->subject->xlsxToQuiz($quiz, new File($path));
 
         $this->assertCount(1, $quiz->questions);
-        $this->assertSame('First question', $quiz->questions->first()->question);
+        /** @var Question $first */
+        $first = $quiz->questions->first();
+        $this->assertSame('First question', $first->question);
     }
 
-    /** @return array<string, array{int, string, int, string, int, int}> */
-    public static function answerCountHeaderProvider(): array
+    /** @return \Iterator<string, array{int, string, int, string, int, int}> */
+    public static function answerCountHeaderProvider(): \Iterator
     {
         // Columns (0-based): Question=0, Answer1=1, Correct=2, Answer2=3, Correct=4, …
         // Answer N is at index 1+2*(N-1) = 2N-1, Correct N at 2+2*(N-1) = 2N.
-        return [
-            '2 answers → 2 header pairs' => [2,  'Answer 2',  3,  'Correct', 4,  5],
-            '6 answers → 6 header pairs' => [6,  'Answer 6',  11, 'Correct', 12, 13],
-            '7 answers → 7 header pairs' => [7,  'Answer 7',  13, 'Correct', 14, 15],
-            '10 answers → 10 header pairs' => [10, 'Answer 10', 19, 'Correct', 20, 21],
-        ];
+        yield '2 answers → 2 header pairs' => [2,  'Answer 2',  3,  'Correct', 4,  5];
+        yield '6 answers → 6 header pairs' => [6,  'Answer 6',  11, 'Correct', 12, 13];
+        yield '7 answers → 7 header pairs' => [7,  'Answer 7',  13, 'Correct', 14, 15];
+        yield '10 answers → 10 header pairs' => [10, 'Answer 10', 19, 'Correct', 20, 21];
     }
 
     #[DataProvider('answerCountHeaderProvider')]
@@ -262,7 +262,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
     {
         $quiz = new Quiz();
         foreach ($counts as $i => $count) {
-            $quiz->addQuestion($this->makeQuestion("Question $i", $count));
+            $quiz->addQuestion($this->makeQuestion('Question ' . $i, $count));
         }
 
         return $quiz;
@@ -274,7 +274,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $question->question = $text;
         $question->ordering = 1;
         for ($i = 1; $i <= $answerCount; ++$i) {
-            $question->addAnswer(new Answer("Answer $i", isRightAnswer: false));
+            $question->addAnswer(new Answer('Answer ' . $i, isRightAnswer: false));
         }
 
         return $question;
@@ -283,7 +283,7 @@ final class QuizSpreadsheetServiceTest extends TestCase
     /** @return array<int, string|null> */
     private function readFirstRow(string $path): array
     {
-        $rows = (new Reader\Xlsx())->setReadDataOnly(true)->load($path)->getActiveSheet()->toArray(formatData: false);
+        $rows = new Reader\Xlsx()->setReadDataOnly(true)->load($path)->getActiveSheet()->toArray(formatData: false);
 
         return $rows[0] ?? [];
     }
