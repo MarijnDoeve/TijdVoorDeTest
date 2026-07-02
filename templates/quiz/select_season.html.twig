@@ -1,5 +1,6 @@
 {% extends 'quiz/base.html.twig' %}
 {% block body %}
-    {{ form(form) }}
-    <a href="{{ path('tvdt_backoffice_index') }}" class="btn btn-outline-secondary">{{ 'Manage Quiz'|trans }}</a>
+    <div class="quiz-form-narrow">
+        {{ form(form) }}
+    </div>
 {% endblock body %}

@@ -72,10 +72,8 @@ Icon
 /.idea/
 /.vscode/
 
-# Junie
-!/.junie/
-/.junie/memory/
-/.junie/plans/
+# Claude Code
+/.claude/settings.local.json
 
 # Windows
 Thumbs.db

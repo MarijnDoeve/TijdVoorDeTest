@@ -1,3 +1,27 @@
+{% macro confirm_modal(id, target, body, formAction, csrfToken) %}
+    <div class="modal fade" id="{{ id }}" data-bs-backdrop="static"
+         tabindex="-1"
+         data-bo--quiz-target="{{ target }}"
+         aria-labelledby="{{ id }}Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="{{ id }}Label">{{ 'Please Confirm'|trans }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">{{ body }}</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
+                    <form action="{{ formAction }}" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrfToken }}">
+                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
 <div data-controller="bo--quiz">
     <h4 class="mb-3">{{ 'Quick actions'|trans }}</h4>
     <div class="mb-3 btn-group">
@@ -24,6 +48,11 @@
             {{ 'Delete Quiz...'|trans }}
         </button>
     </div>
+
+    <a class="btn btn-outline-secondary mb-3"
+       href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
+        {{ 'Export to XLSX'|trans }}
+    </a>
 
     <h4 class="mb-3">{{ 'Questions'|trans }}</h4>
     <div class="accordion">
@@ -66,53 +95,19 @@
         {% endfor %}
     </div>
 
-    {# Modal Clear #}
-    <div class="modal fade" id="clearQuizModal" data-bs-backdrop="static"
-         tabindex="-1"
-         data-bo--quiz-target="clearModal"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ 'Please Confirm'|trans }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ 'Are you sure you want to clear all the results? This will also delete all the eliminations.'|trans }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
-                    <form action="{{ path('tvdt_backoffice_quiz_clear', {quiz: quiz.id}) }}" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token('clear_quiz') }}">
-                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{ _self.confirm_modal(
+        'clearQuizModal',
+        'clearModal',
+        'Are you sure you want to clear all the results? This will also delete all the eliminations.'|trans,
+        path('tvdt_backoffice_quiz_clear', {quiz: quiz.id}),
+        csrf_token('clear_quiz'),
+    ) }}
 
-    {# Modal Delete #}
-    <div class="modal fade" id="deleteQuizModal" data-bs-backdrop="static"
-         tabindex="-1"
-         data-bo--quiz-target="deleteModal"
-         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ 'Please Confirm'|trans }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ 'Are you sure you want to delete this quiz?'|trans }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
-                    <form action="{{ path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}) }}" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_quiz') }}">
-                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{ _self.confirm_modal(
+        'deleteQuizModal',
+        'deleteModal',
+        'Are you sure you want to delete this quiz?'|trans,
+        path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}),
+        csrf_token('delete_quiz'),
+    ) }}
 </div>

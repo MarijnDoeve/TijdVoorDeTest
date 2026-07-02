@@ -7,6 +7,7 @@ services:
       target: frankenphp_dev
     volumes:
       - ./:/app
+      - ~/.composer/cache:/root/.composer/cache
       - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
       - ./frankenphp/data:/data
@@ -46,6 +47,8 @@ services:
       - sass:build
       - --watch
       - -v
+    healthcheck:
+      disable: true
   
   ###> symfony/mercure-bundle ###
   ###< symfony/mercure-bundle ###

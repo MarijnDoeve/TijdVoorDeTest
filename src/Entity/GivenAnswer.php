@@ -31,14 +31,14 @@ class GivenAnswer
     public function __construct(
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
-        private(set) Candidate $candidate,
+        public private(set) Candidate $candidate,
 
         #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         #[ORM\ManyToOne]
-        private(set) Quiz $quiz,
+        public private(set) Quiz $quiz,
 
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
-        private(set) Answer $answer,
+        public private(set) Answer $answer,
     ) {}
 }

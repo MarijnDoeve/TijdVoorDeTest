@@ -1,14 +1,97 @@
-html, body {
+html {
     height: 100%;
     background-image: url("../img/background.png");
-    background-position: center center;
+    background-position: center;
     background-repeat: no-repeat;
     background-color: black;
     color: white;
-
     display: grid;
     align-items: center;
-    justify-self: center;
+}
+
+body {
+    height: 100%;
+    background-image: url("../img/background.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: black;
+    display: grid;
+    align-content: center;
+}
+
+.quiz-form-narrow {
+    max-width: 320px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.quiz-content {
+    width: fit-content;
+    max-width: min(760px, 100%);
+    margin: 0 auto;
+}
+
+.quiz-answers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    column-gap: 2rem;
+
+    @media (max-width: 767px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.answer-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.3;
+
+    &::before {
+        content: '';
+        display: block;
+        flex-shrink: 0;
+        width: 2rem;
+        height: 2rem;
+        background: radial-gradient(ellipse at 35% 30%, #6abf4b, #2d7a1f);
+        border-radius: 4px;
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover,
+    &:focus {
+        color: #7ed45a;
+        outline: none;
+
+        &::before {
+            background: radial-gradient(ellipse at 35% 30%, #86d45f, #3d9c2a);
+        }
+    }
+}
+
+input.btn-check:checked + label.answer-btn {
+    color: #7ed45a;
+
+    &::before {
+        background: radial-gradient(ellipse at 35% 30%, #86d45f, #3d9c2a);
+        box-shadow: 0 0 10px rgba(106, 191, 75, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+}
+
+.quiz-topbar {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1030;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .elimination-screen {

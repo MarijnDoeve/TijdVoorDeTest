@@ -6,17 +6,21 @@ namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Tvdt\Controller\AbstractController;
+use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 use Tvdt\Form\CreateSeasonFormType;
 use Tvdt\Repository\SeasonRepository;
+use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuizSpreadsheetService;
 
 #[AsController]
@@ -75,6 +79,22 @@ final class BackofficeController extends AbstractController
         $response = new StreamedResponse($this->excel->generateTemplate());
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment; filename="template.xlsx"');
+
+        return $response;
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/export',
+        name: 'tvdt_backoffice_quiz_export',
+        requirements: ['quiz' => Requirement::UUID],
+        methods: ['GET'],
+    )]
+    public function exportQuiz(Quiz $quiz): StreamedResponse
+    {
+        $response = new StreamedResponse($this->excel->quizToXlsx($quiz));
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $quiz->name.'.xlsx'));
 
         return $response;
     }
