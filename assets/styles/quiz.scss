@@ -85,6 +85,15 @@ input.btn-check:checked + label.answer-btn {
     }
 }
 
+.quiz-topbar {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1030;
+    display: flex;
+    gap: 0.5rem;
+}
+
 .elimination-screen {
     position: fixed;
     top: 0;
