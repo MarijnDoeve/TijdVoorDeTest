@@ -119,7 +119,7 @@ jobs:
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
 
   build-deploy:
-    name: Build and deploy to ${{ startsWith(github.ref, 'refs/tags/') && 'production' || 'acceptance' }}
+    name: Build and Deploy
     permissions:
       contents: read
       packages: write
