@@ -56,11 +56,13 @@ Copy `.env` and override locally via `.env.local` (not committed):
 just test                                   # Full PHPUnit suite
 just test tests/Path/To/TestFile.php        # Single file
 just test --coverage-html var/coverage      # HTML coverage report
-just reload-tests             # Drop/recreate test DB + migrate + fixtures
+just reload-tests             # Drop/recreate test DB + migrate + test fixtures
 ```
 
 Tests use a separate database configured via `.env.test`. The DAMA
 Doctrine bundle wraps each test in a transaction that is rolled back after.
+`just reload-tests` loads the `--group=test` fixtures; `just fixtures`
+loads the dev group and is unrelated to the test database.
 
 ## Code quality
 
