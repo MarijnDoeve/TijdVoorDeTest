@@ -51,6 +51,11 @@ reload-tests:
     @docker compose exec php bin/console --env=test doctrine:migrations:migrate -n
     @docker compose exec php bin/console --env=test doctrine:fixtures:load -n --group=test
 
+install-hooks:
+    git config core.hooksPath .githooks
+    chmod +x .githooks/pre-commit
+    @echo "Pre-commit hook installed."
+
 trust-cert:
     sudo security add-trusted-cer -d \
     -r trustRoot \

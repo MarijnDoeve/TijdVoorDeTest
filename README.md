@@ -97,8 +97,27 @@ just translations    # Extract/update nl translation strings into translations/
 1. Create a branch from `main` — use a prefix like `feat/`, `fix/`,
    or `docs/`.
 2. Open a pull request; CI must pass before merging.
-3. Run `just fix-cs` and `just phpstan` locally before pushing to
-   avoid CI failures.
+3. Install the pre-commit hook (see below) to catch issues before pushing.
+
+### Pre-commit hook
+
+A pre-commit hook lives in `.githooks/pre-commit`. Install it once after cloning:
+
+```bash
+just install-hooks
+```
+
+On every commit it runs automatically, **only on staged files**:
+
+| Staged file type        | Tools run                                                                    |
+|-------------------------|------------------------------------------------------------------------------|
+| `.php`                  | Rector → PHP-CS-Fixer (auto-fix + re-stage), then PHPStan (blocks on errors) |
+| `.twig`                 | Twig-CS-Fixer (auto-fix + re-stage)                                          |
+| Other (docs, config, …) | Nothing — commit proceeds immediately                                        |
+
+If the PHP container is not running, the hook falls back to
+`docker compose run --rm` so checks still execute. PHPUnit is not
+run in the hook; CI covers that.
 
 ## Deployment
 

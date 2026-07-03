@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Collect staged PHP and Twig files
+STAGED_PHP=()
+while IFS= read -r file; do
+    [[ -n "$file" ]] && STAGED_PHP+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.php$' || true)
+
+STAGED_TWIG=()
+while IFS= read -r file; do
+    [[ -n "$file" ]] && STAGED_TWIG+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.twig$' || true)
+
+if [[ ${#STAGED_PHP[@]} -eq 0 && ${#STAGED_TWIG[@]} -eq 0 ]]; then
+    exit 0
+fi
+
+# Use exec if the service is up, otherwise spin up a one-off container
+if docker compose exec -T php true 2>/dev/null; then
+    DOCKER_CMD=(docker compose exec -T php)
+else
+    echo "PHP service not running — using docker compose run..."
+    DOCKER_CMD=(docker compose run --rm php)
+fi
+
+if [[ ${#STAGED_PHP[@]} -gt 0 ]]; then
+    echo "PHP (${#STAGED_PHP[@]} file(s)): Rector → CS-Fixer → PHPStan"
+
+    echo "  → Rector"
+    "${DOCKER_CMD[@]}" vendor/bin/rector process "${STAGED_PHP[@]}"
+    git add "${STAGED_PHP[@]}"
+
+    echo "  → PHP-CS-Fixer"
+    "${DOCKER_CMD[@]}" vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php "${STAGED_PHP[@]}"
+    git add "${STAGED_PHP[@]}"
+
+    echo "  → PHPStan"
+    "${DOCKER_CMD[@]}" vendor/bin/phpstan analyse "${STAGED_PHP[@]}" --no-progress
+fi
+
+if [[ ${#STAGED_TWIG[@]} -gt 0 ]]; then
+    echo "Twig (${#STAGED_TWIG[@]} file(s)): Twig-CS-Fixer"
+
+    echo "  → Twig-CS-Fixer"
+    "${DOCKER_CMD[@]}" vendor/bin/twig-cs-fixer fix "${STAGED_TWIG[@]}"
+    git add "${STAGED_TWIG[@]}"
+fi
