@@ -1839,16 +1839,16 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v4.6.0",
+            "version": "v4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "59841c7e53f8339b13bc0cb0ee9931b7b9bbb139"
+                "reference": "23b5c2694083355ab87eaa913b43a0cddd8c64bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/59841c7e53f8339b13bc0cb0ee9931b7b9bbb139",
-                "reference": "59841c7e53f8339b13bc0cb0ee9931b7b9bbb139",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/23b5c2694083355ab87eaa913b43a0cddd8c64bb",
+                "reference": "23b5c2694083355ab87eaa913b43a0cddd8c64bb",
                 "shasum": ""
             },
             "require": {
@@ -1863,13 +1863,13 @@
                 "deptrac/deptrac": "^4.0",
                 "doctrine/orm": "~2.14||~3.0",
                 "ekino/phpstan-banned-code": "^3.2.0",
-                "friendsofphp/php-cs-fixer": "^3.95.2",
-                "phpstan/phpstan": "^2.1.55",
+                "friendsofphp/php-cs-fixer": "^3.95.11",
+                "phpstan/phpstan": "^2.2.2",
                 "phpstan/phpstan-deprecation-rules": "^2.0.4",
-                "phpstan/phpstan-doctrine": "^2.0.22",
+                "phpstan/phpstan-doctrine": "^2.0.27",
                 "phpstan/phpstan-phpunit": "^2.0.16",
                 "phpunit/phpunit": "^10.5.63||^11.5",
-                "rector/rector": "^2.4.4",
+                "rector/rector": "^2.5.2",
                 "symfony/cache": "^6.4||^7.0",
                 "symfony/var-exporter": "^6.4||^7.0"
             },
@@ -1952,7 +1952,7 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v4.6.0"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v4.7.0"
             },
             "funding": [
                 {
@@ -1964,7 +1964,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-29T19:11:20+00:00"
+            "time": "2026-07-01T18:17:39+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
