@@ -17,10 +17,10 @@ permissions:
   contents: read
 
 jobs:
-  quality:
-    name: Code Quality
+  build:
+    name: Build Dev Image
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -34,14 +34,35 @@ jobs:
         uses: docker/bake-action@v5
         with:
           pull: true
+          files: |
+            compose.yaml
+            compose.override.yaml
+          set: |
+            *.cache-from=type=gha,scope=${{github.ref}}-devbuild
+            *.cache-from=type=gha,scope=refs/heads/main-devbuild
+            *.cache-to=type=gha,scope=${{github.ref}}-devbuild,mode=${{ github.event_name == 'pull_request' && 'min' || 'max' }}
+
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: build
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Load Docker images
+        uses: docker/bake-action@v5
+        with:
           load: true
           files: |
             compose.yaml
             compose.override.yaml
           set: |
-            *.cache-from=type=gha,scope=${{github.ref}}-quality
-            *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{github.ref}}-quality,mode=${{ github.event_name == 'pull_request' && 'min' || 'max' }}
+            *.cache-from=type=gha,scope=${{github.ref}}-devbuild
       - name: Start services
         run: docker compose up php database --wait --no-build
       - name: Warm up dev cache
@@ -78,6 +99,7 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: build
     permissions:
       checks: write
       pull-requests: write
@@ -87,18 +109,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build Docker images
+      - name: Load Docker images
         uses: docker/bake-action@v5
         with:
-          pull: true
           load: true
           files: |
             compose.yaml
             compose.override.yaml
           set: |
-            *.cache-from=type=gha,scope=${{github.ref}}-tests
-            *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{github.ref}}-tests,mode=${{ github.event_name == 'pull_request' && 'min' || 'max' }}
+            *.cache-from=type=gha,scope=${{github.ref}}-devbuild
       - name: Start services
         run: docker compose up php database --wait --no-build
       - name: Create test database
