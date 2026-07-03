@@ -47,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: build
+    if: "!startsWith(github.ref, 'refs/tags/')"
     permissions:
       contents: read
     steps:
@@ -100,6 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: build
+    if: "!startsWith(github.ref, 'refs/tags/')"
     permissions:
       checks: write
       pull-requests: write
@@ -137,6 +139,27 @@ jobs:
       - name: Doctrine Schema Validator
         run: docker compose exec -T php bin/console -e test doctrine:schema:validate
 
+  verify-prior-run:
+    name: Verify Prior CI Run
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      actions: read
+    steps:
+      - name: Check for successful CI run on this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh api \
+            "repos/${{ github.repository }}/actions/workflows/ci.yml/runs?head_sha=${{ github.sha }}&status=success&per_page=5" \
+            --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }})] | length")
+          if [[ "$count" -eq 0 ]]; then
+            echo "::error::No prior successful CI run found for ${{ github.sha }}. Only tag commits that have passed CI on main."
+            exit 1
+          fi
+          echo "Found $count prior successful CI run(s) for this commit."
+
   build-deploy:
     name: Build and Deploy
     permissions:
@@ -145,10 +168,12 @@ jobs:
     environment:
       name: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || 'acceptance' }}
       url: ${{ vars.URL }}
-    needs: [quality, tests]
+    needs: [quality, tests, verify-prior-run]
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: (github.ref == 'refs/heads/main' && false) || startsWith(github.ref, 'refs/tags/')
+    if: >-
+      always() && !cancelled() && !failure() &&
+      ((github.ref == 'refs/heads/main' && false) || startsWith(github.ref, 'refs/tags/'))
     steps:
       - name: Checkout
         uses: actions/checkout@v4
