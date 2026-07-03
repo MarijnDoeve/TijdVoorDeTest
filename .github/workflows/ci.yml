@@ -243,5 +243,7 @@ jobs:
         shell: bash
         env:
           PORTAINER_WEBHOOK: ${{secrets.PORTAINER_WEBHOOK}}
+          IMAGE_TAG: ${{steps.meta.outputs.tag}}
+          SENTRY_RELEASE: ${{steps.meta.outputs.sentry_version}}
         run: |
-          curl -v -X POST "${PORTAINER_WEBHOOK}?IMAGE_TAG=${{steps.meta.outputs.tag}}" --fail-with-body
+          curl -v -X POST "${PORTAINER_WEBHOOK}?IMAGE_TAG=${IMAGE_TAG}&SENTRY_RELEASE=${SENTRY_RELEASE}" --fail-with-body

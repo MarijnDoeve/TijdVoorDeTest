@@ -10,7 +10,7 @@ services:
       MAILER_DSN: ${MAILER_DSN}
       MAILER_SENDER: ${MAILER_SENDER}
       SENTRY_DSN: ${SENTRY_DSN}
-      SENTRY_RELEASE: ${IMAGE_TAG}
+      SENTRY_RELEASE: ${SENTRY_RELEASE}
       SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT}
     labels:
       - "traefik.enable=true"
