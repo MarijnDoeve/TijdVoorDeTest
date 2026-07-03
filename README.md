@@ -5,9 +5,12 @@
 PHP/Symfony application for WIDM-style quiz management.
 Built with FrankenPHP, PostgreSQL, and Docker.
 
-> **Disclaimer:** This project is not affiliated with, endorsed by, or
-> associated with *Wie is de Mol?* (produced by IDTV, broadcast by
-> AVROTROS/NPO) or *De Mol* (produced by Woestijnvis, broadcast by VRT).
+> **Disclaimer:** This is an unofficial, non-commercial, open-source fan
+> project. It is not affiliated with, endorsed by, or associated with
+> *Wie is de Mol?* (produced by IDTV, broadcast by AVROTROS/NPO) or
+> *De Mol* (produced by Woestijnvis, broadcast by Play/De Vijver Media).
+> *Wie is de Mol?* and *De Mol* are trademarks of their respective rights
+> holders. No copyright infringement is intended.
 
 ## Requirements
 
