@@ -1,7 +1,13 @@
 # Tijd voor de test
 
+![CI](https://github.com/MarijnDoeve/TijdVoorDeTest/actions/workflows/ci.yml/badge.svg)
+
 PHP/Symfony application for WIDM-style quiz management.
 Built with FrankenPHP, PostgreSQL, and Docker.
+
+> **Disclaimer:** This project is not affiliated with, endorsed by, or
+> associated with *Wie is de Mol?* (produced by IDTV, broadcast by
+> AVROTROS/NPO) or *De Mol* (produced by Woestijnvis, broadcast by VRT).
 
 ## Requirements
 
@@ -81,6 +87,14 @@ fixtures are in `src/DataFixtures/` loaded with `--group=test`.
 just translations    # Extract/update nl translation strings into translations/
 ```
 
+## Contributing
+
+1. Create a branch from `main` — use a prefix like `feat/`, `fix/`,
+   or `docs/`.
+2. Open a pull request; CI must pass before merging.
+3. Run `just fix-cs` and `just phpstan` locally before pushing to
+   avoid CI failures.
+
 ## Deployment
 
 Docker images are published to `ghcr.io/marijndoeve/tijdvoordetest`
@@ -118,3 +132,7 @@ IMAGE_TAG=<tag> docker compose -f compose.yaml -f compose.prod.yaml up -d
 The `compose.prod.yaml` configures Traefik labels for TLS termination at
 `tijdvoordetest.nl`. Adjust the `traefik` labels in that file if you're
 hosting on a different domain or using a different reverse proxy.
+
+## License
+
+[MIT](LICENSE)
