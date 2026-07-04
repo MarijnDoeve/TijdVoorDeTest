@@ -141,6 +141,8 @@ jobs:
             *.cache-from=type=gha,scope=${{github.ref}}-devbuild
       - name: Start services
         run: docker compose up php database --wait --no-build
+      - name: Build SCSS
+        run: docker compose exec -T php bin/console sass:build
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
