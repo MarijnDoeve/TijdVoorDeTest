@@ -1,5 +1,12 @@
-<div class="mb-3">
-    <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
+<div class="row mb-4">
+    <div class="col-md-8 col-12">
+        <div class="mb-3">
+            <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
+        </div>
+    </div>
+    <div class="col-md-4 col-12">
+        {{ include('backoffice/help/season_question_bank.html.twig') }}
+    </div>
 </div>
 
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">

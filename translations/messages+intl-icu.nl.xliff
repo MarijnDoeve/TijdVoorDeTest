@@ -179,7 +179,7 @@
       </trans-unit>
       <trans-unit id="tOdAxXK" resname="Deactivate the quiz before undoing the finalization">
         <source>Deactivate the quiz before undoing the finalization</source>
-        <target>Deactiveer de test voordat je de finalisatie ongedaan maakt</target>
+        <target>Deactiveer de test voordat je het afronden ongedaan maakt</target>
       </trans-unit>
       <trans-unit id="Z_crX_u" resname="Delete">
         <source>Delete</source>
@@ -231,11 +231,11 @@
       </trans-unit>
       <trans-unit id="6rPqY9p" resname="Finalize">
         <source>Finalize</source>
-        <target>Finaliseren</target>
+        <target>Afronden</target>
       </trans-unit>
       <trans-unit id="c_5RxsX" resname="Finalized">
         <source>Finalized</source>
-        <target>Definitief</target>
+        <target>Afgerond</target>
       </trans-unit>
       <trans-unit id="OGiIhMH" resname="Green">
         <source>Green</source>
@@ -471,7 +471,7 @@
       </trans-unit>
       <trans-unit id="cyXkBo4" resname="Quiz cleared and no longer finalized">
         <source>Quiz cleared and no longer finalized</source>
-        <target>Test leeggemaakt en niet langer gefinaliseerd</target>
+        <target>Test leeggemaakt en niet langer afgerond</target>
       </trans-unit>
       <trans-unit id="LbVe.2c" resname="Quiz completed">
         <source>Quiz completed</source>
@@ -483,11 +483,11 @@
       </trans-unit>
       <trans-unit id="GPFvyrm" resname="Quiz finalized">
         <source>Quiz finalized</source>
-        <target>Test gefinaliseerd</target>
+        <target>Test afgerond</target>
       </trans-unit>
       <trans-unit id="BAp8lIR" resname="Quiz is no longer finalized">
         <source>Quiz is no longer finalized</source>
-        <target>Test is niet langer gefinaliseerd</target>
+        <target>Test is niet langer afgerond</target>
       </trans-unit>
       <trans-unit id="frxoIkW" resname="Quiz name">
         <source>Quiz name</source>
@@ -583,11 +583,11 @@
       </trans-unit>
       <trans-unit id="1jF4vJ8" resname="The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.">
         <source>The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.</source>
-        <target>De vraag is niet gesynchroniseerd naar gefinaliseerde quiz(zes): %quizzes%. Gebruik de Synchroniseren-knop om ze bij te werken.</target>
+        <target>De vraag is niet gesynchroniseerd naar afgeronde quiz(zes): %quizzes%. Gebruik de Synchroniseren-knop om ze bij te werken.</target>
       </trans-unit>
       <trans-unit id="K3e_SRJ" resname="The quiz cannot be finalized while it has errors">
         <source>The quiz cannot be finalized while it has errors</source>
-        <target>De test kan niet gefinaliseerd worden zolang er fouten zijn</target>
+        <target>De test kan niet afgerond worden zolang er fouten zijn</target>
       </trans-unit>
       <trans-unit id="B7wNGHP" resname="The quiz has already been filled in and can no longer be altered">
         <source>The quiz has already been filled in and can no longer be altered</source>
@@ -595,7 +595,7 @@
       </trans-unit>
       <trans-unit id="Z3xaLuk" resname="The quiz must be finalized before it can be activated">
         <source>The quiz must be finalized before it can be activated</source>
-        <target>De test moet gefinaliseerd zijn voordat deze geactiveerd kan worden</target>
+        <target>De test moet afgerond zijn voordat deze geactiveerd kan worden</target>
       </trans-unit>
       <trans-unit id="HuzRgeN" resname="There are no answers for this question">
         <source>There are no answers for this question</source>
@@ -635,7 +635,15 @@
       </trans-unit>
       <trans-unit id="A_XdODo" resname="Undo finalization">
         <source>Undo finalization</source>
-        <target>Finalisatie ongedaan maken</target>
+        <target>Afronden ongedaan maken</target>
+      </trans-unit>
+      <trans-unit id="Lk7mP2q" resname="Locks the quiz so it can no longer be edited and makes it ready for candidates to take.">
+        <source>Locks the quiz so it can no longer be edited and makes it ready for candidates to take.</source>
+        <target>Vergrendelt de test zodat deze niet meer bewerkt kan worden en maakt deze klaar voor deelnemers.</target>
+      </trans-unit>
+      <trans-unit id="Rn3xW8s" resname="Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.">
+        <source>Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.</source>
+        <target>Heropent de test voor bewerking. Deelnemers kunnen de test niet meer afnemen totdat deze opnieuw is afgerond.</target>
       </trans-unit>
       <trans-unit id="Bdt8q.S" resname="Used in">
         <source>Used in</source>

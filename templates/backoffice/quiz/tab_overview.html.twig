@@ -22,7 +22,8 @@
     </div>
 {% endmacro %}
 
-<div data-controller="bo--quiz">
+<div class="row">
+<div class="col-md-8 col-12" data-controller="bo--quiz">
     <h4 class="mb-3">
         {{ 'Quick actions'|trans }}
         {% if quiz.isFinalized %}
@@ -56,14 +57,18 @@
         {% if not quiz.isFinalized %}
             <form action="{{ path('tvdt_backoffice_quiz_finalize', {quiz: quiz.id}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('finalize_quiz') }}">
-                <button type="submit" class="btn btn-success rounded-0">
+                <button type="submit" class="btn btn-success rounded-0"
+                        data-bs-toggle="tooltip"
+                        title="{{ 'Locks the quiz so it can no longer be edited and makes it ready for candidates to take.'|trans }}">
                     {{ 'Finalize'|trans }}
                 </button>
             </form>
         {% elseif not quiz.hasStartedCandidates and quiz is not same as (season.activeQuiz) %}
             <form action="{{ path('tvdt_backoffice_quiz_unfinalize', {quiz: quiz.id}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('unfinalize_quiz') }}">
-                <button type="submit" class="btn btn-outline-success rounded-0">
+                <button type="submit" class="btn btn-outline-success rounded-0"
+                        data-bs-toggle="tooltip"
+                        title="{{ 'Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.'|trans }}">
                     {{ 'Undo finalization'|trans }}
                 </button>
             </form>
@@ -137,4 +142,8 @@
         path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}),
         csrf_token('delete_quiz'),
     ) }}
+</div>
+<div class="col-md-4 col-12">
+    {{ include('backoffice/help/quiz_overview.html.twig') }}
+</div>
 </div>

@@ -20,7 +20,7 @@
             {{ form_end(form) }}
         </div>
         <div class="col-md-6 col-12">
-            <p class="mb-3">{{ 'Create an empty quiz and add questions from the question bank.'|trans }}</p>
+            {{ include('backoffice/help/quiz_add_blank.html.twig') }}
         </div>
     </div>
 {% endblock %}

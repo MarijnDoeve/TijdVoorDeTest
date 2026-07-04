@@ -19,9 +19,7 @@
             {{ form_end(form) }}
         </div>
         <div class="col-md-6 col-12">
-            <p class="mb-3">
-                {{ 'Help text for creating a season'|trans }}
-            </p>
+            {{ include('backoffice/help/season_add.html.twig') }}
         </div>
     </div>
 {% endblock %}

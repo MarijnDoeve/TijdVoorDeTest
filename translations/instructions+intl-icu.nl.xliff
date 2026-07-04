@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="nl" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+
+      <!-- Home -->
+      <trans-unit id="home.title" resname="Getting started">
+        <source>Getting started</source>
+        <target>Aan de slag</target>
+      </trans-unit>
+      <trans-unit id="home.intro" resname="Each season groups one play round with all its quizzes and candidates. The season code is the link candidates use to start a quiz — this link only works when there is an active quiz.">
+        <source>Each season groups one play round with all its quizzes and candidates. The season code is the link candidates use to start a quiz — this link only works when there is an active quiz.</source>
+        <target>Elk seizoen groepeert één speelronde met alle bijbehorende testen en kandidaten. De seizoenscode is de link die kandidaten gebruiken om een test te starten — deze link is alleen actief als er een actieve test is.</target>
+      </trans-unit>
+      <trans-unit id="home.workflow_title" resname="How it works">
+        <source>How it works</source>
+        <target>Globale werkwijze</target>
+      </trans-unit>
+      <trans-unit id="home.step_1" resname="Create a season and add candidates">
+        <source>Create a season and add candidates</source>
+        <target>Seizoen aanmaken en kandidaten toevoegen</target>
+      </trans-unit>
+      <trans-unit id="home.step_2" resname="Add a quiz via XLSX or the question bank">
+        <source>Add a quiz via XLSX or the question bank</source>
+        <target>Test aanmaken via XLSX of de vragenbank</target>
+      </trans-unit>
+      <trans-unit id="home.step_3" resname="Finalize and activate the quiz">
+        <source>Finalize and activate the quiz</source>
+        <target>Test afronden en activeren</target>
+      </trans-unit>
+      <trans-unit id="home.step_4" resname="Let candidates take the quiz (own device or shared laptop)">
+        <source>Let candidates take the quiz (own device or shared laptop)</source>
+        <target>Kandidaten laten deelnemen (eigen apparaat of gedeelde laptop)</target>
+      </trans-unit>
+      <trans-unit id="home.step_5" resname="View results and start the elimination">
+        <source>View results and start the elimination</source>
+        <target>Resultaten bekijken en eliminatie starten</target>
+      </trans-unit>
+
+      <!-- Create season -->
+      <trans-unit id="season_add.title" resname="New season">
+        <source>New season</source>
+        <target>Nieuw seizoen</target>
+      </trans-unit>
+      <trans-unit id="season_add.intro" resname="A season groups all quizzes and candidates for one play round. Give the season a recognisable name — the season code is generated automatically.">
+        <source>A season groups all quizzes and candidates for one play round. Give the season a recognisable name — the season code is generated automatically.</source>
+        <target>Een seizoen groepeert alle testen en kandidaten voor één speelronde. Geef het seizoen een herkenbare naam — de seizoenscode wordt automatisch gegenereerd.</target>
+      </trans-unit>
+      <trans-unit id="season_add.next_steps" resname="After creating, add candidates and quizzes from the season page.">
+        <source>After creating, add candidates and quizzes from the season page.</source>
+        <target>Na het aanmaken voeg je kandidaten toe en maak je testen aan via de seizoenpagina.</target>
+      </trans-unit>
+
+      <!-- Add candidates -->
+      <trans-unit id="season_candidates_add.title" resname="Add candidates">
+        <source>Add candidates</source>
+        <target>Kandidaten toevoegen</target>
+      </trans-unit>
+      <trans-unit id="season_candidates_add.intro" resname="Enter one name per line. These are the players participating in this season.">
+        <source>Enter one name per line. These are the players participating in this season.</source>
+        <target>Voer één naam per regel in. Dit zijn de spelers die deelnemen aan dit seizoen.</target>
+      </trans-unit>
+      <trans-unit id="season_candidates_add.note" resname="You can always add more candidates later via the Candidates tab. Use the same spelling of names you use in the game.">
+        <source>You can always add more candidates later via the Candidates tab. Use the same spelling of names you use in the game.</source>
+        <target>Je kunt later altijd nog kandidaten toevoegen via het tabblad Kandidaten. Gebruik dezelfde schrijfwijze van namen die je in het spel gebruikt.</target>
+      </trans-unit>
+
+      <!-- Season — Quizzes tab -->
+      <trans-unit id="season_tests.title" resname="Managing quizzes">
+        <source>Managing quizzes</source>
+        <target>Testen beheren</target>
+      </trans-unit>
+      <trans-unit id="season_tests.intro" resname="Add a quiz from an XLSX file or create a blank one and fill it via the question bank. Then open the quiz to review and finalize it.">
+        <source>Add a quiz from an XLSX file or create a blank one and fill it via the question bank. Then open the quiz to review and finalize it.</source>
+        <target>Voeg een test toe vanuit een XLSX-bestand of maak een lege test aan en vul deze via de vragenbank. Open daarna de test om hem te bekijken en af te ronden.</target>
+      </trans-unit>
+      <trans-unit id="season_tests.one_active" resname="A quiz must be finalized before it can be activated. Only one quiz can be active at a time — this is the quiz candidates can currently take.">
+        <source>A quiz must be finalized before it can be activated. Only one quiz can be active at a time — this is the quiz candidates can currently take.</source>
+        <target>Een test moet eerst afgerond zijn voordat je hem kunt activeren. Slechts één test kan tegelijk actief zijn — dit is de test die kandidaten op dat moment kunnen invullen.</target>
+      </trans-unit>
+      <trans-unit id="season_tests.order_title" resname="Order of operations">
+        <source>Order of operations</source>
+        <target>Volgorde van werken</target>
+      </trans-unit>
+      <trans-unit id="season_tests.step_1" resname="Create the quiz (XLSX or blank)">
+        <source>Create the quiz (XLSX or blank)</source>
+        <target>Test aanmaken (XLSX of leeg)</target>
+      </trans-unit>
+      <trans-unit id="season_tests.step_2" resname="Review questions and finalize the quiz">
+        <source>Review questions and finalize the quiz</source>
+        <target>Vragen controleren en test afronden</target>
+      </trans-unit>
+      <trans-unit id="season_tests.step_3" resname="Activate the quiz">
+        <source>Activate the quiz</source>
+        <target>Test activeren</target>
+      </trans-unit>
+      <trans-unit id="season_tests.step_4" resname="Let candidates take the quiz">
+        <source>Let candidates take the quiz</source>
+        <target>Kandidaten laten deelnemen</target>
+      </trans-unit>
+      <trans-unit id="season_tests.step_5" resname="View results and prepare the elimination">
+        <source>View results and prepare the elimination</source>
+        <target>Resultaten bekijken en eliminatie voorbereiden</target>
+      </trans-unit>
+
+      <!-- Season — Candidates tab -->
+      <trans-unit id="season_candidates.title" resname="Candidates">
+        <source>Candidates</source>
+        <target>Kandidaten</target>
+      </trans-unit>
+      <trans-unit id="season_candidates.intro" resname="These are the players of this season. Add all participants before starting the first quiz — candidates are automatically linked to new quizzes.">
+        <source>These are the players of this season. Add all participants before starting the first quiz — candidates are automatically linked to new quizzes.</source>
+        <target>Dit zijn de spelers van dit seizoen. Voeg alle deelnemers toe voordat je de eerste test start — kandidaten worden automatisch aan nieuwe testen gekoppeld.</target>
+      </trans-unit>
+      <trans-unit id="season_candidates.note" resname="Names are entered freely; use the same spelling you use in the game.">
+        <source>Names are entered freely; use the same spelling you use in the game.</source>
+        <target>Namen zijn vrij in te voeren; gebruik dezelfde schrijfwijze die je in het spel gebruikt.</target>
+      </trans-unit>
+
+      <!-- Season — Settings tab -->
+      <trans-unit id="season_settings.title" resname="Season settings">
+        <source>Season settings</source>
+        <target>Seizoensinstellingen</target>
+      </trans-unit>
+      <trans-unit id="season_settings.intro" resname="Adjust the name and other settings for this season here.">
+        <source>Adjust the name and other settings for this season here.</source>
+        <target>Pas hier de naam en overige instellingen van dit seizoen aan.</target>
+      </trans-unit>
+      <trans-unit id="season_settings.code_note" resname="The season code is fixed after creation and determines the URL candidates use to log in.">
+        <source>The season code is fixed after creation and determines the URL candidates use to log in.</source>
+        <target>De seizoenscode staat vast na aanmaken en bepaalt de URL die kandidaten gebruiken om in te loggen.</target>
+      </trans-unit>
+
+      <!-- Season — Question bank tab -->
+      <trans-unit id="season_question_bank.title" resname="Question bank">
+        <source>Question bank</source>
+        <target>Vragenbank</target>
+      </trans-unit>
+      <trans-unit id="season_question_bank.intro" resname="The question bank is a library of questions that can be linked to multiple quizzes. Mark a question as reusable if it may appear in multiple quizzes (e.g. 'Who is de Mol?').">
+        <source>The question bank is a library of questions that can be linked to multiple quizzes. Mark a question as reusable if it may appear in multiple quizzes (e.g. 'Who is de Mol?').</source>
+        <target>De vragenbank is een bibliotheek met vragen die aan meerdere testen kunnen worden gekoppeld. Markeer een vraag als herbruikbaar als deze in meerdere testen mag voorkomen (bijv. "Wie is de Mol?").</target>
+      </trans-unit>
+      <trans-unit id="season_question_bank.sync_note" resname="After editing a bank question, quizzes that already contain it are not updated automatically — use the sync button next to a quiz to push the latest version.">
+        <source>After editing a bank question, quizzes that already contain it are not updated automatically — use the sync button next to a quiz to push the latest version.</source>
+        <target>Na het bewerken van een bankenvraag worden testen die de vraag al bevatten niet automatisch bijgewerkt — gebruik de synchronisatieknop (↻) naast een test om de meest recente versie door te zetten.</target>
+      </trans-unit>
+
+      <!-- Add quiz via XLSX -->
+      <trans-unit id="quiz_add.title" resname="Upload quiz via XLSX">
+        <source>Upload quiz via XLSX</source>
+        <target>Test uploaden via XLSX</target>
+      </trans-unit>
+      <trans-unit id="quiz_add.intro" resname="Upload an XLSX file with the questions for this quiz. After uploading you can review, check and finalize the quiz.">
+        <source>Upload an XLSX file with the questions for this quiz. After uploading you can review, check and finalize the quiz.</source>
+        <target>Upload een XLSX-bestand met de vragen voor deze test. Na het uploaden kun je de vragen bekijken, controleren en de test afronden.</target>
+      </trans-unit>
+      <trans-unit id="quiz_add.format_title" resname="Expected format">
+        <source>Expected format</source>
+        <target>Verwacht formaat</target>
+      </trans-unit>
+      <trans-unit id="quiz_add.format_col_1" resname="First column: question text">
+        <source>First column: question text</source>
+        <target>Eerste kolom: de vraagtekst</target>
+      </trans-unit>
+      <trans-unit id="quiz_add.format_col_2" resname="Next columns: answer options">
+        <source>Next columns: answer options</source>
+        <target>Volgende kolommen: de antwoordopties</target>
+      </trans-unit>
+      <trans-unit id="quiz_add.format_col_3" resname="Mark the correct answer in the spreadsheet">
+        <source>Mark the correct answer in the spreadsheet</source>
+        <target>Markeer het juiste antwoord via de spreadsheet</target>
+      </trans-unit>
+
+      <!-- Add blank quiz -->
+      <trans-unit id="quiz_add_blank.title" resname="Create blank quiz">
+        <source>Create blank quiz</source>
+        <target>Lege test aanmaken</target>
+      </trans-unit>
+      <trans-unit id="quiz_add_blank.intro" resname="Create an empty quiz and add questions from the question bank. Useful if you reuse questions or have prepared them in the bank in advance.">
+        <source>Create an empty quiz and add questions from the question bank. Useful if you reuse questions or have prepared them in the bank in advance.</source>
+        <target>Maak een lege test aan en voeg vragen toe vanuit de vragenbank. Handig als je vragen hergebruikt of ze van tevoren in de bank hebt klaargezet.</target>
+      </trans-unit>
+      <trans-unit id="quiz_add_blank.next_steps" resname="After creating, open the quiz, add questions via the Overview tab and finalize the quiz before activating it.">
+        <source>After creating, open the quiz, add questions via the Overview tab and finalize the quiz before activating it.</source>
+        <target>Na het aanmaken open je de test, voeg je vragen toe via het tabblad Overzicht en ronde je de test af voordat je hem activeert.</target>
+      </trans-unit>
+
+      <!-- Question bank form -->
+      <trans-unit id="quiz_question_bank_form.title" resname="Add question">
+        <source>Add question</source>
+        <target>Vraag toevoegen</target>
+      </trans-unit>
+      <trans-unit id="quiz_question_bank_form.intro" resname="Enter the question and add at least two answer options. Mark exactly one answer as correct.">
+        <source>Enter the question and add at least two answer options. Mark exactly one answer as correct.</source>
+        <target>Voer de vraag in en voeg minimaal twee antwoordopties toe. Markeer precies één antwoord als correct.</target>
+      </trans-unit>
+      <trans-unit id="quiz_question_bank_form.labels_note" resname="Use labels to organise questions in the question bank, for example by episode or theme.">
+        <source>Use labels to organise questions in the question bank, for example by episode or theme.</source>
+        <target>Gebruik labels om vragen te organiseren in de vragenbank, bijvoorbeeld per aflevering of thema.</target>
+      </trans-unit>
+      <trans-unit id="quiz_question_bank_form.reusable_note" resname="Mark a question as reusable if it may appear in multiple quizzes — otherwise a question can only be linked to one quiz.">
+        <source>Mark a question as reusable if it may appear in multiple quizzes — otherwise a question can only be linked to one quiz.</source>
+        <target>Markeer een vraag als herbruikbaar als deze in meerdere testen mag voorkomen — anders kan een vraag maar aan één test worden gekoppeld.</target>
+      </trans-unit>
+
+      <!-- Quiz overview tab -->
+      <trans-unit id="quiz_overview.title" resname="Overview &amp; finalize">
+        <source>Overview &amp; finalize</source>
+        <target>Overzicht &amp; afronden</target>
+      </trans-unit>
+      <trans-unit id="quiz_overview.errors_note" resname="Questions with a red marker in the list have an error. Fix these before finalizing.">
+        <source>Questions with a red marker in the list have an error. Fix these before finalizing.</source>
+        <target>Vragen met een rode markering in de lijst hiernaast bevatten een fout. Herstel deze vóór het afronden.</target>
+      </trans-unit>
+      <trans-unit id="quiz_overview.finalize_note" resname="Finalize locks the quiz for editing and makes it ready for candidates. You can then activate it.">
+        <source>Finalize locks the quiz for editing and makes it ready for candidates. You can then activate it.</source>
+        <target>Afronden vergrendelt de test voor bewerking en maakt hem klaar voor kandidaten. Daarna kun je hem activeren.</target>
+      </trans-unit>
+      <trans-unit id="quiz_overview.activate_note" resname="Activate makes the quiz available to candidates. Only one quiz can be active at a time — only activate the next quiz when everyone has completed the current one.">
+        <source>Activate makes the quiz available to candidates. Only one quiz can be active at a time — only activate the next quiz when everyone has completed the current one.</source>
+        <target>Activeren stelt de test beschikbaar aan kandidaten. Er kan maar één test tegelijk actief zijn — activeer de volgende test pas als iedereen de huidige heeft afgerond.</target>
+      </trans-unit>
+      <trans-unit id="quiz_overview.clear_note" resname="Clear quiz removes all given answers and undoes finalization, so you can edit and run the quiz again.">
+        <source>Clear quiz removes all given answers and undoes finalization, so you can edit and run the quiz again.</source>
+        <target>Test wissen verwijdert alle gegeven antwoorden en heft het afronden op, zodat je de test opnieuw kunt bewerken en uitvoeren.</target>
+      </trans-unit>
+
+      <!-- Quiz candidates tab -->
+      <trans-unit id="quiz_candidates.title" resname="Let candidates take the quiz">
+        <source>Let candidates take the quiz</source>
+        <target>Kandidaten laten deelnemen</target>
+      </trans-unit>
+      <trans-unit id="quiz_candidates.intro" resname="Candidates can take the quiz in two ways:">
+        <source>Candidates can take the quiz in two ways:</source>
+        <target>Kandidaten kunnen de test op twee manieren invullen:</target>
+      </trans-unit>
+      <trans-unit id="quiz_candidates.option_1" resname="Option 1 — own device: Share the season code. Each candidate visits the site on their phone, enters their own name and starts the quiz.">
+        <source>Option 1 — own device: Share the season code. Each candidate visits the site on their phone, enters their own name and starts the quiz.</source>
+        <target>Optie 1 — eigen apparaat: Deel de seizoenscode. Elke kandidaat bezoekt de site op zijn of haar telefoon, voert de eigen naam in en start de test.</target>
+      </trans-unit>
+      <trans-unit id="quiz_candidates.option_2" resname="Option 2 — shared laptop: Open the name entry page in advance on a laptop. Each candidate types their name and starts. After finishing, the next candidate can do the same.">
+        <source>Option 2 — shared laptop: Open the name entry page in advance on a laptop. Each candidate types their name and starts. After finishing, the next candidate can do the same.</source>
+        <target>Optie 2 — gedeelde laptop: Open de naamsinvoerpagina van tevoren op een laptop. Elke kandidaat typt zijn of haar naam en start. Na afloop kan de volgende kandidaat hetzelfde doen.</target>
+      </trans-unit>
+      <trans-unit id="quiz_candidates.status_title" resname="Status">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="quiz_candidates.deactivate_note" resname="Deactivate a candidate if they should not take this quiz, for example after being eliminated earlier. Deactivation is per quiz and does not affect other quizzes.">
+        <source>Deactivate a candidate if they should not take this quiz, for example after being eliminated earlier. Deactivation is per quiz and does not affect other quizzes.</source>
+        <target>Deactiveer een kandidaat als deze de test niet hoeft te maken, bijvoorbeeld na eerder uitgeschakeld zijn. Deactivering is per test en heeft geen invloed op andere testen.</target>
+      </trans-unit>
+
+      <!-- Answer mapping tab -->
+      <trans-unit id="quiz_answer_mapping.title" resname="Fill in answers">
+        <source>Fill in answers</source>
+        <target>Antwoorden invullen</target>
+      </trans-unit>
+      <trans-unit id="quiz_answer_mapping.intro" resname="Use this overview to manually assign answers — for example in case of technical problems or if someone took the quiz on paper.">
+        <source>Use this overview to manually assign answers — for example in case of technical problems or if someone took the quiz on paper.</source>
+        <target>Gebruik dit overzicht om handmatig antwoorden toe te wijzen — bijvoorbeeld bij technische problemen of als iemand de test op papier heeft ingevuld.</target>
+      </trans-unit>
+      <trans-unit id="quiz_answer_mapping.note" resname="Navigate between questions using the Previous and Next buttons. Tick the given answer per candidate and save.">
+        <source>Navigate between questions using the Previous and Next buttons. Tick the given answer per candidate and save.</source>
+        <target>Navigeer met de knoppen Vorige en Volgende tussen vragen. Vink per kandidaat het gegeven antwoord aan en sla op.</target>
+      </trans-unit>
+
+      <!-- Results tab -->
+      <trans-unit id="quiz_result.title" resname="Results">
+        <source>Results</source>
+        <target>Resultaten</target>
+      </trans-unit>
+      <trans-unit id="quiz_result.intro" resname="The table shows the final result per candidate sorted by score. Red rows are the candidates with the lowest score who are at risk of elimination.">
+        <source>The table shows the final result per candidate sorted by score. Red rows are the candidates with the lowest score who are at risk of elimination.</source>
+        <target>De tabel toont het eindresultaat per kandidaat gesorteerd op score. Rode rijen zijn de kandidaten met de laagste score die risico lopen op eliminatie.</target>
+      </trans-unit>
+      <trans-unit id="quiz_result.corrections_note" resname="Corrections are added for bonus points or joker deductions (half points are possible).">
+        <source>Corrections are added for bonus points or joker deductions (half points are possible).</source>
+        <target>Correcties voeg je toe voor bonuspunten of jokeraftrek (halve punten zijn mogelijk).</target>
+      </trans-unit>
+      <trans-unit id="quiz_result.penalty_note" resname="Penalty is a time penalty in seconds and is taken into account when scores are tied.">
+        <source>Penalty is a time penalty in seconds and is taken into account when scores are tied.</source>
+        <target>Straf is tijdstraf in seconden en wordt meegewogen bij gelijke score.</target>
+      </trans-unit>
+      <trans-unit id="quiz_result.elimination_note" resname="Via Prepare elimination you set the screen colours manually and start the elimination sequence.">
+        <source>Via Prepare elimination you set the screen colours manually and start the elimination sequence.</source>
+        <target>Via Eliminatie voorbereiden stel je de schermkleuren handmatig in en start je de eliminatiereeks.</target>
+      </trans-unit>
+
+      <!-- Prepare elimination -->
+      <trans-unit id="prepare_elimination.title" resname="Prepare elimination">
+        <source>Prepare elimination</source>
+        <target>Eliminatie voorbereiden</target>
+      </trans-unit>
+      <trans-unit id="prepare_elimination.intro" resname="Choose a colour for each candidate: green means safe, red means eliminated.">
+        <source>Choose a colour for each candidate: green means safe, red means eliminated.</source>
+        <target>Kies voor elke kandidaat een kleur: groen betekent veilig, rood betekent geëlimineerd.</target>
+      </trans-unit>
+      <trans-unit id="prepare_elimination.save_note" resname="Use Save and start to play the elimination immediately, or save first and start later via the Results tab.">
+        <source>Use Save and start to play the elimination immediately, or save first and start later via the Results tab.</source>
+        <target>Gebruik Opslaan en starten om de eliminatie direct af te spelen, of sla eerst op en start later via het tabblad Resultaten.</target>
+      </trans-unit>
+
+    </body>
+  </file>
+</xliff>
