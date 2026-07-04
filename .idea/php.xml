@@ -204,6 +204,7 @@
       <path value="$PROJECT_DIR$/vendor/thecodingmachine/phpstan-safe-rule" />
       <path value="$PROJECT_DIR$/vendor/thecodingmachine/safe" />
       <path value="$PROJECT_DIR$/vendor/martin-georgiev/postgresql-for-doctrine" />
+      <path value="$PROJECT_DIR$/vendor/symfony/object-mapper" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
