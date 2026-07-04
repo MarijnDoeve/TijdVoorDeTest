@@ -1,5 +1,4 @@
-<h6>{{ 'Results'|trans({}, 'instructions') }}</h6>
-<p>{{ 'The table shows the final result per candidate sorted by score. Red rows are the candidates with the lowest score who are at risk of elimination.'|trans({}, 'instructions') }}</p>
-<p><strong>{{ 'Corrections'|trans }}</strong> — {{ 'Corrections are added for bonus points or joker deductions (half points are possible).'|trans({}, 'instructions') }}</p>
-<p><strong>{{ 'Penalty'|trans }}</strong> — {{ 'Penalty is a time penalty in seconds and is taken into account when scores are tied.'|trans({}, 'instructions') }}</p>
-<p>{{ 'Via Prepare elimination you set the screen colours manually and start the elimination sequence.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/quiz_result.html.twig',
+    'backoffice/help/nl/quiz_result.html.twig',
+]) }}

@@ -1,11 +1,4 @@
-<h6>{{ 'Managing quizzes'|trans({}, 'instructions') }}</h6>
-<p>{{ 'Add a quiz from an XLSX file or create a blank one and fill it via the question bank. Then open the quiz to review and finalize it.'|trans({}, 'instructions') }}</p>
-<p>{{ 'A quiz must be finalized before it can be activated. Only one quiz can be active at a time — this is the quiz candidates can currently take.'|trans({}, 'instructions') }}</p>
-<h6>{{ 'Order of operations'|trans({}, 'instructions') }}</h6>
-<ol>
-    <li>{{ 'Create the quiz (XLSX or blank)'|trans({}, 'instructions') }}</li>
-    <li>{{ 'Review questions and finalize the quiz'|trans({}, 'instructions') }}</li>
-    <li>{{ 'Activate the quiz'|trans({}, 'instructions') }}</li>
-    <li>{{ 'Let candidates take the quiz'|trans({}, 'instructions') }}</li>
-    <li>{{ 'View results and prepare the elimination'|trans({}, 'instructions') }}</li>
-</ol>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_tests.html.twig',
+    'backoffice/help/nl/season_tests.html.twig',
+]) }}

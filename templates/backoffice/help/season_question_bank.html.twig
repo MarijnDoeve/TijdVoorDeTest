@@ -1,3 +1,4 @@
-<h6>{{ 'Question bank'|trans({}, 'instructions') }}</h6>
-<p>{{ "The question bank is a library of questions that can be linked to multiple quizzes. Mark a question as reusable if it may appear in multiple quizzes (e.g. 'Who is de Mol?')."|trans({}, 'instructions') }}</p>
-<p>{{ 'After editing a bank question, quizzes that already contain it are not updated automatically — use the sync button next to a quiz to push the latest version.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_question_bank.html.twig',
+    'backoffice/help/nl/season_question_bank.html.twig',
+]) }}

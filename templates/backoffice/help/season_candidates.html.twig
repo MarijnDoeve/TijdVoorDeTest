@@ -1,3 +1,4 @@
-<h6>{{ 'Candidates'|trans({}, 'instructions') }}</h6>
-<p>{{ 'These are the players of this season. Add all participants before starting the first quiz — candidates are automatically linked to new quizzes.'|trans({}, 'instructions') }}</p>
-<p>{{ 'Names are entered freely; use the same spelling you use in the game.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_candidates.html.twig',
+    'backoffice/help/nl/season_candidates.html.twig',
+]) }}

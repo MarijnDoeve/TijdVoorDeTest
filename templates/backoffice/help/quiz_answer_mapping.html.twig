@@ -1,3 +1,4 @@
-<h6>{{ 'Fill in answers'|trans({}, 'instructions') }}</h6>
-<p>{{ 'Use this overview to manually assign answers — for example in case of technical problems or if someone took the quiz on paper.'|trans({}, 'instructions') }}</p>
-<p>{{ 'Navigate between questions using the Previous and Next buttons. Tick the given answer per candidate and save.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/quiz_answer_mapping.html.twig',
+    'backoffice/help/nl/quiz_answer_mapping.html.twig',
+]) }}

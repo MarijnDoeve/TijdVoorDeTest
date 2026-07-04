@@ -1,3 +1,4 @@
-<h6>{{ 'Add candidates'|trans({}, 'instructions') }}</h6>
-<p>{{ 'Enter one name per line. These are the players participating in this season.'|trans({}, 'instructions') }}</p>
-<p>{{ 'You can always add more candidates later via the Candidates tab. Use the same spelling of names you use in the game.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_add_candidates.html.twig',
+    'backoffice/help/nl/season_add_candidates.html.twig',
+]) }}

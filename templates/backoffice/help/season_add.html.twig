@@ -1,3 +1,4 @@
-<h6>{{ 'New season'|trans({}, 'instructions') }}</h6>
-<p>{{ 'A season groups all quizzes and candidates for one play round. Give the season a recognisable name — the season code is generated automatically.'|trans({}, 'instructions') }}</p>
-<p>{{ 'After creating, add candidates and quizzes from the season page.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_add.html.twig',
+    'backoffice/help/nl/season_add.html.twig',
+]) }}

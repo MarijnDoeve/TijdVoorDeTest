@@ -1,3 +1,4 @@
-<h6>{{ 'Season settings'|trans({}, 'instructions') }}</h6>
-<p>{{ 'Adjust the name and other settings for this season here.'|trans({}, 'instructions') }}</p>
-<p>{{ 'The season code is fixed after creation and determines the URL candidates use to log in.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/season_settings.html.twig',
+    'backoffice/help/nl/season_settings.html.twig',
+]) }}

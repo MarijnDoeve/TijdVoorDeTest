@@ -1,3 +1,4 @@
-<h6>{{ 'Prepare elimination'|trans({}, 'instructions') }}</h6>
-<p>{{ 'Choose a colour for each candidate: green means safe, red means eliminated.'|trans({}, 'instructions') }}</p>
-<p>{{ 'Use Save and start to play the elimination immediately, or save first and start later via the Results tab.'|trans({}, 'instructions') }}</p>
+{{ include([
+    'backoffice/help/' ~ app.request.locale ~ '/prepare_elimination.html.twig',
+    'backoffice/help/nl/prepare_elimination.html.twig',
+]) }}
