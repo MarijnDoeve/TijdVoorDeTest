@@ -621,6 +621,10 @@
         <source>This quiz has already been filled in and can no longer be altered</source>
         <target>Deze quiz is al ingevuld en kan niet meer worden gewijzigd</target>
       </trans-unit>
+      <trans-unit id="Xq9rT2p" resname="This quiz has no questions yet">
+        <source>This quiz has no questions yet</source>
+        <target>Deze test heeft nog geen vragen</target>
+      </trans-unit>
       <trans-unit id="Dptvysv" resname="Time">
         <source>Time</source>
         <target>Tijd</target>

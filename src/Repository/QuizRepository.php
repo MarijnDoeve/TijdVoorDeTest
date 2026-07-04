@@ -137,8 +137,8 @@ class QuizRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<dql
             select q, qz, a from Tvdt\Entity\Quiz q
-            join q.questions qz
-            join qz.answers a
+            left join q.questions qz
+            left join qz.answers a
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
     }
@@ -151,8 +151,8 @@ class QuizRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<dql
             select q, qz, a, ac, s, sc, qc from Tvdt\Entity\Quiz q
-            join q.questions qz
-            join qz.answers a
+            left join q.questions qz
+            left join qz.answers a
             left join a.candidates ac
             join q.season s
             left join s.candidates sc

@@ -156,7 +156,13 @@ class QuizController extends AbstractController
     public function answerMapping(Season $season, Quiz $quiz): Response
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestions($quiz->id);
-        \assert($fetchedQuiz->questions->count() > 0);
+
+        if ($fetchedQuiz->questions->isEmpty()) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('This quiz has no questions yet'));
+
+            return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+        }
+
         $firstQuestion = $fetchedQuiz->questions->first();
         \assert($firstQuestion instanceof Question);
 
@@ -235,7 +241,7 @@ class QuizController extends AbstractController
 
         $this->em->flush();
 
-        $this->addFlash('success', $this->translator->trans('Candidate answers saved'));
+        $this->addFlash(FlashType::Success, $this->translator->trans('Candidate answers saved'));
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_question', [
             'seasonCode' => $season->seasonCode,
@@ -357,7 +363,7 @@ class QuizController extends AbstractController
     {
         $this->quizRepository->deleteQuiz($quiz);
 
-        $this->addFlash('success', $this->translator->trans('Quiz deleted'));
+        $this->addFlash(FlashType::Success, $this->translator->trans('Quiz deleted'));
 
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
@@ -422,7 +428,7 @@ class QuizController extends AbstractController
 
         $this->em->flush();
 
-        $this->addFlash('success', $this->translator->trans('Candidate status updated'));
+        $this->addFlash(FlashType::Success, $this->translator->trans('Candidate status updated'));
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_tab', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
