@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Service;
 
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Tvdt\Entity\Answer;
@@ -37,34 +38,39 @@ final readonly class QuestionBankService
             throw new QuizLockedException();
         }
 
-        if (!$bankQuestion->canBeAssigned() || $bankQuestion->isUsedInQuiz($quiz)) {
-            throw new BankQuestionAlreadyUsedException();
-        }
+        $this->entityManager->wrapInTransaction(function () use ($bankQuestion, $quiz): void {
+            // Pessimistic write lock serialises concurrent assignment attempts for the same BankQuestion
+            $this->entityManager->lock($bankQuestion, LockMode::PESSIMISTIC_WRITE);
 
-        $maxOrdering = 0;
-        foreach ($quiz->questions as $existingQuestion) {
-            $maxOrdering = max($maxOrdering, $existingQuestion->ordering);
-        }
+            if (!$bankQuestion->canBeAssigned() || $bankQuestion->isUsedInQuiz($quiz)) {
+                throw new BankQuestionAlreadyUsedException();
+            }
 
-        /** @var Question $question */
-        $question = $this->objectMapper->map($bankQuestion, Question::class);
-        $question->ordering = $maxOrdering + 1;
+            $maxOrdering = 0;
+            foreach ($quiz->questions as $existingQuestion) {
+                $maxOrdering = max($maxOrdering, $existingQuestion->ordering);
+            }
 
-        foreach ($bankQuestion->answers as $bankAnswer) {
-            /** @var Answer $answer */
-            $answer = $this->objectMapper->map($bankAnswer, Answer::class);
-            $question->addAnswer($answer);
-        }
+            /** @var Question $question */
+            $question = $this->objectMapper->map($bankQuestion, Question::class);
+            $question->ordering = $maxOrdering + 1;
 
-        $quiz->addQuestion($question);
+            foreach ($bankQuestion->answers as $bankAnswer) {
+                /** @var Answer $answer */
+                $answer = $this->objectMapper->map($bankAnswer, Answer::class);
+                $question->addAnswer($answer);
+            }
 
-        $usage = new BankQuestionUsage($bankQuestion, $quiz);
-        $usage->question = $question;
+            $quiz->addQuestion($question);
 
-        $bankQuestion->addUsage($usage);
+            $usage = new BankQuestionUsage($bankQuestion, $quiz);
+            $usage->question = $question;
 
-        $this->entityManager->persist($question);
-        $this->entityManager->flush();
+            $bankQuestion->addUsage($usage);
+
+            $this->entityManager->persist($question);
+            $this->entityManager->flush();
+        });
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller\Backoffice;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -215,9 +216,13 @@ class QuestionBankController extends AbstractController
 
         $exists = $season->questionLabels->exists(static fn (int $key, QuestionLabel $label): bool => $label->name === $name);
         if (!$exists) {
-            $season->addQuestionLabel(new QuestionLabel($name));
-            $this->em->flush();
-            $this->addFlash(FlashType::Success, $this->translator->trans('Label added'));
+            try {
+                $season->addQuestionLabel(new QuestionLabel($name));
+                $this->em->flush();
+                $this->addFlash(FlashType::Success, $this->translator->trans('Label added'));
+            } catch (UniqueConstraintViolationException) {
+                // Concurrent request already inserted the same label; treat as a no-op
+            }
         }
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);

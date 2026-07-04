@@ -293,9 +293,9 @@ class QuizController extends AbstractController
             $this->quizRepository->clearQuiz($quiz);
             $quiz->finalizedAt = null;
             $this->em->flush();
-            $this->addFlash('success', $this->translator->trans('Quiz cleared and no longer finalized'));
+            $this->addFlash(FlashType::Success, $this->translator->trans('Quiz cleared and no longer finalized'));
         } catch (ErrorClearingQuizException) {
-            $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
+            $this->addFlash(FlashType::Danger, $this->translator->trans('Error clearing quiz'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
@@ -316,7 +316,7 @@ class QuizController extends AbstractController
         } elseif (!$quiz->isFinalized()) {
             $quiz->finalizedAt = new DateTimeImmutable();
             $this->em->flush();
-            $this->addFlash('success', $this->translator->trans('Quiz finalized'));
+            $this->addFlash(FlashType::Success, $this->translator->trans('Quiz finalized'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
@@ -339,7 +339,7 @@ class QuizController extends AbstractController
         } else {
             $quiz->finalizedAt = null;
             $this->em->flush();
-            $this->addFlash('success', $this->translator->trans('Quiz is no longer finalized'));
+            $this->addFlash(FlashType::Success, $this->translator->trans('Quiz is no longer finalized'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
