@@ -12,9 +12,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Tvdt\Entity\Answer;
+use Tvdt\Entity\BankQuestion;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Question;
+use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
@@ -75,6 +77,61 @@ final class SeasonVoterTest extends TestCase
         $answer = self::createStub(Answer::class);
         $answer->question = $question;
         yield 'Answer' => [$answer];
+
+        $bankQuestion = self::createStub(BankQuestion::class);
+        $bankQuestion->season = $season;
+        yield 'BankQuestion' => [$bankQuestion];
+
+        $questionLabel = self::createStub(QuestionLabel::class);
+        $questionLabel->season = $season;
+        yield 'QuestionLabel' => [$questionLabel];
+    }
+
+    public function testModifyQuizContentGrantedOnUnlockedQuiz(): void
+    {
+        $season = self::createStub(Season::class);
+        $season->method('isOwner')->willReturn(true);
+
+        $quiz = self::createStub(Quiz::class);
+        $quiz->season = $season;
+        $quiz->method('isLocked')->willReturn(false);
+
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->seasonVoter->vote($this->token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
+    }
+
+    public function testModifyQuizContentDeniedOnLockedQuiz(): void
+    {
+        $season = self::createStub(Season::class);
+        $season->method('isOwner')->willReturn(true);
+
+        $quiz = self::createStub(Quiz::class);
+        $quiz->season = $season;
+        $quiz->method('isLocked')->willReturn(true);
+
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->seasonVoter->vote($this->token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
+    }
+
+    public function testModifyQuizContentDeniedOnLockedQuizForAdmin(): void
+    {
+        $user = new User();
+        $user->roles = ['ROLE_ADMIN'];
+
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($user);
+
+        $quiz = self::createStub(Quiz::class);
+        $quiz->season = self::createStub(Season::class);
+        $quiz->method('isLocked')->willReturn(true);
+
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->seasonVoter->vote($token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
+    }
+
+    public function testModifyQuizContentDeniedOnNonQuizSubject(): void
+    {
+        $season = self::createStub(Season::class);
+        $season->method('isOwner')->willReturn(true);
+
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->seasonVoter->vote($this->token, $season, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
     }
 
     public function testWrongUserTypeReturnFalse(): void

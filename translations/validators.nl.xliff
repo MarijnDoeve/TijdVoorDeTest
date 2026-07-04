@@ -9,6 +9,14 @@
         <source>A PHP extension caused the upload to fail.</source>
         <target>De upload is mislukt vanwege een PHP-extensie.</target>
       </trans-unit>
+      <trans-unit id="H5aPWKx" resname="A question must have exactly one correct answer">
+        <source>A question must have exactly one correct answer</source>
+        <target>Een vraag moet precies één goed antwoord hebben</target>
+      </trans-unit>
+      <trans-unit id="urKst95" resname="A question needs at least two answers">
+        <source>A question needs at least two answers</source>
+        <target>Een vraag heeft minstens twee antwoorden nodig</target>
+      </trans-unit>
       <trans-unit id="L9tKe2y" resname="An empty file is not allowed.">
         <source>An empty file is not allowed.</source>
         <target>Lege bestanden zijn niet toegestaan.</target>
@@ -64,6 +72,10 @@
       <trans-unit id="ywSABzT" resname="Please enter a valid URL.">
         <source>Please enter a valid URL.</source>
         <target>Vul een geldige URL in.</target>
+      </trans-unit>
+      <trans-unit id="_vG7Dae" resname="Please enter a valid UUID.">
+        <source>Please enter a valid UUID.</source>
+        <target state="needs-review-translation">Vul een geldige UUID in.</target>
       </trans-unit>
       <trans-unit id="e_2ZUCK" resname="Please enter a valid birthdate.">
         <source>Please enter a valid birthdate.</source>
@@ -361,6 +373,10 @@
         <source>This URL is missing a top-level domain.</source>
         <target>Deze URL mist een top-level domein.</target>
       </trans-unit>
+      <trans-unit id="1yeK8aU" resname="This XML payload is too large ({{ size }} bytes): it exceeds the limit of {{ limit }} bytes.">
+        <source>This XML payload is too large ({{ size }} bytes): it exceeds the limit of {{ limit }} bytes.</source>
+        <target state="needs-review-translation">Deze XML-payload is te groot ({{ size }} bytes): deze overschrijdt de limiet van {{ limit }} bytes.</target>
+      </trans-unit>
       <trans-unit id="d4HuxpA" resname="This collection should contain exactly {{ limit }} element.|This collection should contain exactly {{ limit }} elements.">
         <source>This collection should contain exactly {{ limit }} element.|This collection should contain exactly {{ limit }} elements.</source>
         <target>Deze collectie moet exact één element bevatten.|Deze collectie moet exact {{ limit }} elementen bevatten.</target>
@@ -425,6 +441,10 @@
         <source>This value contains characters that are not allowed by the current restriction-level.</source>
         <target>Deze waarde bevat tekens die niet zijn toegestaan volgens het huidige beperkingsniveau.</target>
       </trans-unit>
+      <trans-unit id="hueZAUr" resname="This value does not conform to the expected XSD schema.">
+        <source>This value does not conform to the expected XSD schema.</source>
+        <target state="needs-review-translation">Deze waarde voldoet niet aan het verwachte XSD-schema.</target>
+      </trans-unit>
       <trans-unit id="tD.RkRe" resname="This value does not match the expected {{ charset }} charset.">
         <source>This value does not match the expected {{ charset }} charset.</source>
         <target>Deze waarde is niet in de verwachte tekencodering {{ charset }}.</target>
@@ -485,6 +505,10 @@
         <source>This value is not a valid country.</source>
         <target>Deze waarde is geen geldig land.</target>
       </trans-unit>
+      <trans-unit id="ZXF_Jfm" resname="This value is not a valid cron expression.">
+        <source>This value is not a valid cron expression.</source>
+        <target state="needs-review-translation">Deze waarde is geen geldige cron-expressie.</target>
+      </trans-unit>
       <trans-unit id="OeFZFII" resname="This value is not a valid currency.">
         <source>This value is not a valid currency.</source>
         <target>Deze waarde is geen geldige valuta.</target>
@@ -524,6 +548,10 @@
       <trans-unit id="qj68TOe" resname="This value is not a valid week.">
         <source>This value is not a valid week.</source>
         <target>Deze waarde is geen geldige week.</target>
+      </trans-unit>
+      <trans-unit id="iTwuWRs" resname="This value is not valid XML.">
+        <source>This value is not valid XML.</source>
+        <target state="needs-review-translation">Deze waarde is geen geldige XML.</target>
       </trans-unit>
       <trans-unit id="TZg2uqx" resname="This value is not valid.">
         <source>This value is not valid.</source>

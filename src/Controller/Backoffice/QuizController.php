@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Safe\DateTimeImmutable;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +23,7 @@ use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\Season;
+use Tvdt\Enum\FlashType;
 use Tvdt\Exception\ErrorClearingQuizException;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
@@ -252,6 +254,12 @@ class QuizController extends AbstractController
     )]
     public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
     {
+        if ($quiz instanceof Quiz && !$quiz->isFinalized()) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('The quiz must be finalized before it can be activated'));
+
+            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+        }
+
         $season->activeQuiz = $quiz;
         $this->em->flush();
 
@@ -274,9 +282,55 @@ class QuizController extends AbstractController
     {
         try {
             $this->quizRepository->clearQuiz($quiz);
-            $this->addFlash('success', $this->translator->trans('Quiz cleared'));
+            $quiz->finalizedAt = null;
+            $this->em->flush();
+            $this->addFlash('success', $this->translator->trans('Quiz cleared and no longer finalized'));
         } catch (ErrorClearingQuizException) {
             $this->addFlash('error', $this->translator->trans('Error clearing quiz'));
+        }
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsCsrfTokenValid('finalize_quiz')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/finalize',
+        name: 'tvdt_backoffice_quiz_finalize',
+        requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function finalizeQuiz(Quiz $quiz): RedirectResponse
+    {
+        if ($quiz->questions->isEmpty() || [] !== $quiz->getQuestionErrors()) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('The quiz cannot be finalized while it has errors'));
+        } elseif (!$quiz->isFinalized()) {
+            $quiz->finalizedAt = new DateTimeImmutable();
+            $this->em->flush();
+            $this->addFlash('success', $this->translator->trans('Quiz finalized'));
+        }
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsCsrfTokenValid('unfinalize_quiz')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/unfinalize',
+        name: 'tvdt_backoffice_quiz_unfinalize',
+        requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function unfinalizeQuiz(Quiz $quiz): RedirectResponse
+    {
+        if ($quiz->hasStartedCandidates()) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('The quiz has already been filled in and can no longer be altered'));
+        } elseif ($quiz->season->activeQuiz === $quiz) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('Deactivate the quiz before undoing the finalization'));
+        } else {
+            $quiz->finalizedAt = null;
+            $this->em->flush();
+            $this->addFlash('success', $this->translator->trans('Quiz is no longer finalized'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);

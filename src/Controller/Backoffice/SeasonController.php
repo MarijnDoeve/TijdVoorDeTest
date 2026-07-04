@@ -39,7 +39,39 @@ class SeasonController extends AbstractController
         name: 'tvdt_backoffice_season',
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
     )]
-    public function index(Season $season, Request $request): Response
+    public function index(Season $season): Response
+    {
+        return $this->render('backoffice/season.html.twig', [
+            'season' => $season,
+            'activeTab' => 'tests',
+            'template' => 'backoffice/season/tab_tests.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/candidates',
+        name: 'tvdt_backoffice_season_candidates',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        priority: 10,
+    )]
+    public function candidatesTab(Season $season): Response
+    {
+        return $this->render('backoffice/season.html.twig', [
+            'season' => $season,
+            'activeTab' => 'candidates',
+            'template' => 'backoffice/season/tab_candidates.html.twig',
+        ]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/settings',
+        name: 'tvdt_backoffice_season_settings',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        priority: 10,
+    )]
+    public function settingsTab(Season $season, Request $request): Response
     {
         $form = $this->createForm(SettingsForm::class, $season->settings);
 
@@ -47,11 +79,15 @@ class SeasonController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
+
+            return $this->redirectToRoute('tvdt_backoffice_season_settings', ['seasonCode' => $season->seasonCode]);
         }
 
         return $this->render('backoffice/season.html.twig', [
             'season' => $season,
             'form' => $form,
+            'activeTab' => 'settings',
+            'template' => 'backoffice/season/tab_settings.html.twig',
         ]);
     }
 

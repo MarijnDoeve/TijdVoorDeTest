@@ -23,7 +23,16 @@
 {% endmacro %}
 
 <div data-controller="bo--quiz">
-    <h4 class="mb-3">{{ 'Quick actions'|trans }}</h4>
+    <h4 class="mb-3">
+        {{ 'Quick actions'|trans }}
+        {% if quiz.isFinalized %}
+            <span class="badge text-bg-success">{{ 'Finalized'|trans }}</span>
+        {% elseif quiz.isLocked %}
+            <span class="badge text-bg-warning">{{ 'Locked (answers given)'|trans }}</span>
+        {% else %}
+            <span class="badge text-bg-secondary">{{ 'Draft'|trans }}</span>
+        {% endif %}
+    </h4>
     <div class="mb-3 btn-group">
 
         {% if quiz is same as (season.activeQuiz) %}
@@ -36,8 +45,25 @@
         {% else %}
             <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
-                <button type="submit" class="btn btn-primary rounded-0 rounded-start">
+                <button type="submit" class="btn btn-primary rounded-0 rounded-start"
+                        {% if not quiz.isFinalized %}disabled data-bs-toggle="tooltip"
+                        title="{{ 'The quiz must be finalized before it can be activated'|trans }}"{% endif %}>
                     {{ 'Make active'|trans }}
+                </button>
+            </form>
+        {% endif %}
+        {% if not quiz.isFinalized %}
+            <form action="{{ path('tvdt_backoffice_quiz_finalize', {quiz: quiz.id}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('finalize_quiz') }}">
+                <button type="submit" class="btn btn-success rounded-0">
+                    {{ 'Finalize'|trans }}
+                </button>
+            </form>
+        {% elseif not quiz.hasStartedCandidates and quiz is not same as (season.activeQuiz) %}
+            <form action="{{ path('tvdt_backoffice_quiz_unfinalize', {quiz: quiz.id}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('unfinalize_quiz') }}">
+                <button type="submit" class="btn btn-outline-success rounded-0">
+                    {{ 'Undo finalization'|trans }}
                 </button>
             </form>
         {% endif %}

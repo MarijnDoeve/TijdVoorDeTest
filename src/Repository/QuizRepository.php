@@ -12,6 +12,7 @@ use Safe\Exceptions\DatetimeException;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Dto\Result;
 use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
 
 /** @extends ServiceEntityRepository<Quiz> */
@@ -20,6 +21,29 @@ class QuizRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
         parent::__construct($registry, Quiz::class);
+    }
+
+    /**
+     * Quizzes of the season that can still receive bank questions:
+     * not finalized and not started by any candidate.
+     *
+     * @return list<Quiz>
+     */
+    public function findAssignableForSeason(Season $season): array
+    {
+        /* @var list<Quiz> */
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select q from Tvdt\Entity\Quiz q
+            where q.season = :season
+            and q.finalizedAt is null
+            and not exists (
+                select 1 from Tvdt\Entity\QuizCandidate qc
+                where qc.quiz = q and qc.started is not null
+            )
+            order by q.id asc
+            DQL)
+            ->setParameter('season', $season)
+            ->getResult();
     }
 
     /** @throws ErrorClearingQuizException */

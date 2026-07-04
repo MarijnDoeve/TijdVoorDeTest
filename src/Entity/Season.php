@@ -51,12 +51,24 @@ class Season
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     public ?SeasonSettings $settings = null;
 
+    /** @var Collection<int, BankQuestion> */
+    #[ORM\OneToMany(targetEntity: BankQuestion::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['question' => 'ASC'])]
+    public private(set) Collection $bankQuestions;
+
+    /** @var Collection<int, QuestionLabel> */
+    #[ORM\OneToMany(targetEntity: QuestionLabel::class, mappedBy: 'season', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['name' => 'ASC'])]
+    public private(set) Collection $questionLabels;
+
     public function __construct()
     {
         $this->settings = new SeasonSettings();
         $this->quizzes = new ArrayCollection();
         $this->candidates = new ArrayCollection();
         $this->owners = new ArrayCollection();
+        $this->bankQuestions = new ArrayCollection();
+        $this->questionLabels = new ArrayCollection();
     }
 
     public function addQuiz(Quiz $quiz): static
@@ -74,6 +86,26 @@ class Season
         if (!$this->candidates->contains($candidate)) {
             $this->candidates->add($candidate);
             $candidate->season = $this;
+        }
+
+        return $this;
+    }
+
+    public function addBankQuestion(BankQuestion $bankQuestion): static
+    {
+        if (!$this->bankQuestions->contains($bankQuestion)) {
+            $this->bankQuestions->add($bankQuestion);
+            $bankQuestion->season = $this;
+        }
+
+        return $this;
+    }
+
+    public function addQuestionLabel(QuestionLabel $questionLabel): static
+    {
+        if (!$this->questionLabels->contains($questionLabel)) {
+            $this->questionLabels->add($questionLabel);
+            $questionLabel->season = $this;
         }
 
         return $this;

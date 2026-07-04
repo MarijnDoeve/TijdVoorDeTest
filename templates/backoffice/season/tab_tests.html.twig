@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="mb-0 pe-2">{{ 'Quizzes'|trans }}</h4>
+            <a class="link"
+               href="{{ path('tvdt_backoffice_quiz_add', {seasonCode: season.seasonCode}) }}">{{ 'Add'|trans }}</a>
+        </div>
+        <div class="list-group mb-3">
+            {% for quiz in season.quizzes %}
+                <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
+                   href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">
+                    {{ quiz.name }}
+                    {% if quiz.isFinalized %}
+                        <span class="badge text-bg-success">{{ 'Finalized'|trans }}</span>
+                    {% endif %}
+                </a>
+            {% else %}
+                {{ 'No quizzes'|trans }}
+            {% endfor %}
+        </div>
+    </div>
+</div>

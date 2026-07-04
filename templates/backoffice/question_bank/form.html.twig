@@ -1,0 +1,55 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% macro answer_row(answerForm) %}
+    <div class="d-flex align-items-center gap-2 mb-2" data-collection-item>
+        <div class="flex-grow-1">{{ form_widget(answerForm.text) }}</div>
+        <div class="form-check">
+            {{ form_widget(answerForm.isRightAnswer, {attr: {class: 'form-check-input'}}) }}
+            {{ form_label(answerForm.isRightAnswer, null, {label_attr: {class: 'form-check-label'}}) }}
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger"
+                data-action="bo--form-collection#removeItem">&times;</button>
+    </div>
+{% endmacro %}
+
+{% block title %}{{ parent() }}{{ 'Question bank'|trans }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ season.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode}) }}">{{ 'Question bank'|trans }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <h2 class="mb-3">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</h2>
+
+            {{ form_start(form) }}
+            {{ form_row(form.question) }}
+            {{ form_row(form.reusable) }}
+            {{ form_row(form.labels) }}
+
+            <div data-controller="bo--form-collection"
+                 data-bo--form-collection-prototype-value="{{ _self.answer_row(form.answers.vars.prototype)|e('html_attr') }}">
+                {{ form_label(form.answers) }}
+                {{ form_errors(form.answers) }}
+                <div data-bo--form-collection-target="collection">
+                    {% for answerForm in form.answers %}
+                        {{ _self.answer_row(answerForm) }}
+                    {% endfor %}
+                </div>
+                {% do form.answers.setRendered %}
+                <button type="button" class="btn btn-sm btn-outline-primary mb-3"
+                        data-action="bo--form-collection#addItem">{{ 'Add answer'|trans }}</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock body %}

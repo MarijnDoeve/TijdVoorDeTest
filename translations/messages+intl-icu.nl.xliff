@@ -41,6 +41,22 @@
         <source>Add a quiz to {name}</source>
         <target>Voeg een test toe aan {name}</target>
       </trans-unit>
+      <trans-unit id="3AXboIn" resname="Add answer">
+        <source>Add answer</source>
+        <target>Antwoord toevoegen</target>
+      </trans-unit>
+      <trans-unit id="MJD3m3Q" resname="Add label">
+        <source>Add label</source>
+        <target>Label toevoegen</target>
+      </trans-unit>
+      <trans-unit id="gjGGGsg" resname="Add question">
+        <source>Add question</source>
+        <target>Vraag toevoegen</target>
+      </trans-unit>
+      <trans-unit id="tHdA52O" resname="All">
+        <source>All</source>
+        <target>Alle</target>
+      </trans-unit>
       <trans-unit id="qiXD5ve" resname="All Seasons">
         <source>All Seasons</source>
         <target>Alle seizoenen</target>
@@ -57,13 +73,25 @@
         <source>Are you sure you want to clear all the results? This will also delete all the eliminations.</source>
         <target>Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.</target>
       </trans-unit>
+      <trans-unit id="8HZ5s3T" resname="Are you sure you want to delete this question from the question bank?">
+        <source>Are you sure you want to delete this question from the question bank?</source>
+        <target>Weet je zeker dat je deze vraag uit de vragenbank wilt verwijderen?</target>
+      </trans-unit>
       <trans-unit id="Ec4twG8" resname="Are you sure you want to delete this quiz?">
         <source>Are you sure you want to delete this quiz?</source>
         <target>Weet je zeker dat je deze test wilt verwijderen?</target>
       </trans-unit>
+      <trans-unit id="4bcq6sL" resname="Assign">
+        <source>Assign</source>
+        <target>Toewijzen</target>
+      </trans-unit>
       <trans-unit id=".QFPbFe" resname="Back">
         <source>Back</source>
         <target>Terug</target>
+      </trans-unit>
+      <trans-unit id="JUdglpF" resname="Backoffice">
+        <source>Backoffice</source>
+        <target>Backoffice</target>
       </trans-unit>
       <trans-unit id="T6TIfj7" resname="Candidate">
         <source>Candidate</source>
@@ -133,6 +161,14 @@
         <source>Deactivate Quiz</source>
         <target>Deactiveer test</target>
       </trans-unit>
+      <trans-unit id="tOdAxXK" resname="Deactivate the quiz before undoing the finalization">
+        <source>Deactivate the quiz before undoing the finalization</source>
+        <target>Deactiveer de test voordat je de finalisatie ongedaan maakt</target>
+      </trans-unit>
+      <trans-unit id="Z_crX_u" resname="Delete">
+        <source>Delete</source>
+        <target>Verwijderen</target>
+      </trans-unit>
       <trans-unit id="p9GNNI3" resname="Delete Quiz...">
         <source>Delete Quiz...</source>
         <target>Test verwijderen...</target>
@@ -141,9 +177,21 @@
         <source>Download Template</source>
         <target>Download sjabloon</target>
       </trans-unit>
+      <trans-unit id="dwUtS3b" resname="Draft">
+        <source>Draft</source>
+        <target>Concept</target>
+      </trans-unit>
       <trans-unit id="FfYlwX8" resname="EMPTY">
         <source>EMPTY</source>
         <target>LEEG</target>
+      </trans-unit>
+      <trans-unit id="M.l1CPU" resname="Edit">
+        <source>Edit</source>
+        <target>Bewerken</target>
+      </trans-unit>
+      <trans-unit id="6RmXg4t" resname="Edit question">
+        <source>Edit question</source>
+        <target>Vraag bewerken</target>
       </trans-unit>
       <trans-unit id="JZi_tm0" resname="Email">
         <source>Email</source>
@@ -160,6 +208,18 @@
       <trans-unit id="HNMwvRn" resname="Error clearing quiz">
         <source>Error clearing quiz</source>
         <target>Fout bij het leegmaken van de test</target>
+      </trans-unit>
+      <trans-unit id="bgWPQMg" resname="Export to XLSX">
+        <source>Export to XLSX</source>
+        <target>Exporteren naar XLSX</target>
+      </trans-unit>
+      <trans-unit id="6rPqY9p" resname="Finalize">
+        <source>Finalize</source>
+        <target>Finaliseren</target>
+      </trans-unit>
+      <trans-unit id="c_5RxsX" resname="Finalized">
+        <source>Finalized</source>
+        <target>Gefinaliseerd</target>
       </trans-unit>
       <trans-unit id="OGiIhMH" resname="Green">
         <source>Green</source>
@@ -193,13 +253,33 @@
         <source>Inactive</source>
         <target>Inactief</target>
       </trans-unit>
+      <trans-unit id="0GRwjA_" resname="Invalid label name">
+        <source>Invalid label name</source>
+        <target>Ongeldige labelnaam</target>
+      </trans-unit>
       <trans-unit id="k1X7w12" resname="Invalid season code">
         <source>Invalid season code</source>
         <target>Ongeldige seizoencode</target>
       </trans-unit>
+      <trans-unit id="OoJeYtt" resname="Label added">
+        <source>Label added</source>
+        <target>Label toegevoegd</target>
+      </trans-unit>
+      <trans-unit id="HWV7sHP" resname="Label removed">
+        <source>Label removed</source>
+        <target>Label verwijderd</target>
+      </trans-unit>
+      <trans-unit id="YqI5TFM" resname="Labels">
+        <source>Labels</source>
+        <target>Labels</target>
+      </trans-unit>
       <trans-unit id="q0FeoCr" resname="Load Prepared Elimination">
         <source>Load Prepared Elimination</source>
         <target>Laad voorbereide eliminatie</target>
+      </trans-unit>
+      <trans-unit id="M2ELPzt" resname="Locked (answers given)">
+        <source>Locked (answers given)</source>
+        <target>Vergrendeld (antwoorden gegeven)</target>
       </trans-unit>
       <trans-unit id="JKl2Twv" resname="Logout">
         <source>Logout</source>
@@ -221,6 +301,10 @@
         <source>Name</source>
         <target>Naam</target>
       </trans-unit>
+      <trans-unit id="lqTjJ4a" resname="New label">
+        <source>New label</source>
+        <target>Nieuw label</target>
+      </trans-unit>
       <trans-unit id="gefhnBC" resname="Next">
         <source>Next</source>
         <target>Volgende</target>
@@ -232,6 +316,14 @@
       <trans-unit id="nOHriCl" resname="No active quiz">
         <source>No active quiz</source>
         <target>Geen actieve test</target>
+      </trans-unit>
+      <trans-unit id="lwoek_H" resname="No candidates">
+        <source>No candidates</source>
+        <target>Geen kandidaten</target>
+      </trans-unit>
+      <trans-unit id="IsJa5UL" resname="No questions in the question bank yet">
+        <source>No questions in the question bank yet</source>
+        <target>Nog geen vragen in de vragenbank</target>
       </trans-unit>
       <trans-unit id="oNXT2zu" resname="No quizzes">
         <source>No quizzes</source>
@@ -248,6 +340,10 @@
       <trans-unit id="k7Eqnjt" resname="Number of dropouts:">
         <source>Number of dropouts:</source>
         <target>Aantal afvallers:</target>
+      </trans-unit>
+      <trans-unit id="_SqArFZ" resname="Open">
+        <source>Open</source>
+        <target>Openen</target>
       </trans-unit>
       <trans-unit id="HmgPmMV" resname="Overview">
         <source>Overview</source>
@@ -297,6 +393,30 @@
         <source>Previous</source>
         <target>Vorige</target>
       </trans-unit>
+      <trans-unit id="W1WJHfF" resname="Question">
+        <source>Question</source>
+        <target>Vraag</target>
+      </trans-unit>
+      <trans-unit id="lxvgioH" resname="Question added to quiz %quiz%">
+        <source>Question added to quiz %quiz%</source>
+        <target>Vraag toegevoegd aan test %quiz%</target>
+      </trans-unit>
+      <trans-unit id="hMGFgEZ" resname="Question added to the question bank">
+        <source>Question added to the question bank</source>
+        <target>Vraag toegevoegd aan de vragenbank</target>
+      </trans-unit>
+      <trans-unit id="katmLq0" resname="Question bank">
+        <source>Question bank</source>
+        <target>Vragenbank</target>
+      </trans-unit>
+      <trans-unit id="KApairC" resname="Question removed from the question bank">
+        <source>Question removed from the question bank</source>
+        <target>Vraag verwijderd uit de vragenbank</target>
+      </trans-unit>
+      <trans-unit id="MNSmL.W" resname="Question updated">
+        <source>Question updated</source>
+        <target>Vraag bijgewerkt</target>
+      </trans-unit>
       <trans-unit id="Rx5irUP" resname="Questions">
         <source>Questions</source>
         <target>Vragen</target>
@@ -325,6 +445,10 @@
         <source>Quiz cleared</source>
         <target>Test leeggemaakt</target>
       </trans-unit>
+      <trans-unit id="cyXkBo4" resname="Quiz cleared and no longer finalized">
+        <source>Quiz cleared and no longer finalized</source>
+        <target>Test leeggemaakt en niet langer gefinaliseerd</target>
+      </trans-unit>
       <trans-unit id="LbVe.2c" resname="Quiz completed">
         <source>Quiz completed</source>
         <target>Test voltooid</target>
@@ -332,6 +456,14 @@
       <trans-unit id="XdfTTMD" resname="Quiz deleted">
         <source>Quiz deleted</source>
         <target>Test verwijderd</target>
+      </trans-unit>
+      <trans-unit id="GPFvyrm" resname="Quiz finalized">
+        <source>Quiz finalized</source>
+        <target>Test gefinaliseerd</target>
+      </trans-unit>
+      <trans-unit id="BAp8lIR" resname="Quiz is no longer finalized">
+        <source>Quiz is no longer finalized</source>
+        <target>Test is niet langer gefinaliseerd</target>
       </trans-unit>
       <trans-unit id="frxoIkW" resname="Quiz name">
         <source>Quiz name</source>
@@ -353,6 +485,10 @@
         <source>Remember me</source>
         <target>Onthoud mij</target>
       </trans-unit>
+      <trans-unit id="zy7f1zh" resname="Remove label">
+        <source>Remove label</source>
+        <target>Label verwijderen</target>
+      </trans-unit>
       <trans-unit id="Z9CSKpk" resname="Repeat Password">
         <source>Repeat Password</source>
         <target>Herhaal wachtwoord</target>
@@ -360,6 +496,10 @@
       <trans-unit id="7UvBPrb" resname="Results &amp; Elimination">
         <source>Results &amp; Elimination</source>
         <target><![CDATA[Resultaat & Eliminatie]]></target>
+      </trans-unit>
+      <trans-unit id="uFRq6ud" resname="Reusable">
+        <source>Reusable</source>
+        <target>Herbruikbaar</target>
       </trans-unit>
       <trans-unit id="z9OKodR" resname="Save">
         <source>Save</source>
@@ -413,6 +553,18 @@
         <source>The password fields must match.</source>
         <target>De wachtwoorden moeten overeen komen.</target>
       </trans-unit>
+      <trans-unit id="K3e_SRJ" resname="The quiz cannot be finalized while it has errors">
+        <source>The quiz cannot be finalized while it has errors</source>
+        <target>De test kan niet gefinaliseerd worden zolang er fouten zijn</target>
+      </trans-unit>
+      <trans-unit id="B7wNGHP" resname="The quiz has already been filled in and can no longer be altered">
+        <source>The quiz has already been filled in and can no longer be altered</source>
+        <target>De test is al ingevuld en kan niet meer aangepast worden</target>
+      </trans-unit>
+      <trans-unit id="Z3xaLuk" resname="The quiz must be finalized before it can be activated">
+        <source>The quiz must be finalized before it can be activated</source>
+        <target>De test moet gefinaliseerd zijn voordat deze geactiveerd kan worden</target>
+      </trans-unit>
       <trans-unit id="HuzRgeN" resname="There are no answers for this question">
         <source>There are no answers for this question</source>
         <target>Er zijn geen antwoorden voor deze vraag</target>
@@ -421,9 +573,29 @@
         <source>There is no active quiz</source>
         <target>Er is geen test actief</target>
       </trans-unit>
+      <trans-unit id=".WkwBH8" resname="This question has already been used">
+        <source>This question has already been used</source>
+        <target>Deze vraag is al gebruikt</target>
+      </trans-unit>
+      <trans-unit id="zkt9PBS" resname="This question has been used in a quiz. The copy in the quiz will not be affected.">
+        <source>This question has been used in a quiz. The copy in the quiz will not be affected.</source>
+        <target>Deze vraag is gebruikt in een test. De kopie in de test blijft ongewijzigd.</target>
+      </trans-unit>
+      <trans-unit id="nFSq59J" resname="This quiz can no longer be altered">
+        <source>This quiz can no longer be altered</source>
+        <target>Deze test kan niet meer aangepast worden</target>
+      </trans-unit>
       <trans-unit id="Dptvysv" resname="Time">
         <source>Time</source>
         <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="A_XdODo" resname="Undo finalization">
+        <source>Undo finalization</source>
+        <target>Finalisatie ongedaan maken</target>
+      </trans-unit>
+      <trans-unit id="Bdt8q.S" resname="Used in">
+        <source>Used in</source>
+        <target>Gebruikt in</target>
       </trans-unit>
       <trans-unit id="pRCwpOT" resname="Yes">
         <source>Yes</source>

@@ -7,9 +7,14 @@ namespace Tvdt\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
+use Safe\DateTimeImmutable;
 use Tvdt\Entity\Answer;
+use Tvdt\Entity\BankAnswer;
+use Tvdt\Entity\BankQuestion;
+use Tvdt\Entity\BankQuestionUsage;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
+use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\SeasonSettings;
@@ -17,6 +22,16 @@ use Tvdt\Entity\SeasonSettings;
 final class KrtekFixtures extends Fixture implements FixtureGroupInterface
 {
     public const string KRTEK_SEASON = 'krtek-seaspm';
+
+    public const string KRTEK_QUIZ_1 = 'krtek-quiz-1';
+
+    public const string KRTEK_QUIZ_2 = 'krtek-quiz-2';
+
+    public const string BANK_QUESTION_REUSABLE = 'bank-question-reusable';
+
+    public const string BANK_QUESTION_USED = 'bank-question-used';
+
+    public const string BANK_QUESTION_UNUSED = 'bank-question-unused';
 
     public static function getGroups(): array
     {
@@ -47,16 +62,64 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $quiz1 = $this->createQuiz1($season);
         $season->addQuiz($quiz1);
         $season->activeQuiz = $quiz1;
-        $season->addQuiz($this->createQuiz2($season));
+
+        $quiz1->finalizedAt = new DateTimeImmutable();
+        $quiz2 = $this->createQuiz2($season);
+        $season->addQuiz($quiz2);
 
         \assert($season->settings instanceof SeasonSettings);
 
         $season->settings->confirmAnswers = true;
         $season->settings->showNumbers = true;
 
+        $this->createQuestionBank($season, $quiz2);
+
         $manager->flush();
 
         $this->addReference(self::KRTEK_SEASON, $season);
+        $this->addReference(self::KRTEK_QUIZ_1, $quiz1);
+        $this->addReference(self::KRTEK_QUIZ_2, $quiz2);
+    }
+
+    private function createQuestionBank(Season $season, Quiz $usedInQuiz): void
+    {
+        $location = new QuestionLabel('Locatie');
+        $season->addQuestionLabel($location);
+        $finale = new QuestionLabel('Finale');
+        $season->addQuestionLabel($finale);
+
+        $reusable = new BankQuestion();
+        $reusable->question = 'Wie is de Krtek?';
+        $reusable->reusable = true;
+        $reusable->addLabel($finale);
+        $reusable->addAnswer(new BankAnswer('Claudia', true));
+        $reusable->addAnswer(new BankAnswer('Eelco'));
+        $reusable->addAnswer(new BankAnswer('Elise'));
+
+        $season->addBankQuestion($reusable);
+
+        $used = new BankQuestion();
+        $used->question = 'Waar sliep de Krtek?';
+        $used->addLabel($location);
+        $used->addAnswer(new BankAnswer('Boven', true));
+        $used->addAnswer(new BankAnswer('Beneden'));
+        $used->addUsage(new BankQuestionUsage($used, $usedInQuiz));
+
+        $season->addBankQuestion($used);
+
+        $unused = new BankQuestion();
+        $unused->question = 'Wat at de Krtek als ontbijt?';
+        $unused->addLabel($location);
+        $unused->addLabel($finale);
+        $unused->addAnswer(new BankAnswer('Brood', true));
+        $unused->addAnswer(new BankAnswer('Yoghurt'));
+        $unused->addAnswer(new BankAnswer('Niks'));
+
+        $season->addBankQuestion($unused);
+
+        $this->addReference(self::BANK_QUESTION_REUSABLE, $reusable);
+        $this->addReference(self::BANK_QUESTION_USED, $used);
+        $this->addReference(self::BANK_QUESTION_UNUSED, $unused);
     }
 
     private function createQuiz1(Season $season): Quiz
