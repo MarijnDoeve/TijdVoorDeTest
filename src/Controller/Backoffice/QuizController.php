@@ -252,19 +252,28 @@ class QuizController extends AbstractController
         requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'quiz' => Requirement::UUID.'|null'],
         methods: ['POST'],
     )]
-    public function enableQuiz(Season $season, ?Quiz $quiz): RedirectResponse
+    public function enableQuiz(Season $season, ?Quiz $quiz, Request $request): RedirectResponse
     {
         if ($quiz instanceof Quiz && !$quiz->isFinalized()) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('The quiz must be finalized before it can be activated'));
 
-            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+            return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
         }
 
         $season->activeQuiz = $quiz;
         $this->em->flush();
 
         if ($quiz instanceof Quiz) {
-            return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+            return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
+        }
+
+        // When deactivating, stay on the quiz page if one was passed
+        $previousQuizId = $request->request->getString('redirect_quiz');
+        if ('' !== $previousQuizId) {
+            $previousQuiz = $this->em->getRepository(Quiz::class)->find($previousQuizId);
+            if ($previousQuiz instanceof Quiz && $previousQuiz->season === $season) {
+                return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $previousQuiz->id]);
+            }
         }
 
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);

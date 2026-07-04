@@ -38,6 +38,7 @@
         {% if quiz is same as (season.activeQuiz) %}
             <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
+                <input type="hidden" name="redirect_quiz" value="{{ quiz.id }}">
                 <button type="submit" class="btn btn-secondary rounded-0 rounded-start">
                     {{ 'Deactivate Quiz'|trans }}
                 </button>

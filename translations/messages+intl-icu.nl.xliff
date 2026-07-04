@@ -45,6 +45,18 @@
         <source>Add answer</source>
         <target>Antwoord toevoegen</target>
       </trans-unit>
+      <trans-unit id="hUN3NTt" resname="Add blank">
+        <source>Add blank</source>
+        <target>Leeg toevoegen</target>
+      </trans-unit>
+      <trans-unit id="nl03zPX" resname="Add blank quiz">
+        <source>Add blank quiz</source>
+        <target>Lege quiz toevoegen</target>
+      </trans-unit>
+      <trans-unit id="2Qmgp4S" resname="Add from XLSX">
+        <source>Add from XLSX</source>
+        <target>Toevoegen vanuit XLSX</target>
+      </trans-unit>
       <trans-unit id="MJD3m3Q" resname="Add label">
         <source>Add label</source>
         <target>Label toevoegen</target>
@@ -152,6 +164,10 @@
       <trans-unit id="Wsms_zc" resname="Create an account">
         <source>Create an account</source>
         <target>Maak een account aan</target>
+      </trans-unit>
+      <trans-unit id="yBgKisV" resname="Create an empty quiz and add questions from the question bank.">
+        <source>Create an empty quiz and add questions from the question bank.</source>
+        <target>Maak een lege quiz aan en voeg vragen toe vanuit de vragenbank.</target>
       </trans-unit>
       <trans-unit id="S5P7nQd" resname="Deactivate">
         <source>Deactivate</source>
@@ -409,9 +425,17 @@
         <source>Question bank</source>
         <target>Vragenbank</target>
       </trans-unit>
+      <trans-unit id="htaUa1k" resname="Question removed from quiz %quiz%">
+        <source>Question removed from quiz %quiz%</source>
+        <target>Vraag verwijderd uit quiz %quiz%</target>
+      </trans-unit>
       <trans-unit id="KApairC" resname="Question removed from the question bank">
         <source>Question removed from the question bank</source>
         <target>Vraag verwijderd uit de vragenbank</target>
+      </trans-unit>
+      <trans-unit id="6rkejYf" resname="Question synced to quiz %quiz%">
+        <source>Question synced to quiz %quiz%</source>
+        <target>Vraag gesynchroniseerd naar quiz %quiz%</target>
       </trans-unit>
       <trans-unit id="MNSmL.W" resname="Question updated">
         <source>Question updated</source>
@@ -549,9 +573,17 @@
         <source>Submit</source>
         <target>Verstuur</target>
       </trans-unit>
+      <trans-unit id="yqJbSKu" resname="Sync latest changes to this quiz">
+        <source>Sync latest changes to this quiz</source>
+        <target>Laatste wijzigingen synchroniseren naar deze quiz</target>
+      </trans-unit>
       <trans-unit id="_z4el3Z" resname="The password fields must match.">
         <source>The password fields must match.</source>
         <target>De wachtwoorden moeten overeen komen.</target>
+      </trans-unit>
+      <trans-unit id="1jF4vJ8" resname="The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.">
+        <source>The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.</source>
+        <target>De vraag is niet gesynchroniseerd naar gefinaliseerde quiz(zes): %quizzes%. Gebruik de Synchroniseren-knop om ze bij te werken.</target>
       </trans-unit>
       <trans-unit id="K3e_SRJ" resname="The quiz cannot be finalized while it has errors">
         <source>The quiz cannot be finalized while it has errors</source>
@@ -585,9 +617,17 @@
         <source>This quiz can no longer be altered</source>
         <target>Deze test kan niet meer aangepast worden</target>
       </trans-unit>
+      <trans-unit id="uAJQGot" resname="This quiz has already been filled in and can no longer be altered">
+        <source>This quiz has already been filled in and can no longer be altered</source>
+        <target>Deze quiz is al ingevuld en kan niet meer worden gewijzigd</target>
+      </trans-unit>
       <trans-unit id="Dptvysv" resname="Time">
         <source>Time</source>
         <target>Tijd</target>
+      </trans-unit>
+      <trans-unit id="XLYBGca" resname="Unassign">
+        <source>Unassign</source>
+        <target>Ontkoppelen</target>
       </trans-unit>
       <trans-unit id="A_XdODo" resname="Undo finalization">
         <source>Undo finalization</source>

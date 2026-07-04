@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\BankQuestion;
 use Tvdt\Entity\BankQuestionUsage;
@@ -15,7 +16,10 @@ use Tvdt\Exception\QuizLockedException;
 
 final readonly class QuestionBankService
 {
-    public function __construct(private EntityManagerInterface $entityManager) {}
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ObjectMapperInterface $objectMapper,
+    ) {}
 
     /**
      * Copy a bank question (with its answers) into a quiz and record the usage.
@@ -42,20 +46,66 @@ final readonly class QuestionBankService
             $maxOrdering = max($maxOrdering, $existingQuestion->ordering);
         }
 
-        $question = new Question();
-        $question->question = $bankQuestion->question;
+        /** @var Question $question */
+        $question = $this->objectMapper->map($bankQuestion, Question::class);
         $question->ordering = $maxOrdering + 1;
 
         foreach ($bankQuestion->answers as $bankAnswer) {
-            $answer = new Answer($bankAnswer->text, $bankAnswer->isRightAnswer);
-            $answer->ordering = $bankAnswer->ordering;
+            /** @var Answer $answer */
+            $answer = $this->objectMapper->map($bankAnswer, Answer::class);
             $question->addAnswer($answer);
         }
 
         $quiz->addQuestion($question);
-        $bankQuestion->addUsage(new BankQuestionUsage($bankQuestion, $quiz));
+
+        $usage = new BankQuestionUsage($bankQuestion, $quiz);
+        $usage->question = $question;
+
+        $bankQuestion->addUsage($usage);
 
         $this->entityManager->persist($question);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Propagate bank question edits to a quiz copy.
+     * Only safe on quizzes where no candidate has started (no GivenAnswers exist yet).
+     */
+    public function syncToQuiz(BankQuestion $bankQuestion, BankQuestionUsage $usage): void
+    {
+        $question = $usage->question;
+        if (!$question instanceof Question) {
+            return;
+        }
+
+        $question->question = $bankQuestion->question;
+
+        // Replace answers (safe: no started candidates means no GivenAnswers)
+        foreach ($question->answers->toArray() as $existingAnswer) {
+            $question->answers->removeElement($existingAnswer);
+            $this->entityManager->remove($existingAnswer);
+        }
+
+        foreach ($bankQuestion->answers as $bankAnswer) {
+            /** @var Answer $answer */
+            $answer = $this->objectMapper->map($bankAnswer, Answer::class);
+            $question->addAnswer($answer);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /** Remove the quiz copy created by this usage and delete the usage record. */
+    public function unassignFromQuiz(BankQuestionUsage $usage): void
+    {
+        $question = $usage->question;
+        if ($question instanceof Question) {
+            $question->quiz->questions->removeElement($question);
+            $this->entityManager->remove($question);
+        }
+
+        $usage->bankQuestion->usages->removeElement($usage);
+        $this->entityManager->remove($usage);
         $this->entityManager->flush();
     }
 }

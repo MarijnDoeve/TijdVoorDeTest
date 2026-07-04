@@ -24,6 +24,10 @@ class BankQuestionUsage
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     public private(set) \DateTimeImmutable $created;
 
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\ManyToOne]
+    public ?Question $question = null;
+
     public function __construct(
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'usages')]

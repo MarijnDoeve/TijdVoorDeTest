@@ -19,6 +19,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\BankQuestion;
+use Tvdt\Entity\BankQuestionUsage;
 use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
@@ -120,6 +121,8 @@ class QuestionBankController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->applyAnswerOrdering($bankQuestion);
             $this->em->flush();
+
+            $this->syncUsagesAfterEdit($bankQuestion);
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
 
@@ -245,6 +248,64 @@ class QuestionBankController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
     }
 
+    #[IsCsrfTokenValid('unassign_bank_question')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/question-bank/{bankQuestion}/unassign/{usage}',
+        name: 'tvdt_backoffice_question_bank_unassign',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'bankQuestion' => Requirement::UUID, 'usage' => Requirement::UUID],
+        methods: ['POST'],
+        priority: 10,
+    )]
+    public function unassign(Season $season, BankQuestion $bankQuestion, BankQuestionUsage $usage): RedirectResponse
+    {
+        $this->assertSameSeason($season, $bankQuestion->season);
+
+        if ($usage->bankQuestion !== $bankQuestion) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($usage->quiz->isLocked()) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
+
+            return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+        }
+
+        $this->questionBankService->unassignFromQuiz($usage);
+        $this->addFlash(FlashType::Success, $this->translator->trans('Question removed from quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
+
+        return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+    }
+
+    #[IsCsrfTokenValid('sync_bank_question')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/question-bank/{bankQuestion}/sync/{usage}',
+        name: 'tvdt_backoffice_question_bank_sync',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'bankQuestion' => Requirement::UUID, 'usage' => Requirement::UUID],
+        methods: ['POST'],
+        priority: 10,
+    )]
+    public function syncToQuiz(Season $season, BankQuestion $bankQuestion, BankQuestionUsage $usage): RedirectResponse
+    {
+        $this->assertSameSeason($season, $bankQuestion->season);
+
+        if ($usage->bankQuestion !== $bankQuestion) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($usage->quiz->hasStartedCandidates()) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz has already been filled in and can no longer be altered'));
+
+            return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+        }
+
+        $this->questionBankService->syncToQuiz($bankQuestion, $usage);
+        $this->addFlash(FlashType::Success, $this->translator->trans('Question synced to quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
+
+        return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+    }
+
     private function assertSameSeason(Season $season, Season $subjectSeason): void
     {
         if ($season !== $subjectSeason) {
@@ -257,6 +318,28 @@ class QuestionBankController extends AbstractController
         $ordering = 1;
         foreach ($bankQuestion->answers as $answer) {
             $answer->ordering = $ordering++;
+        }
+    }
+
+    private function syncUsagesAfterEdit(BankQuestion $bankQuestion): void
+    {
+        $pendingNames = [];
+        foreach ($bankQuestion->usages as $usage) {
+            if (!$usage->quiz->isFinalized()) {
+                $this->questionBankService->syncToQuiz($bankQuestion, $usage);
+            } elseif (!$usage->quiz->hasStartedCandidates()) {
+                $pendingNames[] = $usage->quiz->name;
+            }
+        }
+
+        if ([] !== $pendingNames) {
+            $this->addFlash(
+                FlashType::Warning,
+                $this->translator->trans(
+                    'The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.',
+                    ['%quizzes%' => implode(', ', $pendingNames)],
+                ),
+            );
         }
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -147,5 +149,39 @@ class SeasonController extends AbstractController
         }
 
         return $this->render('/backoffice/quiz_add.html.twig', ['form' => $form, 'season' => $season]);
+    }
+
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/add-blank-quiz',
+        name: 'tvdt_backoffice_quiz_add_blank',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        priority: 10,
+    )]
+    public function addBlankQuiz(Request $request, Season $season): Response
+    {
+        $form = $this->createFormBuilder(new Quiz())
+            ->add('name', TextType::class, ['label' => 'Quiz name'])
+            ->add('save', SubmitType::class, ['label' => 'Create'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Quiz $quiz */
+            $quiz = $form->getData();
+            $quiz->season = $season;
+            $this->em->persist($quiz);
+            $this->em->flush();
+
+            $this->addFlash(FlashType::Success, $this->translator->trans('Quiz Added!'));
+
+            return $this->redirectToRoute('tvdt_backoffice_quiz_overview', [
+                'seasonCode' => $season->seasonCode,
+                'quiz' => $quiz->id,
+            ]);
+        }
+
+        return $this->render('/backoffice/quiz_add_blank.html.twig', ['form' => $form, 'season' => $season]);
     }
 }

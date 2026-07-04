@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -16,6 +17,7 @@ use Tvdt\Repository\BankQuestionRepository;
 #[ORM\Entity(repositoryClass: BankQuestionRepository::class)]
 class BankQuestion implements \Stringable
 {
+    #[Map(if: false)]
     #[ORM\Column(type: UuidType::NAME)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -25,24 +27,29 @@ class BankQuestion implements \Stringable
     #[ORM\Column(length: 255)]
     public string $question;
 
+    #[Map(if: false)]
     #[ORM\JoinColumn(nullable: false)]
     #[ORM\ManyToOne(inversedBy: 'bankQuestions')]
     public Season $season;
 
+    #[Map(if: false)]
     #[ORM\Column(options: ['default' => false])]
     public bool $reusable = false;
 
     /** @var Collection<int, QuestionLabel> */
+    #[Map(if: false)]
     #[ORM\ManyToMany(targetEntity: QuestionLabel::class, inversedBy: 'bankQuestions')]
     public private(set) Collection $labels;
 
     /** @var Collection<int, BankAnswer> */
     #[Assert\Count(min: 2, minMessage: 'A question needs at least two answers')]
+    #[Map(if: false)]
     #[ORM\OneToMany(targetEntity: BankAnswer::class, mappedBy: 'bankQuestion', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['ordering' => 'ASC'])]
     public private(set) Collection $answers;
 
     /** @var Collection<int, BankQuestionUsage> */
+    #[Map(if: false)]
     #[ORM\OneToMany(targetEntity: BankQuestionUsage::class, mappedBy: 'bankQuestion', cascade: ['persist'], orphanRemoval: true)]
     public private(set) Collection $usages;
 
