@@ -131,6 +131,6 @@ class BankQuestion implements \Stringable
 
     public function __toString(): string
     {
-        return $this->question ?? '';
+        return $this->question;
     }
 }

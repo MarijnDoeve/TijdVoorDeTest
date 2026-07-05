@@ -72,6 +72,20 @@ class QuizRepository extends ServiceEntityRepository
                 DQL)
                 ->setParameter('quiz', $quiz)
                 ->execute();
+
+            $em->createQuery(<<<DQL
+                delete from Tvdt\Entity\BankQuestionUsage bqu
+                where bqu.quiz = :quiz
+                DQL)
+                ->setParameter('quiz', $quiz)
+                ->execute();
+
+            $em->createQuery(<<<DQL
+                update Tvdt\Entity\Quiz q set q.finalizedAt = null
+                where q = :quiz
+                DQL)
+                ->setParameter('quiz', $quiz)
+                ->execute();
         }
         // @codeCoverageIgnoreStart
         catch (\Throwable $throwable) {

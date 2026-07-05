@@ -97,8 +97,6 @@ final readonly class QuestionBankService
             $answer = $this->objectMapper->map($bankAnswer, Answer::class);
             $question->addAnswer($answer);
         }
-
-        $this->entityManager->flush();
     }
 
     /** Remove the quiz copy created by this usage and delete the usage record. */

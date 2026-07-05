@@ -161,7 +161,7 @@ class SeasonController extends AbstractController
     public function addBlankQuiz(Request $request, Season $season): Response
     {
         $form = $this->createFormBuilder(new Quiz())
-            ->add('name', TextType::class, ['label' => 'Quiz name'])
+            ->add('name', TextType::class, ['label' => $this->translator->trans('Quiz name'), 'translation_domain' => false])
             ->add('save', SubmitType::class, ['label' => 'Create'])
             ->getForm();
 

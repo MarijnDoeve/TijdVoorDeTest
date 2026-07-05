@@ -297,8 +297,6 @@ class QuizController extends AbstractController
     {
         try {
             $this->quizRepository->clearQuiz($quiz);
-            $quiz->finalizedAt = null;
-            $this->em->flush();
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz cleared and no longer finalized'));
         } catch (ErrorClearingQuizException) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('Error clearing quiz'));
@@ -323,6 +321,8 @@ class QuizController extends AbstractController
             $quiz->finalizedAt = new DateTimeImmutable();
             $this->em->flush();
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz finalized'));
+        } else {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('The quiz is already finalized'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);

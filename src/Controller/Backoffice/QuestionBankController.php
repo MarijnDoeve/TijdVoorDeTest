@@ -150,6 +150,15 @@ class QuestionBankController extends AbstractController
     {
         $this->assertSameSeason($season, $bankQuestion->season);
 
+        $hasLockedUsages = $bankQuestion->usages->exists(
+            static fn (int $key, BankQuestionUsage $usage): bool => $usage->quiz->isLocked(),
+        );
+        if ($hasLockedUsages) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('This question cannot be deleted because it is used in a locked or active quiz'));
+
+            return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+        }
+
         $this->em->remove($bankQuestion);
         $this->em->flush();
 
@@ -299,13 +308,14 @@ class QuestionBankController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        if ($usage->quiz->hasStartedCandidates()) {
-            $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz has already been filled in and can no longer be altered'));
+        if ($usage->quiz->isLocked()) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
 
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
         $this->questionBankService->syncToQuiz($bankQuestion, $usage);
+        $this->em->flush();
         $this->addFlash(FlashType::Success, $this->translator->trans('Question synced to quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
@@ -329,12 +339,18 @@ class QuestionBankController extends AbstractController
     private function syncUsagesAfterEdit(BankQuestion $bankQuestion): void
     {
         $pendingNames = [];
+        $synced = false;
         foreach ($bankQuestion->usages as $usage) {
-            if (!$usage->quiz->isFinalized()) {
+            if (!$usage->quiz->isLocked()) {
                 $this->questionBankService->syncToQuiz($bankQuestion, $usage);
-            } elseif (!$usage->quiz->hasStartedCandidates()) {
+                $synced = true;
+            } else {
                 $pendingNames[] = $usage->quiz->name;
             }
+        }
+
+        if ($synced) {
+            $this->em->flush();
         }
 
         if ([] !== $pendingNames) {
