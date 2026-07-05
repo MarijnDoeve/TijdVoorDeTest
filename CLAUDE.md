@@ -224,6 +224,15 @@ Auto-executed scripts on install/update:
 - `assets:install` - Copy public assets
 - `importmap:install` - JS import map setup
 
+## Writing Style (Help Content & UI Text)
+
+When writing Dutch help content in `templates/backoffice/help/nl/`:
+
+- **No em-dashes** (—): use a comma or restructure the sentence instead.
+- **No semicolons** (;): use a comma. Semicolons are technically correct but read as AI-generated text.
+- **Natural Dutch**: write the way a person would explain it to a colleague, not in formal documentation style.
+- **Colons after bold labels** (e.g. `<strong>Label:</strong> description`) are fine and intentional.
+
 ## Notes for Future Work
 
 - The backoffice elimination logic is in `Controller/Backoffice/PrepareEliminationController.php`
