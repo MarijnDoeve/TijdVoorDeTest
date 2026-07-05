@@ -30,7 +30,7 @@ return [
     TwigExtraBundle::class => ['all' => true],
     DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
     SymfonyCastsVerifyEmailBundle::class => ['all' => true],
-    SentryBundle::class => ['prod' => true],
+    SentryBundle::class => ['dev' => true, 'prod' => true],
     SymfonycastsSassBundle::class => ['all' => true],
     StimulusBundle::class => ['all' => true],
     TurboBundle::class => ['all' => true],

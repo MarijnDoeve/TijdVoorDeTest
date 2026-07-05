@@ -70,5 +70,10 @@ services:
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
   ###< symfony/mailer ###
 
+  spotlight:
+    image: ghcr.io/getsentry/spotlight:latest
+    ports:
+      - "8969:8969"
+
 volumes:
   sass:
