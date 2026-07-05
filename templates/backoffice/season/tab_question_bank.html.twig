@@ -1,13 +1,8 @@
-<div class="row mb-4">
+<div class="row">
     <div class="col-md-8 col-12">
         <div class="mb-3">
             <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
         </div>
-    </div>
-    <div class="col-md-4 col-12">
-        {{ include('backoffice/help/season_question_bank.html.twig') }}
-    </div>
-</div>
 
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
         <a class="badge rounded-pill text-decoration-none text-bg-primary{% if activeLabel is not null %} opacity-50{% endif %}"
@@ -121,13 +116,17 @@
                                         <option value="{{ quiz.id }}">{{ quiz.name }}</option>
                                     {% endfor %}
                                 </select>
-                                <button type="submit" class="btn btn-sm btn-outline-primary">{{ 'Assign'|trans }}</button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="{{ 'Assign'|trans }}"><i class="bi bi-plus-lg"></i></button>
                             </form>
                         {% endif %}
-                        <a class="btn btn-sm btn-outline-secondary"
-                           href="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}">{{ 'Edit'|trans }}</a>
-                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                                data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}">{{ 'Delete'|trans }}</button>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-outline-secondary"
+                               href="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
+                               title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></a>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}"
+                                    title="{{ 'Delete'|trans }}"><i class="bi bi-trash"></i></button>
+                        </div>
                     </div>
 
                     <div class="modal fade" id="deleteBankQuestion-{{ bankQuestion.id }}" data-bs-backdrop="static"
@@ -164,3 +163,8 @@
         {% endfor %}
         </tbody>
     </table>
+    </div>
+    <div class="col-md-4 col-12">
+        {{ include('backoffice/help/season_question_bank.html.twig') }}
+    </div>
+</div>
