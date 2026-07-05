@@ -1,3 +1,9 @@
+when@dev:
+    sentry:
+        dsn: 'https://placeholder@placeholder.ingest.sentry.io/0'
+        options:
+            spotlight: 'http://spotlight:8969/stream'
+
 when@prod:
     sentry:
         dsn: '%env(SENTRY_DSN)%'
