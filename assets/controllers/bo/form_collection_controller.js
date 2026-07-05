@@ -7,6 +7,7 @@ export default class extends Controller {
   connect() {
     this.index = this.collectionTarget.children.length;
     this._setupDrag();
+    this._syncOrdering();
   }
 
   addItem() {
@@ -16,6 +17,7 @@ export default class extends Controller {
     this.collectionTarget.appendChild(el);
     this._makeDraggable(el);
     this.index++;
+    this._syncOrdering();
   }
 
   removeItem(event) {
@@ -64,25 +66,31 @@ export default class extends Controller {
     handle.addEventListener('dragend', () => {
       this._dragging = null;
       el.classList.remove('opacity-50');
-      this.collectionTarget.querySelectorAll('[data-collection-item]').forEach(i => i.classList.remove('border-top', 'border-primary'));
+      this.collectionTarget.querySelectorAll('[data-collection-item]').forEach(i => i.classList.remove('border-top', 'border-bottom', 'border-primary'));
     });
 
     el.addEventListener('dragover', (e) => {
       e.preventDefault();
       if (!this._dragging || this._dragging === el) return;
       e.dataTransfer.dropEffect = 'move';
-      el.classList.add('border-top', 'border-primary');
+      const rect = el.getBoundingClientRect();
+      const isBottom = e.clientY > rect.top + rect.height / 2;
+      el.classList.toggle('border-top', !isBottom);
+      el.classList.toggle('border-bottom', isBottom);
+      el.classList.add('border-primary');
     });
 
     el.addEventListener('dragleave', () => {
-      el.classList.remove('border-top', 'border-primary');
+      el.classList.remove('border-top', 'border-bottom', 'border-primary');
     });
 
     el.addEventListener('drop', (e) => {
       e.preventDefault();
-      el.classList.remove('border-top', 'border-primary');
+      el.classList.remove('border-top', 'border-bottom', 'border-primary');
       if (!this._dragging || this._dragging === el) return;
-      this.collectionTarget.insertBefore(this._dragging, el);
+      const rect = el.getBoundingClientRect();
+      const isBottom = e.clientY > rect.top + rect.height / 2;
+      this.collectionTarget.insertBefore(this._dragging, isBottom ? el.nextSibling : el);
       this._syncOrdering();
     });
   }

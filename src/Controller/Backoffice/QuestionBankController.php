@@ -26,6 +26,7 @@ use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
+use Tvdt\Enum\LabelColour;
 use Tvdt\Exception\BankQuestionAlreadyUsedException;
 use Tvdt\Exception\BankQuestionIncompleteException;
 use Tvdt\Exception\QuizLockedException;
@@ -70,6 +71,7 @@ class QuestionBankController extends AbstractController
             'bankQuestions' => $this->bankQuestionRepository->findBySeason($season, $label),
             'assignableQuizzes' => $this->quizRepository->findAssignableForSeason($season),
             'activeLabel' => $label,
+            'labelColours' => LabelColour::cases(),
             'activeTab' => 'question-bank',
             'template' => 'backoffice/season/tab_question_bank.html.twig',
         ]);
@@ -122,7 +124,6 @@ class QuestionBankController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->applyAnswerOrdering($bankQuestion);
             $this->em->flush();
 
             $this->syncUsagesAfterEdit($bankQuestion);
@@ -229,6 +230,8 @@ class QuestionBankController extends AbstractController
 
         $slug = mb_strtolower($this->slugger->slug($name)->toString());
 
+        $colour = LabelColour::tryFrom($request->request->getString('colour')) ?? LabelColour::Slate;
+
         $exists = $season->questionLabels->exists(static fn (int $key, QuestionLabel $label): bool => $label->name === $name);
         if (!$exists) {
             if ($this->questionLabelRepository->slugExistsForSeason($slug, $season)) {
@@ -240,6 +243,7 @@ class QuestionBankController extends AbstractController
             try {
                 $newLabel = new QuestionLabel($name);
                 $newLabel->slug = $slug;
+                $newLabel->colour = $colour;
                 $season->addQuestionLabel($newLabel);
                 $this->em->flush();
                 $this->addFlash(FlashType::Success, $this->translator->trans('Label added'));

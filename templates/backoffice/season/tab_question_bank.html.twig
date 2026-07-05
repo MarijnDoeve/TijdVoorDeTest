@@ -10,11 +10,11 @@
 </div>
 
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
-        <a class="badge rounded-pill text-decoration-none{% if activeLabel is null %} text-bg-primary{% else %} text-bg-secondary{% endif %}"
+        <a class="badge rounded-pill text-decoration-none text-bg-primary{% if activeLabel is not null %} opacity-50{% endif %}"
            href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode}) }}">{{ 'All'|trans }}</a>
         {% for label in season.questionLabels %}
             <span class="d-inline-flex align-items-center gap-1">
-                <a class="badge rounded-pill text-decoration-none{% if activeLabel is same as (label) %} text-bg-{{ label.colour.value }}{% else %} text-bg-secondary{% endif %}"
+                <a class="badge rounded-pill text-decoration-none text-bg-{{ label.colour.value }}{% if activeLabel is not same as (label) %} opacity-50{% endif %}"
                    href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode, label: label.slug}) }}">{{ label.name }}</a>
                 <form action="{{ path('tvdt_backoffice_question_bank_label_delete', {seasonCode: season.seasonCode, labelSlug: label.slug}) }}"
                       method="POST" class="d-inline">
@@ -23,13 +23,48 @@
                 </form>
             </span>
         {% endfor %}
-        <form action="{{ path('tvdt_backoffice_question_bank_labels', {seasonCode: season.seasonCode}) }}"
-              method="POST" class="d-inline-flex align-items-center gap-1">
-            <input type="hidden" name="_token" value="{{ csrf_token('add_question_label') }}">
-            <input type="text" class="form-control form-control-sm" name="name" maxlength="64"
-                   placeholder="{{ 'New label'|trans }}" required>
-            <button type="submit" class="btn btn-sm btn-outline-primary">{{ 'Add label'|trans }}</button>
-        </form>
+
+        {% embed 'components/modal.html.twig' with {
+            id: 'addLabelModal',
+            title: 'Add label'|trans,
+            triggerLabel: 'Add label'|trans,
+        } %}
+            {% block modal_body %}
+                <form id="addLabelForm"
+                      action="{{ path('tvdt_backoffice_question_bank_labels', {seasonCode: season.seasonCode}) }}"
+                      method="POST">
+                    <input type="hidden" name="_token" value="{{ csrf_token('add_question_label') }}">
+                    <div class="mb-3">
+                        <label for="addLabelName" class="form-label">{{ 'Name'|trans }}</label>
+                        <input type="text" class="form-control" id="addLabelName" name="name" maxlength="64" required autofocus>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label d-block">{{ 'Colour'|trans }}</label>
+                        <style>
+                            .colour-swatch { opacity: .35; cursor: pointer; transition: opacity .1s, box-shadow .1s; font-size: .875rem; }
+                            .btn-check:checked + .colour-swatch { opacity: 1; box-shadow: 0 0 0 3px rgba(255,255,255,.6); }
+                            .colour-swatch:hover { opacity: .7; }
+                        </style>
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% for colour in labelColours %}
+                                <input type="radio" class="btn-check" name="colour"
+                                       id="addLabelColour_{{ colour.value }}"
+                                       value="{{ colour.value }}" autocomplete="off"
+                                       {{ loop.first ? 'checked' }}>
+                                <label class="badge rounded-pill text-bg-{{ colour.value }} colour-swatch px-3 py-2"
+                                       for="addLabelColour_{{ colour.value }}">
+                                    {{ colour.name|trans }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+            {% endblock %}
+            {% block modal_footer %}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary" form="addLabelForm">{{ 'Add label'|trans }}</button>
+            {% endblock %}
+        {% endembed %}
     </div>
 
         <table class="table align-middle">
