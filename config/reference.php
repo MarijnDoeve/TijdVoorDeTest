@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // This file is auto-generated and is for apps only. Bundles SHOULD NOT rely on its content.
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
@@ -1518,6 +1520,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         web_profiler?: WebProfilerConfig,
  *         twig_extra?: TwigExtraConfig,
  *         symfonycasts_verify_email?: SymfonycastsVerifyEmailConfig,
+ *         sentry?: SentryConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         stimulus?: StimulusConfig,
  *         turbo?: TurboConfig,

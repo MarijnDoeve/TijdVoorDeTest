@@ -8,20 +8,29 @@ import * as Sentry from '@sentry/browser';
 const dsn = document.querySelector('meta[name="sentry-dsn"]')?.content ?? '';
 const userEmail = document.querySelector('meta[name="user-email"]')?.content ?? '';
 
-Sentry.init({
-    dsn: dsn || undefined,
-    // When no DSN is set (local dev), forward events to Spotlight instead
-    spotlight: !dsn,
-    integrations: [
-        Sentry.feedbackIntegration({
-            colorScheme: 'system',
-            showName: true,
-            showEmail: true,
-            isNameRequired: false,
-            isEmailRequired: false,
-        }),
-    ],
+// When no real DSN is configured, route to the local Spotlight sidecar so
+// nothing reaches Sentry. A syntactically valid DSN is still required for the
+// SDK to initialise; the tunnel option redirects all transport to Spotlight.
+const useSpotlight = !dsn;
+const effectiveDsn = dsn || 'https://0@o0.ingest.sentry.io/0';
+
+const feedbackIntegration = Sentry.feedbackIntegration({
+    colorScheme: 'system',
+    showName: true,
+    showEmail: true,
+    isNameRequired: false,
+    isEmailRequired: false,
+    autoInject: false,
 });
+
+Sentry.init({
+    dsn: effectiveDsn,
+    tunnel: useSpotlight ? 'http://localhost:8969/stream' : undefined,
+    integrations: [feedbackIntegration],
+});
+
+// autoInject is unreliable in Sentry v10 due to the setupOnce guard; mount manually.
+feedbackIntegration.createWidget();
 
 if (userEmail) {
     Sentry.setUser({ email: userEmail });
