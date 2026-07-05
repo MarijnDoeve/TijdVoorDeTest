@@ -7,6 +7,7 @@ namespace Tvdt\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Uid\Uuid;
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Tvdt\Repository\BankQuestionRepository;
 
+#[Gedmo\Loggable(logEntryClass: LogEntry::class)]
 #[ORM\Entity(repositoryClass: BankQuestionRepository::class)]
 class BankQuestion implements \Stringable
 {
@@ -24,6 +26,7 @@ class BankQuestion implements \Stringable
     #[ORM\Id]
     public private(set) Uuid $id;
 
+    #[Gedmo\Versioned]
     #[ORM\Column(length: 255)]
     public string $question;
 
@@ -32,6 +35,7 @@ class BankQuestion implements \Stringable
     #[ORM\ManyToOne(inversedBy: 'bankQuestions')]
     public Season $season;
 
+    #[Gedmo\Versioned]
     #[Map(if: false)]
     #[ORM\Column(options: ['default' => false])]
     public bool $reusable = false;
@@ -42,7 +46,6 @@ class BankQuestion implements \Stringable
     public private(set) Collection $labels;
 
     /** @var Collection<int, BankAnswer> */
-    #[Assert\Count(min: 2, minMessage: 'A question needs at least two answers')]
     #[Map(if: false)]
     #[ORM\OneToMany(targetEntity: BankAnswer::class, mappedBy: 'bankQuestion', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['ordering' => 'ASC'])]
@@ -102,14 +105,18 @@ class BankQuestion implements \Stringable
         return $this;
     }
 
-    public function isUsed(): bool
-    {
-        return !$this->usages->isEmpty();
+    public bool $isUsed {
+        get => !$this->usages->isEmpty();
     }
 
-    public function canBeAssigned(): bool
-    {
-        return $this->reusable || !$this->isUsed();
+    public bool $canBeAssigned {
+        get => $this->reusable || !$this->isUsed;
+    }
+
+    /** True when the question is fully complete and can be assigned to a quiz. */
+    public bool $isCompleteForQuiz {
+        get => $this->answers->count() >= 2
+            && 1 === $this->answers->filter(static fn (BankAnswer $answer): bool => $answer->isRightAnswer)->count();
     }
 
     public function isUsedInQuiz(Quiz $quiz): bool
@@ -120,9 +127,17 @@ class BankQuestion implements \Stringable
     #[Assert\Callback]
     public function validateAnswers(ExecutionContextInterface $context): void
     {
+        if ($this->answers->isEmpty()) {
+            return;
+        }
+
         $correctAnswers = $this->answers->filter(static fn (BankAnswer $answer): bool => $answer->isRightAnswer)->count();
 
-        if (1 !== $correctAnswers) {
+        if ($this->answers->count() < 2) {
+            $context->buildViolation('A question needs at least two answers')
+                ->atPath('answers')
+                ->addViolation();
+        } elseif (1 !== $correctAnswers) {
             $context->buildViolation('A question must have exactly one correct answer')
                 ->atPath('answers')
                 ->addViolation();

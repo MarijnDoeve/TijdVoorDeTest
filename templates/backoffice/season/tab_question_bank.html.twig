@@ -14,12 +14,12 @@
            href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode}) }}">{{ 'All'|trans }}</a>
         {% for label in season.questionLabels %}
             <span class="d-inline-flex align-items-center gap-1">
-                <a class="badge rounded-pill text-decoration-none{% if activeLabel is same as (label) %} text-bg-primary{% else %} text-bg-secondary{% endif %}"
-                   href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode, label: label.id}) }}">{{ label.name }}</a>
-                <form action="{{ path('tvdt_backoffice_question_bank_label_delete', {seasonCode: season.seasonCode, label: label.id}) }}"
+                <a class="badge rounded-pill text-decoration-none{% if activeLabel is same as (label) %} text-bg-{{ label.colour.value }}{% else %} text-bg-secondary{% endif %}"
+                   href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode, label: label.slug}) }}">{{ label.name }}</a>
+                <form action="{{ path('tvdt_backoffice_question_bank_label_delete', {seasonCode: season.seasonCode, labelSlug: label.slug}) }}"
                       method="POST" class="d-inline">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete_question_label') }}">
-                    <button type="submit" class="btn btn-sm btn-link p-0 text-danger" aria-label="{{ 'Remove label'|trans }}">&times;</button>
+                    <button type="submit" class="btn btn-sm btn-link p-0 text-danger" aria-label="{{ 'Remove label'|trans }}"><i class="bi bi-trash"></i></button>
                 </form>
             </span>
         {% endfor %}
@@ -48,7 +48,7 @@
                 <td>{{ bankQuestion.question }}</td>
                 <td>
                     {% for label in bankQuestion.labels %}
-                        <span class="badge rounded-pill text-bg-secondary">{{ label.name }}</span>
+                        <span class="badge rounded-pill text-bg-{{ label.colour.value }}">{{ label.name }}</span>
                     {% endfor %}
                 </td>
                 <td>

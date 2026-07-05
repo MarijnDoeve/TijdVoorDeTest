@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller\Backoffice;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Candidate;
@@ -161,7 +165,14 @@ class SeasonController extends AbstractController
     public function addBlankQuiz(Request $request, Season $season): Response
     {
         $form = $this->createFormBuilder(new Quiz())
-            ->add('name', TextType::class, ['label' => $this->translator->trans('Quiz name'), 'translation_domain' => false])
+            ->add('name', TextType::class, [
+                'label' => $this->translator->trans('Quiz name'),
+                'translation_domain' => false,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(max: 64),
+                ],
+            ])
             ->add('save', SubmitType::class, ['label' => 'Create'])
             ->getForm();
 
@@ -172,7 +183,14 @@ class SeasonController extends AbstractController
             $quiz = $form->getData();
             $quiz->season = $season;
             $this->em->persist($quiz);
-            $this->em->flush();
+
+            try {
+                $this->em->flush();
+            } catch (UniqueConstraintViolationException) {
+                $form->get('name')->addError(new FormError($this->translator->trans('A quiz with this name already exists in this season')));
+
+                return $this->render('/backoffice/quiz_add_blank.html.twig', ['form' => $form, 'season' => $season]);
+            }
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz Added!'));
 

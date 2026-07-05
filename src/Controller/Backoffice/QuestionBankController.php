@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
@@ -26,9 +27,11 @@ use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Exception\BankQuestionAlreadyUsedException;
+use Tvdt\Exception\BankQuestionIncompleteException;
 use Tvdt\Exception\QuizLockedException;
 use Tvdt\Form\BankQuestionFormType;
 use Tvdt\Repository\BankQuestionRepository;
+use Tvdt\Repository\QuestionLabelRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuestionBankService;
@@ -41,8 +44,10 @@ class QuestionBankController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $em,
         private readonly BankQuestionRepository $bankQuestionRepository,
+        private readonly QuestionLabelRepository $questionLabelRepository,
         private readonly QuizRepository $quizRepository,
         private readonly QuestionBankService $questionBankService,
+        private readonly SluggerInterface $slugger,
     ) {}
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -55,12 +60,9 @@ class QuestionBankController extends AbstractController
     public function index(Season $season, Request $request): Response
     {
         $label = null;
-        $labelId = $request->query->getString('label');
-        if ('' !== $labelId && Uuid::isValid($labelId)) {
-            $label = $this->em->getRepository(QuestionLabel::class)->find($labelId);
-            if ($label instanceof QuestionLabel && $label->season !== $season) {
-                $label = null;
-            }
+        $labelSlug = $request->query->getString('label');
+        if ('' !== $labelSlug) {
+            $label = $this->questionLabelRepository->findBySlugAndSeason($labelSlug, $season);
         }
 
         return $this->render('backoffice/season.html.twig', [
@@ -151,7 +153,7 @@ class QuestionBankController extends AbstractController
         $this->assertSameSeason($season, $bankQuestion->season);
 
         $hasLockedUsages = $bankQuestion->usages->exists(
-            static fn (int $key, BankQuestionUsage $usage): bool => $usage->quiz->isLocked(),
+            static fn (int $key, BankQuestionUsage $usage): bool => $usage->quiz->isLocked,
         );
         if ($hasLockedUsages) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('This question cannot be deleted because it is used in a locked or active quiz'));
@@ -199,6 +201,8 @@ class QuestionBankController extends AbstractController
             $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
         } catch (BankQuestionAlreadyUsedException) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('This question has already been used'));
+        } catch (BankQuestionIncompleteException) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('This question is incomplete: it needs at least two answers and exactly one correct answer'));
         }
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
@@ -223,10 +227,20 @@ class QuestionBankController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
+        $slug = mb_strtolower($this->slugger->slug($name)->toString());
+
         $exists = $season->questionLabels->exists(static fn (int $key, QuestionLabel $label): bool => $label->name === $name);
         if (!$exists) {
+            if ($this->questionLabelRepository->slugExistsForSeason($slug, $season)) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('A label with a similar name already exists'));
+
+                return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
+            }
+
             try {
-                $season->addQuestionLabel(new QuestionLabel($name));
+                $newLabel = new QuestionLabel($name);
+                $newLabel->slug = $slug;
+                $season->addQuestionLabel($newLabel);
                 $this->em->flush();
                 $this->addFlash(FlashType::Success, $this->translator->trans('Label added'));
             } catch (UniqueConstraintViolationException) {
@@ -240,15 +254,18 @@ class QuestionBankController extends AbstractController
     #[IsCsrfTokenValid('delete_question_label')]
     #[IsGranted(SeasonVoter::DELETE, subject: 'season')]
     #[Route(
-        '/backoffice/season/{seasonCode:season}/question-bank/labels/{label}/delete',
+        '/backoffice/season/{seasonCode:season}/question-bank/labels/{labelSlug}/delete',
         name: 'tvdt_backoffice_question_bank_label_delete',
-        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'label' => Requirement::UUID],
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'labelSlug' => '[a-z0-9-]+'],
         methods: ['POST'],
         priority: 15,
     )]
-    public function deleteLabel(Season $season, QuestionLabel $label): RedirectResponse
+    public function deleteLabel(Season $season, string $labelSlug): RedirectResponse
     {
-        $this->assertSameSeason($season, $label->season);
+        $label = $this->questionLabelRepository->findBySlugAndSeason($labelSlug, $season);
+        if (!$label instanceof QuestionLabel) {
+            throw $this->createNotFoundException();
+        }
 
         foreach ($label->bankQuestions as $bankQuestion) {
             $bankQuestion->removeLabel($label);
@@ -279,7 +296,7 @@ class QuestionBankController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        if ($usage->quiz->isLocked()) {
+        if ($usage->quiz->isLocked) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
 
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
@@ -308,7 +325,7 @@ class QuestionBankController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        if ($usage->quiz->isLocked()) {
+        if ($usage->quiz->isLocked) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
 
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
@@ -341,7 +358,7 @@ class QuestionBankController extends AbstractController
         $pendingNames = [];
         $synced = false;
         foreach ($bankQuestion->usages as $usage) {
-            if (!$usage->quiz->isLocked()) {
+            if (!$usage->quiz->isLocked) {
                 $this->questionBankService->syncToQuiz($bankQuestion, $usage);
                 $synced = true;
             } else {

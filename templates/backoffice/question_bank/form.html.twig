@@ -2,13 +2,14 @@
 
 {% macro answer_row(answerForm) %}
     <div class="d-flex align-items-center gap-2 mb-2" data-collection-item>
+        <span class="text-muted" data-drag-handle style="cursor: grab" title="{{ 'Drag to reorder'|trans }}"><i class="bi bi-grip-vertical"></i></span>
         <div class="flex-grow-1">{{ form_widget(answerForm.text) }}</div>
         <div class="form-check">
             {{ form_widget(answerForm.isRightAnswer, {attr: {class: 'form-check-input'}}) }}
             {{ form_label(answerForm.isRightAnswer, null, {label_attr: {class: 'form-check-label'}}) }}
         </div>
         <button type="button" class="btn btn-sm btn-outline-danger"
-                data-action="bo--form-collection#removeItem">&times;</button>
+                data-action="bo--form-collection#removeItem"><i class="bi bi-trash"></i></button>
     </div>
 {% endmacro %}
 
@@ -45,8 +46,14 @@
                     {% endfor %}
                 </div>
                 {% do form.answers.setRendered %}
-                <button type="button" class="btn btn-sm btn-outline-primary mb-3"
-                        data-action="bo--form-collection#addItem">{{ 'Add answer'|trans }}</button>
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary"
+                            data-action="bo--form-collection#addItem">{{ 'Add answer'|trans }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-action="bo--form-collection#sortAlphabetically">{{ 'Sort A–Z'|trans }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-action="bo--form-collection#randomize">{{ 'Randomize'|trans }}</button>
+                </div>
             </div>
 
             {{ form_end(form) }}

@@ -9,10 +9,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Enum\LabelColour;
 use Tvdt\Repository\QuestionLabelRepository;
 
 #[ORM\Entity(repositoryClass: QuestionLabelRepository::class)]
 #[ORM\UniqueConstraint(fields: ['name', 'season'])]
+#[ORM\UniqueConstraint(name: 'uq_question_label_slug_season', fields: ['slug', 'season'])]
 class QuestionLabel implements \Stringable
 {
     #[ORM\Column(type: UuidType::NAME)]
@@ -28,6 +30,12 @@ class QuestionLabel implements \Stringable
     /** @var Collection<int, BankQuestion> */
     #[ORM\ManyToMany(targetEntity: BankQuestion::class, mappedBy: 'labels')]
     public private(set) Collection $bankQuestions;
+
+    #[ORM\Column(length: 16, enumType: LabelColour::class, options: ['default' => 'secondary'])]
+    public LabelColour $colour = LabelColour::Slate;
+
+    #[ORM\Column(length: 64)]
+    public string $slug = '';
 
     public function __construct(
         #[ORM\Column(length: 64)]

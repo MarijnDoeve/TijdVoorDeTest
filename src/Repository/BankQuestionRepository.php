@@ -22,11 +22,6 @@ class BankQuestionRepository extends ServiceEntityRepository
     public function findBySeason(Season $season, ?QuestionLabel $label = null): array
     {
         $queryBuilder = $this->createQueryBuilder('bq')
-            ->select('bq', 'ba', 'l', 'u', 'uq')
-            ->leftJoin('bq.answers', 'ba')
-            ->leftJoin('bq.labels', 'l')
-            ->leftJoin('bq.usages', 'u')
-            ->leftJoin('u.quiz', 'uq')
             ->where('bq.season = :season')
             ->orderBy('bq.question', 'ASC')
             ->setParameter('season', $season);
@@ -37,7 +32,40 @@ class BankQuestionRepository extends ServiceEntityRepository
                 ->setParameter('label', $label);
         }
 
-        /* @var list<BankQuestion> */
-        return $queryBuilder->getQuery()->getResult();
+        /** @var list<BankQuestion> $questions */
+        $questions = $queryBuilder->getQuery()->getResult();
+
+        if ([] === $questions) {
+            return [];
+        }
+
+        // Load each many-to-many/one-to-many collection in a separate query to avoid
+        // the Cartesian-product row explosion that occurs when joining multiple collections at once.
+        $this->createQueryBuilder('bq')
+            ->select('partial bq.{id}', 'ba')
+            ->leftJoin('bq.answers', 'ba')
+            ->where('bq.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult();
+
+        $this->createQueryBuilder('bq')
+            ->select('partial bq.{id}', 'l')
+            ->leftJoin('bq.labels', 'l')
+            ->where('bq.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult();
+
+        $this->createQueryBuilder('bq')
+            ->select('partial bq.{id}', 'u', 'uq')
+            ->leftJoin('bq.usages', 'u')
+            ->leftJoin('u.quiz', 'uq')
+            ->where('bq.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult();
+
+        return $questions;
     }
 }

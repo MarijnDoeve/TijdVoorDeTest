@@ -66,27 +66,17 @@ class Quiz
         return $this;
     }
 
-    public function isFinalized(): bool
-    {
-        return $this->finalizedAt instanceof \DateTimeImmutable;
+    public bool $isFinalized {
+        get => $this->finalizedAt instanceof \DateTimeImmutable;
     }
 
-    public function hasStartedCandidates(): bool
-    {
-        return $this->candidateData->exists(static fn (int $key, QuizCandidate $quizCandidate): bool => $quizCandidate->started instanceof \DateTimeImmutable);
+    public bool $hasStartedCandidates {
+        get => $this->candidateData->exists(static fn (int $key, QuizCandidate $quizCandidate): bool => $quizCandidate->started instanceof \DateTimeImmutable);
     }
 
-    /**
-     * A locked quiz can no longer be altered: it is either explicitly
-     * finalized or a candidate has already started filling it in.
-     */
-    public function isLocked(): bool
-    {
-        if ($this->isFinalized()) {
-            return true;
-        }
-
-        return $this->hasStartedCandidates();
+    /** A locked quiz can no longer be altered: it is either explicitly finalized or a candidate has already started filling it in. */
+    public bool $isLocked {
+        get => $this->isFinalized || $this->hasStartedCandidates;
     }
 
     public function addElimination(Elimination $elimination): self

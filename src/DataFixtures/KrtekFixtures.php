@@ -84,8 +84,12 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
     private function createQuestionBank(Season $season, Quiz $usedInQuiz): void
     {
         $location = new QuestionLabel('Locatie');
+        $location->slug = 'locatie';
+
         $season->addQuestionLabel($location);
         $finale = new QuestionLabel('Finale');
+        $finale->slug = 'finale';
+
         $season->addQuestionLabel($finale);
 
         $reusable = new BankQuestion();

@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Safe\DateTimeImmutable;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -92,9 +93,9 @@ final class SeasonVoterTest extends TestCase
         $season = self::createStub(Season::class);
         $season->method('isOwner')->willReturn(true);
 
-        $quiz = self::createStub(Quiz::class);
+        $quiz = new Quiz();
         $quiz->season = $season;
-        $quiz->method('isLocked')->willReturn(false);
+        // finalizedAt = null, candidateData empty → isLocked = false
 
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->seasonVoter->vote($this->token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
     }
@@ -104,9 +105,9 @@ final class SeasonVoterTest extends TestCase
         $season = self::createStub(Season::class);
         $season->method('isOwner')->willReturn(true);
 
-        $quiz = self::createStub(Quiz::class);
+        $quiz = new Quiz();
         $quiz->season = $season;
-        $quiz->method('isLocked')->willReturn(true);
+        $quiz->finalizedAt = new DateTimeImmutable(); // → isLocked = true
 
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->seasonVoter->vote($this->token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
     }
@@ -119,9 +120,9 @@ final class SeasonVoterTest extends TestCase
         $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
-        $quiz = self::createStub(Quiz::class);
+        $quiz = new Quiz();
         $quiz->season = self::createStub(Season::class);
-        $quiz->method('isLocked')->willReturn(true);
+        $quiz->finalizedAt = new DateTimeImmutable(); // → isLocked = true
 
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->seasonVoter->vote($token, $quiz, [SeasonVoter::MODIFY_QUIZ_CONTENT]));
     }

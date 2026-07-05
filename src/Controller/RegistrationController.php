@@ -19,6 +19,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use Tvdt\Entity\User;
+use Tvdt\Enum\FlashType;
 use Tvdt\Form\RegistrationFormType;
 use Tvdt\Repository\UserRepository;
 use Tvdt\Security\EmailVerifier;
@@ -95,7 +96,7 @@ final class RegistrationController extends AbstractController
             return $this->redirectToRoute('tvdt_register');
         }
 
-        $this->addFlash('success', $this->translator->trans('Your email address has been verified.'));
+        $this->addFlash(FlashType::Success->value, $this->translator->trans('Your email address has been verified.'));
 
         return $this->redirectToRoute('tvdt_backoffice_index');
     }

@@ -69,7 +69,7 @@ final class SeasonVoter extends Voter
                 default => null,
             };
 
-            if (!$quiz instanceof Quiz || $quiz->isLocked()) {
+            if (!$quiz instanceof Quiz || $quiz->isLocked) {
                 return false;
             }
 

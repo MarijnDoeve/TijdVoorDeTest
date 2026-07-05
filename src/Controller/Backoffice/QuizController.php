@@ -260,7 +260,7 @@ class QuizController extends AbstractController
     )]
     public function enableQuiz(Season $season, ?Quiz $quiz, Request $request): RedirectResponse
     {
-        if ($quiz instanceof Quiz && !$quiz->isFinalized()) {
+        if ($quiz instanceof Quiz && !$quiz->isFinalized) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('The quiz must be finalized before it can be activated'));
 
             return $this->redirectToRoute('tvdt_backoffice_quiz_overview', ['seasonCode' => $season->seasonCode, 'quiz' => $quiz->id]);
@@ -317,7 +317,7 @@ class QuizController extends AbstractController
     {
         if ($quiz->questions->isEmpty() || [] !== $quiz->getQuestionErrors()) {
             $this->addFlash(FlashType::Warning, $this->translator->trans('The quiz cannot be finalized while it has errors'));
-        } elseif (!$quiz->isFinalized()) {
+        } elseif (!$quiz->isFinalized) {
             $quiz->finalizedAt = new DateTimeImmutable();
             $this->em->flush();
             $this->addFlash(FlashType::Success, $this->translator->trans('Quiz finalized'));
@@ -338,7 +338,7 @@ class QuizController extends AbstractController
     )]
     public function unfinalizeQuiz(Quiz $quiz): RedirectResponse
     {
-        if ($quiz->hasStartedCandidates()) {
+        if ($quiz->hasStartedCandidates) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('The quiz has already been filled in and can no longer be altered'));
         } elseif ($quiz->season->activeQuiz === $quiz) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('Deactivate the quiz before undoing the finalization'));

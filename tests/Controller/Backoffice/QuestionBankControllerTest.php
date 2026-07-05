@@ -78,7 +78,7 @@ final class QuestionBankControllerTest extends WebTestCase
         $label = $this->entityManager->getRepository(QuestionLabel::class)->findOneBy(['name' => 'Locatie']);
         $this->assertInstanceOf(QuestionLabel::class, $label);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank?label='.$label->id);
+        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank?label='.$label->slug);
 
         $this->assertResponseIsSuccessful();
         $body = $crawler->filter('tbody')->text();
@@ -231,8 +231,8 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->assertCount(3, $copiedQuestion->answers);
 
         $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
-        $this->assertTrue($bankQuestion->isUsed());
-        $this->assertFalse($bankQuestion->canBeAssigned());
+        $this->assertTrue($bankQuestion->isUsed);
+        $this->assertFalse($bankQuestion->canBeAssigned);
     }
 
     public function testAssignUsedNonReusableQuestionIsRefused(): void
@@ -283,7 +283,7 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->loginAsOwner();
         $bankQuestion = $this->getBankQuestion('Wie is de Krtek?');
         $finalizedQuiz = $this->getQuizByName('Quiz 1');
-        $this->assertTrue($finalizedQuiz->isFinalized());
+        $this->assertTrue($finalizedQuiz->isFinalized);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
         $token = $this->getCsrfToken(\sprintf('%s/assign', $bankQuestion->id));
@@ -313,9 +313,9 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->assertInstanceOf(QuestionLabel::class, $label);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $deleteToken = $this->getCsrfToken(\sprintf('labels/%s/delete', $label->id));
+        $deleteToken = $this->getCsrfToken(\sprintf('labels/%s/delete', $label->slug));
 
-        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/labels/%s/delete', $label->id), [
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/labels/%s/delete', $label->slug), [
             '_token' => $deleteToken,
         ]);
         $this->assertResponseRedirects('/backoffice/season/krtek/question-bank');

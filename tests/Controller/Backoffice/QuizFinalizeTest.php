@@ -66,7 +66,7 @@ final class QuizFinalizeTest extends WebTestCase
     public function testFinalizeSetsFinalizedAt(): void
     {
         $quiz = $this->getQuizByName('Quiz 2');
-        $this->assertFalse($quiz->isFinalized());
+        $this->assertFalse($quiz->isFinalized);
 
         $token = $this->getCsrfTokenFromOverview($quiz, '/finalize');
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/finalize', $quiz->id), ['_token' => $token]);
@@ -74,7 +74,7 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertTrue($this->getQuizByName('Quiz 2')->isFinalized());
+        $this->assertTrue($this->getQuizByName('Quiz 2')->isFinalized);
     }
 
     public function testFinalizeRefusedWhenQuizHasErrors(): void
@@ -102,13 +102,13 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertFalse($this->getQuizByName('Invalid Quiz')->isFinalized());
+        $this->assertFalse($this->getQuizByName('Invalid Quiz')->isFinalized);
     }
 
     public function testEnableRefusedWhenNotFinalized(): void
     {
         $quiz = $this->getQuizByName('Quiz 2');
-        $this->assertFalse($quiz->isFinalized());
+        $this->assertFalse($quiz->isFinalized);
 
         $token = $this->getCsrfTokenFromOverview($quiz, '/enable');
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/quiz/%s/enable', $quiz->id), ['_token' => $token]);
@@ -152,7 +152,7 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertFalse($this->getQuizByName('Quiz 2')->isFinalized());
+        $this->assertFalse($this->getQuizByName('Quiz 2')->isFinalized);
     }
 
     public function testUnfinalizeRefusedWhenQuizIsActive(): void
@@ -170,7 +170,7 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertTrue($this->getQuizByName('Quiz 1')->isFinalized());
+        $this->assertTrue($this->getQuizByName('Quiz 1')->isFinalized);
     }
 
     public function testUnfinalizeRefusedWhenCandidatesStarted(): void
@@ -196,13 +196,13 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertTrue($this->getQuizByName('Quiz 2')->isFinalized());
+        $this->assertTrue($this->getQuizByName('Quiz 2')->isFinalized);
     }
 
     public function testClearQuizResetsFinalization(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
-        $this->assertTrue($quiz->isFinalized());
+        $this->assertTrue($quiz->isFinalized);
 
         $token = $this->getCsrfTokenFromOverview($quiz, '/clear');
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/clear', $quiz->id), ['_token' => $token]);
@@ -210,6 +210,25 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $this->assertFalse($this->getQuizByName('Quiz 1')->isFinalized());
+        $this->assertFalse($this->getQuizByName('Quiz 1')->isFinalized);
+    }
+
+    public function testDeactivateWithRedirectQuizStaysOnQuizOverview(): void
+    {
+        // Quiz 1 is active in fixtures; deactivate while viewing Quiz 2 → should redirect to Quiz 2 overview
+        $this->getQuizByName('Quiz 1');
+        $quiz2 = $this->getQuizByName('Quiz 2');
+
+        $token = $this->getCsrfTokenFromOverview($quiz2, '/enable');
+        $this->client->request(
+            Request::METHOD_POST,
+            '/backoffice/season/krtek/quiz/null/enable',
+            ['_token' => $token, 'redirect_quiz' => (string) $quiz2->id],
+        );
+
+        self::assertResponseRedirects(\sprintf('/backoffice/season/krtek/quiz/%s/overview', $quiz2->id));
+
+        $this->entityManager->clear();
+        $this->assertNotInstanceOf(Quiz::class, $this->getKrtekSeason()->activeQuiz);
     }
 }

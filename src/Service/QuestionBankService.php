@@ -13,6 +13,7 @@ use Tvdt\Entity\BankQuestionUsage;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Exception\BankQuestionAlreadyUsedException;
+use Tvdt\Exception\BankQuestionIncompleteException;
 use Tvdt\Exception\QuizLockedException;
 
 final readonly class QuestionBankService
@@ -27,6 +28,7 @@ final readonly class QuestionBankService
      *
      * @throws QuizLockedException              when the quiz is finalized or already filled in
      * @throws BankQuestionAlreadyUsedException when the question is single-use and used, or already in this quiz
+     * @throws BankQuestionIncompleteException  when the question lacks ≥2 answers or a correct answer
      */
     public function assignToQuiz(BankQuestion $bankQuestion, Quiz $quiz): void
     {
@@ -34,15 +36,19 @@ final readonly class QuestionBankService
             throw new \InvalidArgumentException('Bank question and quiz belong to different seasons');
         }
 
-        if ($quiz->isLocked()) {
+        if ($quiz->isLocked) {
             throw new QuizLockedException();
+        }
+
+        if (!$bankQuestion->isCompleteForQuiz) {
+            throw new BankQuestionIncompleteException();
         }
 
         $this->entityManager->wrapInTransaction(function () use ($bankQuestion, $quiz): void {
             // Pessimistic write lock serialises concurrent assignment attempts for the same BankQuestion
             $this->entityManager->lock($bankQuestion, LockMode::PESSIMISTIC_WRITE);
 
-            if (!$bankQuestion->canBeAssigned() || $bankQuestion->isUsedInQuiz($quiz)) {
+            if (!$bankQuestion->canBeAssigned || $bankQuestion->isUsedInQuiz($quiz)) {
                 throw new BankQuestionAlreadyUsedException();
             }
 
