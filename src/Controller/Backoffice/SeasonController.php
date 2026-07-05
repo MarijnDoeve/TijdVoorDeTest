@@ -116,7 +116,7 @@ class SeasonController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
         }
 
-        return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form]);
+        return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form, 'season' => $season]);
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
