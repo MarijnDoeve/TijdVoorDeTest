@@ -34,4 +34,11 @@ return [
     '@hotwired/stimulus' => ['version' => '3.2.2'],
     '@hotwired/turbo' => ['version' => '8.0.23'],
     'bootstrap-icons/font/bootstrap-icons.min.css' => ['version' => '1.13.1', 'type' => 'css'],
+    '@sentry/browser' => ['version' => '10.63.0'],
+    '@sentry/feedback' => ['version' => '10.63.0'],
+    '@sentry/core/browser' => ['version' => '10.63.0'],
+    '@sentry/browser-utils' => ['version' => '10.63.0'],
+    '@sentry/replay' => ['version' => '10.63.0'],
+    '@sentry/replay-canvas' => ['version' => '10.63.0'],
+    '@sentry/core' => ['version' => '10.63.0'],
 ];
