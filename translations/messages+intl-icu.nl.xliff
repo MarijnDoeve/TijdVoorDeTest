@@ -33,6 +33,10 @@
         <source>Add Candidates</source>
         <target>Voeg kandidaten toe</target>
       </trans-unit>
+      <trans-unit id="L13Ozf3" resname="Add Empty Quiz">
+        <source>Add Empty Quiz</source>
+        <target>Voeg een lege test toe</target>
+      </trans-unit>
       <trans-unit id="g4GCvSW" resname="Add Quiz">
         <source>Add Quiz</source>
         <target>Test toevoegen</target>
@@ -52,10 +56,6 @@
       <trans-unit id="nl03zPX" resname="Add blank quiz">
         <source>Add blank quiz</source>
         <target>Lege quiz toevoegen</target>
-      </trans-unit>
-      <trans-unit id="2Qmgp4S" resname="Import">
-        <source>Import</source>
-        <target>Importeren</target>
       </trans-unit>
       <trans-unit id="MJD3m3Q" resname="Add label">
         <source>Add label</source>
@@ -261,6 +261,14 @@
         <source>Home</source>
         <target>Home</target>
       </trans-unit>
+      <trans-unit id="oPzjCWg" resname="Import">
+        <source>Import</source>
+        <target>Importeren</target>
+      </trans-unit>
+      <trans-unit id="sTM8Dqn" resname="Import Quiz from Excel">
+        <source>Import Quiz from Excel</source>
+        <target>Importeer test vanuit Excel</target>
+      </trans-unit>
       <trans-unit id="8n2mlHc" resname="In Progress">
         <source>In Progress</source>
         <target>Bezig</target>
@@ -296,6 +304,10 @@
       <trans-unit id="M2ELPzt" resname="Locked (answers given)">
         <source>Locked (answers given)</source>
         <target>Vergrendeld (antwoorden gegeven)</target>
+      </trans-unit>
+      <trans-unit id="flmhYFo" resname="Locks the quiz so it can no longer be edited and makes it ready for candidates to take.">
+        <source>Locks the quiz so it can no longer be edited and makes it ready for candidates to take.</source>
+        <target>Vergrendelt de test zodat deze niet meer bewerkt kan worden en maakt deze klaar voor deelnemers.</target>
       </trans-unit>
       <trans-unit id="JKl2Twv" resname="Logout">
         <source>Logout</source>
@@ -497,6 +509,10 @@
         <source>Quizzes</source>
         <target>Tests</target>
       </trans-unit>
+      <trans-unit id="r_Mv3kR" resname="Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.">
+        <source>Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.</source>
+        <target>Heropent de test voor bewerking. Deelnemers kunnen de test niet meer afnemen totdat deze opnieuw is afgerond.</target>
+      </trans-unit>
       <trans-unit id="P1HcfAu" resname="Red">
         <source>Red</source>
         <target>Rood</target>
@@ -593,6 +609,10 @@
         <source>The quiz has already been filled in and can no longer be altered</source>
         <target>De test is al ingevuld en kan niet meer aangepast worden</target>
       </trans-unit>
+      <trans-unit id="P.nJezw" resname="The quiz is already finalized">
+        <source>The quiz is already finalized</source>
+        <target>De test is al afgerond</target>
+      </trans-unit>
       <trans-unit id="Z3xaLuk" resname="The quiz must be finalized before it can be activated">
         <source>The quiz must be finalized before it can be activated</source>
         <target>De test moet afgerond zijn voordat deze geactiveerd kan worden</target>
@@ -604,6 +624,10 @@
       <trans-unit id=".LrcTyU" resname="There is no active quiz">
         <source>There is no active quiz</source>
         <target>Er is geen test actief</target>
+      </trans-unit>
+      <trans-unit id="o.FTilS" resname="This question cannot be deleted because it is used in a locked or active quiz">
+        <source>This question cannot be deleted because it is used in a locked or active quiz</source>
+        <target>Deze vraag kan niet verwijderd worden omdat die gebruik wordt in een vergrendelde of actieve test</target>
       </trans-unit>
       <trans-unit id=".WkwBH8" resname="This question has already been used">
         <source>This question has already been used</source>
@@ -621,7 +645,7 @@
         <source>This quiz has already been filled in and can no longer be altered</source>
         <target>Deze quiz is al ingevuld en kan niet meer worden gewijzigd</target>
       </trans-unit>
-      <trans-unit id="Xq9rT2p" resname="This quiz has no questions yet">
+      <trans-unit id="HhT1KC3" resname="This quiz has no questions yet">
         <source>This quiz has no questions yet</source>
         <target>Deze test heeft nog geen vragen</target>
       </trans-unit>
@@ -636,14 +660,6 @@
       <trans-unit id="A_XdODo" resname="Undo finalization">
         <source>Undo finalization</source>
         <target>Afronden ongedaan maken</target>
-      </trans-unit>
-      <trans-unit id="Lk7mP2q" resname="Locks the quiz so it can no longer be edited and makes it ready for candidates to take.">
-        <source>Locks the quiz so it can no longer be edited and makes it ready for candidates to take.</source>
-        <target>Vergrendelt de test zodat deze niet meer bewerkt kan worden en maakt deze klaar voor deelnemers.</target>
-      </trans-unit>
-      <trans-unit id="Rn3xW8s" resname="Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.">
-        <source>Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.</source>
-        <target>Heropent de test voor bewerking. Deelnemers kunnen de test niet meer afnemen totdat deze opnieuw is afgerond.</target>
       </trans-unit>
       <trans-unit id="Bdt8q.S" resname="Used in">
         <source>Used in</source>

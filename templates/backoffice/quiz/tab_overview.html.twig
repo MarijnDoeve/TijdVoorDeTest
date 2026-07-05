@@ -76,15 +76,14 @@
         <button class="btn btn-danger" data-action="click->bo--quiz#clearQuiz">
             {{ 'Clear Quiz...'|trans }}
         </button>
-        <button class="btn btn-danger rounded-0 rounded-end" data-action="click->bo--quiz#deleteQuiz">
+        <button class="btn btn-danger rounded-0 " data-action="click->bo--quiz#deleteQuiz">
             {{ 'Delete Quiz...'|trans }}
         </button>
+        <a class="btn btn-secondary rounded-0 rounded-end"
+           href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
+            {{ 'Export to XLSX'|trans }}
+        </a>
     </div>
-
-    <a class="btn btn-outline-secondary mb-3"
-       href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
-        {{ 'Export to XLSX'|trans }}
-    </a>
 
     <h4 class="mb-3">{{ 'Questions'|trans }}</h4>
     <div class="accordion">
