@@ -131,14 +131,10 @@ class BankQuestion implements \Stringable
             return;
         }
 
-        $correctAnswers = $this->answers->filter(static fn (BankAnswer $answer): bool => $answer->isRightAnswer)->count();
+        $this->answers->filter(static fn (BankAnswer $answer): bool => $answer->isRightAnswer)->count();
 
         if ($this->answers->count() < 2) {
             $context->buildViolation('A question needs at least two answers')
-                ->atPath('answers')
-                ->addViolation();
-        } elseif (1 !== $correctAnswers) {
-            $context->buildViolation('A question must have exactly one correct answer')
                 ->atPath('answers')
                 ->addViolation();
         }

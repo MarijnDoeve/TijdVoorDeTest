@@ -2,6 +2,7 @@
 
 {% macro answer_row(answerForm) %}
     <div class="d-flex align-items-center gap-2 mb-2" data-collection-item>
+        {{ form_widget(answerForm.ordering) }}
         <span class="text-muted" data-drag-handle style="cursor: grab" title="{{ 'Drag to reorder'|trans }}"><i class="bi bi-grip-vertical"></i></span>
         <div class="flex-grow-1">{{ form_widget(answerForm.text) }}</div>
         <div class="form-check">

@@ -126,7 +126,7 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->assertSame('Rood', (string) $bankQuestion->answers->first());
     }
 
-    public function testCreateRefusedWithoutCorrectAnswer(): void
+    public function testCreateAllowedWithoutCorrectAnswer(): void
     {
         $this->loginAsOwner();
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank/new');
@@ -143,8 +143,10 @@ final class QuestionBankControllerTest extends WebTestCase
             ],
         ]);
 
-        $this->assertResponseIsUnprocessable();
-        $this->assertNotInstanceOf(BankQuestion::class, $this->entityManager->getRepository(BankQuestion::class)->findOneBy(['question' => 'Vraag zonder goed antwoord']));
+        $this->assertResponseRedirects();
+        $saved = $this->entityManager->getRepository(BankQuestion::class)->findOneBy(['question' => 'Vraag zonder goed antwoord']);
+        $this->assertInstanceOf(BankQuestion::class, $saved);
+        $this->assertFalse($saved->isCompleteForQuiz);
     }
 
     public function testEditBankQuestion(): void

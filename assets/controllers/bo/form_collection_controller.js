@@ -30,6 +30,7 @@ export default class extends Controller {
       return textA.localeCompare(textB);
     });
     items.forEach(item => this.collectionTarget.appendChild(item));
+    this._syncOrdering();
   }
 
   randomize() {
@@ -39,6 +40,7 @@ export default class extends Controller {
       [items[i], items[j]] = [items[j], items[i]];
     }
     items.forEach(item => this.collectionTarget.appendChild(item));
+    this._syncOrdering();
   }
 
   // — drag-and-drop —
@@ -81,6 +83,14 @@ export default class extends Controller {
       el.classList.remove('border-top', 'border-primary');
       if (!this._dragging || this._dragging === el) return;
       this.collectionTarget.insertBefore(this._dragging, el);
+      this._syncOrdering();
+    });
+  }
+
+  _syncOrdering() {
+    [...this.collectionTarget.children].forEach((el, i) => {
+      const input = el.querySelector('input[name*="[ordering]"]');
+      if (input) input.value = i;
     });
   }
 }
