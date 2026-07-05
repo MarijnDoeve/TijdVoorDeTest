@@ -6,6 +6,7 @@ namespace Tvdt\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -40,6 +41,9 @@ class Quiz
     #[ORM\Column(nullable: false, options: ['default' => 1])]
     public int $dropouts = 1;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    public ?\DateTimeImmutable $finalizedAt = null;
+
     /** @var Collection<int, Elimination> */
     #[ORM\OneToMany(targetEntity: Elimination::class, mappedBy: 'quiz', cascade: ['persist'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
@@ -60,6 +64,19 @@ class Quiz
         }
 
         return $this;
+    }
+
+    public bool $isFinalized {
+        get => $this->finalizedAt instanceof \DateTimeImmutable;
+    }
+
+    public bool $hasStartedCandidates {
+        get => $this->candidateData->exists(static fn (int $key, QuizCandidate $quizCandidate): bool => $quizCandidate->started instanceof \DateTimeImmutable);
+    }
+
+    /** A locked quiz can no longer be altered: it is either explicitly finalized or a candidate has already started filling it in. */
+    public bool $isLocked {
+        get => $this->isFinalized || $this->hasStartedCandidates;
     }
 
     public function addElimination(Elimination $elimination): self

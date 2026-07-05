@@ -12,6 +12,7 @@ use Safe\Exceptions\DatetimeException;
 use Symfony\Component\Uid\Uuid;
 use Tvdt\Dto\Result;
 use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
 use Tvdt\Exception\ErrorClearingQuizException;
 
 /** @extends ServiceEntityRepository<Quiz> */
@@ -20,6 +21,29 @@ class QuizRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry, private readonly LoggerInterface $logger)
     {
         parent::__construct($registry, Quiz::class);
+    }
+
+    /**
+     * Quizzes of the season that can still receive bank questions:
+     * not finalized and not started by any candidate.
+     *
+     * @return list<Quiz>
+     */
+    public function findAssignableForSeason(Season $season): array
+    {
+        /* @var list<Quiz> */
+        return $this->getEntityManager()->createQuery(<<<DQL
+            select q from Tvdt\Entity\Quiz q
+            where q.season = :season
+            and q.finalizedAt is null
+            and not exists (
+                select 1 from Tvdt\Entity\QuizCandidate qc
+                where qc.quiz = q and qc.started is not null
+            )
+            order by q.id asc
+            DQL)
+            ->setParameter('season', $season)
+            ->getResult();
     }
 
     /** @throws ErrorClearingQuizException */
@@ -45,6 +69,20 @@ class QuizRepository extends ServiceEntityRepository
             $em->createQuery(<<<DQL
                 delete from Tvdt\Entity\Elimination e
                 where e.quiz = :quiz
+                DQL)
+                ->setParameter('quiz', $quiz)
+                ->execute();
+
+            $em->createQuery(<<<DQL
+                delete from Tvdt\Entity\BankQuestionUsage bqu
+                where bqu.quiz = :quiz
+                DQL)
+                ->setParameter('quiz', $quiz)
+                ->execute();
+
+            $em->createQuery(<<<DQL
+                update Tvdt\Entity\Quiz q set q.finalizedAt = null
+                where q = :quiz
                 DQL)
                 ->setParameter('quiz', $quiz)
                 ->execute();
@@ -113,8 +151,8 @@ class QuizRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<dql
             select q, qz, a from Tvdt\Entity\Quiz q
-            join q.questions qz
-            join qz.answers a
+            left join q.questions qz
+            left join qz.answers a
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
     }
@@ -127,8 +165,8 @@ class QuizRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<dql
             select q, qz, a, ac, s, sc, qc from Tvdt\Entity\Quiz q
-            join q.questions qz
-            join qz.answers a
+            left join q.questions qz
+            left join qz.answers a
             left join a.candidates ac
             join q.season s
             left join s.candidates sc

@@ -22,13 +22,24 @@
     </div>
 {% endmacro %}
 
-<div data-controller="bo--quiz">
-    <h4 class="mb-3">{{ 'Quick actions'|trans }}</h4>
+<div class="row">
+<div class="col-md-8 col-12" data-controller="bo--quiz">
+    <h4 class="mb-3">
+        {{ 'Quick actions'|trans }}
+        {% if quiz.isFinalized %}
+            <span class="badge text-bg-success">{{ 'Finalized'|trans }}</span>
+        {% elseif quiz.isLocked %}
+            <span class="badge text-bg-warning">{{ 'Locked (answers given)'|trans }}</span>
+        {% else %}
+            <span class="badge text-bg-secondary">{{ 'Draft'|trans }}</span>
+        {% endif %}
+    </h4>
     <div class="mb-3 btn-group">
 
         {% if quiz is same as (season.activeQuiz) %}
             <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: 'null'}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
+                <input type="hidden" name="redirect_quiz" value="{{ quiz.id }}">
                 <button type="submit" class="btn btn-secondary rounded-0 rounded-start">
                     {{ 'Deactivate Quiz'|trans }}
                 </button>
@@ -36,23 +47,43 @@
         {% else %}
             <form action="{{ path('tvdt_backoffice_enable', {seasonCode: season.seasonCode, quiz: quiz.id}) }}" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token('enable_quiz') }}">
-                <button type="submit" class="btn btn-primary rounded-0 rounded-start">
+                <button type="submit" class="btn btn-primary rounded-0 rounded-start"
+                        {% if not quiz.isFinalized %}disabled data-bs-toggle="tooltip"
+                        title="{{ 'The quiz must be finalized before it can be activated'|trans }}"{% endif %}>
                     {{ 'Make active'|trans }}
+                </button>
+            </form>
+        {% endif %}
+        {% if not quiz.isFinalized %}
+            <form action="{{ path('tvdt_backoffice_quiz_finalize', {quiz: quiz.id}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('finalize_quiz') }}">
+                <button type="submit" class="btn btn-success rounded-0"
+                        data-bs-toggle="tooltip"
+                        title="{{ 'Locks the quiz so it can no longer be edited and makes it ready for candidates to take.'|trans }}">
+                    {{ 'Finalize'|trans }}
+                </button>
+            </form>
+        {% elseif not quiz.hasStartedCandidates and quiz is not same as (season.activeQuiz) %}
+            <form action="{{ path('tvdt_backoffice_quiz_unfinalize', {quiz: quiz.id}) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('unfinalize_quiz') }}">
+                <button type="submit" class="btn btn-outline-success rounded-0"
+                        data-bs-toggle="tooltip"
+                        title="{{ 'Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.'|trans }}">
+                    {{ 'Undo finalization'|trans }}
                 </button>
             </form>
         {% endif %}
         <button class="btn btn-danger" data-action="click->bo--quiz#clearQuiz">
             {{ 'Clear Quiz...'|trans }}
         </button>
-        <button class="btn btn-danger rounded-0 rounded-end" data-action="click->bo--quiz#deleteQuiz">
+        <button class="btn btn-danger rounded-0 " data-action="click->bo--quiz#deleteQuiz">
             {{ 'Delete Quiz...'|trans }}
         </button>
+        <a class="btn btn-secondary rounded-0 rounded-end"
+           href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
+            {{ 'Export to XLSX'|trans }}
+        </a>
     </div>
-
-    <a class="btn btn-outline-secondary mb-3"
-       href="{{ path('tvdt_backoffice_quiz_export', {quiz: quiz.id}) }}">
-        {{ 'Export to XLSX'|trans }}
-    </a>
 
     <h4 class="mb-3">{{ 'Questions'|trans }}</h4>
     <div class="accordion">
@@ -73,6 +104,12 @@
                 <div id="question-{{ loop.index0 }}"
                      class="accordion-collapse collapse">
                     <div class="accordion-body">
+                        {% if is_granted('QUIZ_MODIFY_CONTENT', question) %}
+                            <a class="btn btn-sm btn-outline-secondary mb-2"
+                               href="{{ path('tvdt_backoffice_quiz_question_edit', {seasonCode: season.seasonCode, quiz: quiz.id, question: question.id}) }}">
+                                <i class="bi bi-pencil"></i> {{ 'Edit'|trans }}
+                            </a>
+                        {% endif %}
                         <ul>
                             {%~ for answer in question.answers %}
                                 <li{% if answer.isRightAnswer %} class="text-decoration-underline"{% endif %}>
@@ -110,4 +147,8 @@
         path('tvdt_backoffice_quiz_delete', {quiz: quiz.id}),
         csrf_token('delete_quiz'),
     ) }}
+</div>
+<div class="col-md-4 col-12">
+    {{ include('backoffice/help/quiz_overview.html.twig') }}
+</div>
 </div>

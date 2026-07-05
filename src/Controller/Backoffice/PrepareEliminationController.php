@@ -15,6 +15,7 @@ use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
+use Tvdt\Enum\FlashType;
 use Tvdt\Factory\EliminationFactory;
 
 final class PrepareEliminationController extends AbstractController
@@ -52,7 +53,7 @@ final class PrepareEliminationController extends AbstractController
                 return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
             }
 
-            $this->addFlash('success', 'Elimination updated');
+            $this->addFlash(FlashType::Success, 'Elimination updated');
 
             return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
         }

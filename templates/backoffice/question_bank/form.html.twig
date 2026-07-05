@@ -1,0 +1,53 @@
+{% extends 'backoffice/base.html.twig' %}
+{% import 'backoffice/partials/answer_row.html.twig' as macros %}
+
+{% block title %}{{ parent() }}{{ 'Question bank'|trans }}{% endblock %}
+
+{% block breadcrumbs %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ season.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode}) }}">{{ 'Question bank'|trans }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <h2 class="mb-3">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</h2>
+
+            {{ form_start(form) }}
+            {{ form_row(form.question) }}
+            {{ form_row(form.reusable) }}
+            {{ form_row(form.labels) }}
+
+            <div data-controller="bo--form-collection"
+                 data-bo--form-collection-prototype-value="{{ macros.answer_row(form.answers.vars.prototype)|e('html_attr') }}">
+                {{ form_label(form.answers) }}
+                {{ form_errors(form.answers) }}
+                <div data-bo--form-collection-target="collection">
+                    {% for answerForm in form.answers %}
+                        {{ macros.answer_row(answerForm) }}
+                    {% endfor %}
+                </div>
+                {% do form.answers.setRendered %}
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary"
+                            data-action="bo--form-collection#addItem">{{ 'Add answer'|trans }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-action="bo--form-collection#sortAlphabetically">{{ 'Sort A–Z'|trans }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-action="bo--form-collection#randomize">{{ 'Randomize'|trans }}</button>
+                </div>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-6 col-12">
+            {{ include('backoffice/help/quiz_question_bank_form.html.twig') }}
+        </div>
+    </div>
+{% endblock body %}

@@ -1,0 +1,25 @@
+{% block modal_trigger %}
+    <button type="button" class="{{ triggerClass|default('btn btn-sm btn-outline-primary') }}"
+            data-bs-toggle="modal" data-bs-target="#{{ id }}">
+        {{ triggerLabel|default('Open') }}
+    </button>
+{% endblock %}
+
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{ id }}Label">{{ title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
+            </div>
+            <div class="modal-body">
+                {% block modal_body %}{% endblock %}
+            </div>
+            <div class="modal-footer">
+                {% block modal_footer %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>

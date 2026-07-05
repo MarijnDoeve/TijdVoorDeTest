@@ -11,39 +11,24 @@
 {% endblock %}
 
 {% block body %}
-    <h2 class="mb-3">{{ 'Season'|trans }}: {{ season.name }}</h2>
-    <div class="row">
-        <div class="col-md-6 col-12">
-            <div class="d-flex align-items-center mb-3">
-                <h4 class="mb-0 pe-2">{{ 'Quizzes'|trans }}</h4>
-                <a class="link"
-                   href="{{ path('tvdt_backoffice_quiz_add', {seasonCode: season.seasonCode}) }}">{{ 'Add'|trans }}</a>
-            </div>
-            <div class="list-group mb-3">
-                {% for quiz in season.quizzes %}
-                    <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
-                       href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a>
-                {% else %}
-                    {{ 'No quizzes'|trans }}
-                {% endfor %}
-            </div>
-        </div>
-        <div class="col-md-3 col-12">
-            <div class="d-flex align-items-center mb-3">
-                <h4 class="mb-0 pe-2">{{ 'Candidates'|trans }}</h4>
-                <a class="link"
-                   href="{{ path('tvdt_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}
-                </a>
-            </div>
-            <ul class="mb-3">
-                {% for candidate in season.candidates %}
-                    <li>{{ candidate.name }}</li>{% endfor %}
-            </ul>
+    {% set tabs = [
+        {id: 'tests', label: 'Quizzes'|trans, route: 'tvdt_backoffice_season'},
+        {id: 'question-bank', label: 'Question bank'|trans, route: 'tvdt_backoffice_question_bank'},
+        {id: 'candidates', label: 'Candidates'|trans, route: 'tvdt_backoffice_season_candidates'},
+        {id: 'settings', label: 'Settings'|trans, route: 'tvdt_backoffice_season_settings'},
+    ] %}
 
-            <div class="d-flex align-items-center mb-3">
-                <h4 class="mb-0 pe-2">{{ 'Settings'|trans }}</h4>
-            </div>
-            {{ form(form) }}
-        </div>
+    <h2 class="mb-3">{{ 'Season'|trans }}: {{ season.name }}</h2>
+    <ul class="nav nav-tabs mb-3">
+        {% for tab in tabs %}
+            <li class="nav-item">
+                <a class="nav-link{{ activeTab == tab.id ? ' active' }}" href="{{ path(tab.route, {seasonCode: season.seasonCode}) }}">
+                    {{ tab.label }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="pt-3">
+        {{ include(template) }}
     </div>
 {% endblock body %}
