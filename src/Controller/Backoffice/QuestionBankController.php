@@ -230,7 +230,7 @@ class QuestionBankController extends AbstractController
 
         $slug = mb_strtolower($this->slugger->slug($name)->toString());
 
-        $colour = LabelColour::tryFrom($request->request->getString('colour')) ?? LabelColour::Slate;
+        $colour = LabelColour::tryFrom($request->request->getString('colour')) ?? LabelColour::Gray;
 
         $exists = $season->questionLabels->exists(static fn (int $key, QuestionLabel $label): bool => $label->name === $name);
         if (!$exists) {

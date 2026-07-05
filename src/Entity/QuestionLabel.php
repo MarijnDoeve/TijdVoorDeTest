@@ -32,7 +32,7 @@ class QuestionLabel implements \Stringable
     public private(set) Collection $bankQuestions;
 
     #[ORM\Column(length: 16, enumType: LabelColour::class, options: ['default' => 'secondary'])]
-    public LabelColour $colour = LabelColour::Slate;
+    public LabelColour $colour = LabelColour::Gray;
 
     #[ORM\Column(length: 64)]
     public string $slug = '';
