@@ -1,15 +1,15 @@
 {% extends 'backoffice/base.html.twig' %}
 {% import 'backoffice/partials/answer_row.html.twig' as macros %}
 
-{% block title %}{{ parent() }}{{ 'Question bank'|trans }}{% endblock %}
+{% block title %}{{ parent() }}{{ 'Edit question'|trans }}{% endblock %}
 
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_index') }}">{{ 'Home'|trans }}</a></li>
             <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_season', {seasonCode: season.seasonCode}) }}">{{ season.name }}</a></li>
-            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_question_bank', {seasonCode: season.seasonCode}) }}">{{ 'Question bank'|trans }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</li>
+            <li class="breadcrumb-item"><a href="{{ path('tvdt_backoffice_quiz_overview', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">{{ quiz.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ 'Edit question'|trans }}</li>
         </ol>
     </nav>
 {% endblock %}
@@ -17,12 +17,10 @@
 {% block body %}
     <div class="row">
         <div class="col-md-6 col-12">
-            <h2 class="mb-3">{{ bankQuestion is null ? 'Add question'|trans : 'Edit question'|trans }}</h2>
+            <h2 class="mb-3">{{ 'Edit question'|trans }}</h2>
 
             {{ form_start(form) }}
             {{ form_row(form.question) }}
-            {{ form_row(form.reusable) }}
-            {{ form_row(form.labels) }}
 
             <div data-controller="bo--form-collection"
                  data-bo--form-collection-prototype-value="{{ macros.answer_row(form.answers.vars.prototype)|e('html_attr') }}">

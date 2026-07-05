@@ -104,6 +104,12 @@
                 <div id="question-{{ loop.index0 }}"
                      class="accordion-collapse collapse">
                     <div class="accordion-body">
+                        {% if is_granted('QUIZ_MODIFY_CONTENT', question) %}
+                            <a class="btn btn-sm btn-outline-secondary mb-2"
+                               href="{{ path('tvdt_backoffice_quiz_question_edit', {seasonCode: season.seasonCode, quiz: quiz.id, question: question.id}) }}">
+                                <i class="bi bi-pencil"></i> {{ 'Edit'|trans }}
+                            </a>
+                        {% endif %}
                         <ul>
                             {%~ for answer in question.answers %}
                                 <li{% if answer.isRightAnswer %} class="text-decoration-underline"{% endif %}>
