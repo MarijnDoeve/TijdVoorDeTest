@@ -53,9 +53,9 @@
         <source>Add blank quiz</source>
         <target>Lege quiz toevoegen</target>
       </trans-unit>
-      <trans-unit id="2Qmgp4S" resname="Add from XLSX">
-        <source>Add from XLSX</source>
-        <target>Toevoegen vanuit XLSX</target>
+      <trans-unit id="2Qmgp4S" resname="Import">
+        <source>Import</source>
+        <target>Importeren</target>
       </trans-unit>
       <trans-unit id="MJD3m3Q" resname="Add label">
         <source>Add label</source>
