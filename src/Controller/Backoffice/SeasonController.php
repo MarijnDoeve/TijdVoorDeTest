@@ -30,7 +30,7 @@ use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuizSpreadsheetService;
 
 #[AsController]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED')]
 class SeasonController extends AbstractController
 {
     public function __construct(
