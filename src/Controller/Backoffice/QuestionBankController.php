@@ -88,7 +88,7 @@ class QuestionBankController extends AbstractController
     {
         $bankQuestion = new BankQuestion();
 
-        $isModalRequest = $request->headers->has('X-Modal-Request');
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
 
         $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
         $form->handleRequest($request);
@@ -101,22 +101,21 @@ class QuestionBankController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question added to the question bank'));
 
-            if ($isModalRequest) {
-                return new Response('', Response::HTTP_NO_CONTENT);
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="bank-question-modal-frame"></turbo-frame>');
             }
 
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
-        $template = $isModalRequest
-            ? 'backoffice/question_bank/_form_body.html.twig'
+        $template = $isTurboFrame
+            ? 'backoffice/question_bank/_frame.html.twig'
             : 'backoffice/question_bank/form.html.twig';
 
         $response = $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => null,
-            'isModal' => $isModalRequest,
         ]);
 
         if ($form->isSubmitted()) {
@@ -137,7 +136,7 @@ class QuestionBankController extends AbstractController
     {
         $this->assertSameSeason($season, $bankQuestion->season);
 
-        $isModalRequest = $request->headers->has('X-Modal-Request');
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
 
         $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
         $form->handleRequest($request);
@@ -149,22 +148,21 @@ class QuestionBankController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
 
-            if ($isModalRequest) {
-                return new Response('', Response::HTTP_NO_CONTENT);
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="bank-question-modal-frame"></turbo-frame>');
             }
 
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
-        $template = $isModalRequest
-            ? 'backoffice/question_bank/_form_body.html.twig'
+        $template = $isTurboFrame
+            ? 'backoffice/question_bank/_frame.html.twig'
             : 'backoffice/question_bank/form.html.twig';
 
         $response = $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => $bankQuestion,
-            'isModal' => $isModalRequest,
         ]);
 
         if ($form->isSubmitted()) {
