@@ -1,6 +1,6 @@
 {% import 'backoffice/partials/answer_row.html.twig' as macros %}
 
-{{ form_start(form) }}
+{{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
 {{ form_row(form.question) }}
 {{ form_row(form.reusable) }}
 {{ form_row(form.labels) }}
