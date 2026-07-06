@@ -1,7 +1,12 @@
 <div class="row">
     <div class="col-md-8 col-12" data-controller="bo--modal-form">
         <div class="mb-3">
-            <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
+            <button class="btn btn-sm btn-outline-primary"
+                    data-action="click->bo--modal-form#open"
+                    data-url="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}"
+                    data-modal-title="{{ 'Add question'|trans }}">
+                {{ 'Add question'|trans }}
+            </button>
         </div>
 
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">

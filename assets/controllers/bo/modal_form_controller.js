@@ -23,7 +23,27 @@ export default class extends Controller {
     const res = await fetch(url, {headers: {'X-Modal-Request': '1'}});
     this.modalBodyTarget.innerHTML = await res.text();
     this._moveFooter();
+    this._bindDirty();
     this._bindForm(url);
+  }
+
+  _bindDirty() {
+    const modal = Modal.getOrCreateInstance(this.modalTarget);
+    modal._config.backdrop = true;
+    modal._config.keyboard = true;
+
+    const markDirty = () => {
+      modal._config.backdrop = 'static';
+      modal._config.keyboard = false;
+    };
+
+    this.modalBodyTarget.addEventListener('input', markDirty, {once: true});
+    this.modalBodyTarget.addEventListener('change', markDirty, {once: true});
+
+    this.modalTarget.addEventListener('hidden.bs.modal', () => {
+      modal._config.backdrop = true;
+      modal._config.keyboard = true;
+    }, {once: true});
   }
 
   _moveFooter() {
