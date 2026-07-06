@@ -44,7 +44,7 @@ class QuizQuestionController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $isModalRequest = $request->headers->has('X-Modal-Request');
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
 
         $form = $this->createForm(QuestionFormType::class, $question);
         $form->handleRequest($request);
@@ -55,8 +55,8 @@ class QuizQuestionController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
 
-            if ($isModalRequest) {
-                return new Response('', Response::HTTP_NO_CONTENT);
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="question-modal-frame"></turbo-frame>');
             }
 
             return $this->redirectToRoute('tvdt_backoffice_quiz_overview', [
@@ -65,8 +65,8 @@ class QuizQuestionController extends AbstractController
             ]);
         }
 
-        $template = $isModalRequest
-            ? 'backoffice/quiz/_question_form_body.html.twig'
+        $template = $isTurboFrame
+            ? 'backoffice/quiz/_question_frame.html.twig'
             : 'backoffice/quiz/question_form.html.twig';
 
         $response = $this->render($template, [
@@ -74,7 +74,6 @@ class QuizQuestionController extends AbstractController
             'quiz' => $quiz,
             'question' => $question,
             'form' => $form,
-            'isModal' => $isModalRequest,
         ]);
 
         if ($form->isSubmitted()) {
@@ -95,7 +94,7 @@ class QuizQuestionController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        return $this->render('backoffice/quiz/_question_detail_body.html.twig', [
+        return $this->render('backoffice/quiz/_question_detail_frame.html.twig', [
             'question' => $question,
         ]);
     }

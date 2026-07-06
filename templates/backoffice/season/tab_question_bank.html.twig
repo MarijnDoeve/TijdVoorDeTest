@@ -1,9 +1,10 @@
 <div class="row">
-    <div class="col-md-8 col-12" data-controller="bo--modal-form">
+    <div class="col-md-8 col-12" data-controller="bo--modal"
+         data-action="turbo:frame-load->bo--modal#frameLoad turbo:submit-end->bo--modal#frameSubmitEnd">
         <div class="mb-3">
             <button class="btn btn-sm btn-outline-primary"
-                    data-action="click->bo--modal-form#open"
-                    data-url="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}"
+                    data-action="click->bo--modal#open"
+                    data-src="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}"
                     data-modal-title="{{ 'Add question'|trans }}">
                 {{ 'Add question'|trans }}
             </button>
@@ -126,8 +127,8 @@
                         {% endif %}
                         <div class="btn-group btn-group-sm" role="group">
                             <button type="button" class="btn btn-outline-secondary"
-                                    data-action="click->bo--modal-form#open"
-                                    data-url="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
+                                    data-action="click->bo--modal#open"
+                                    data-src="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
                                     title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></button>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}"
@@ -170,7 +171,7 @@
         </tbody>
     </table>
         <div class="modal fade" tabindex="-1"
-             data-bo--modal-form-target="modal"
+             data-bo--modal-target="modal"
              aria-labelledby="bankQuestionEditModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -178,8 +179,7 @@
                         <h5 class="modal-title" id="bankQuestionEditModalLabel">{{ 'Edit question'|trans }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" data-bo--modal-form-target="modalBody"></div>
-                    <div class="modal-footer" data-bo--modal-form-target="modalFooter"></div>
+                    <turbo-frame id="bank-question-modal-frame" data-bo--modal-target="frame"></turbo-frame>
                 </div>
             </div>
         </div>
