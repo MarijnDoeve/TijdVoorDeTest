@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-md-8 col-12">
+    <div class="col-md-8 col-12" data-controller="bo--modal-form">
         <div class="mb-3">
             <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
         </div>
@@ -120,9 +120,10 @@
                             </form>
                         {% endif %}
                         <div class="btn-group btn-group-sm" role="group">
-                            <a class="btn btn-outline-secondary"
-                               href="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
-                               title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></a>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-action="click->bo--modal-form#open"
+                                    data-url="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
+                                    title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></button>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}"
                                     title="{{ 'Delete'|trans }}"><i class="bi bi-trash"></i></button>
@@ -163,6 +164,20 @@
         {% endfor %}
         </tbody>
     </table>
+        <div class="modal fade" tabindex="-1"
+             data-bo--modal-form-target="modal"
+             aria-labelledby="bankQuestionEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bankQuestionEditModalLabel">{{ 'Edit question'|trans }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" data-bo--modal-form-target="modalBody"></div>
+                    <div class="modal-footer" data-bo--modal-form-target="modalFooter"></div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-4 col-12">
         {{ include('backoffice/help/season_question_bank.html.twig') }}

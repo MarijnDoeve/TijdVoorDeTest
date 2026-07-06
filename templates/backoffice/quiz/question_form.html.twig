@@ -18,31 +18,7 @@
     <div class="row">
         <div class="col-md-6 col-12">
             <h2 class="mb-3">{{ 'Edit question'|trans }}</h2>
-
-            {{ form_start(form) }}
-            {{ form_row(form.question) }}
-
-            <div data-controller="bo--form-collection"
-                 data-bo--form-collection-prototype-value="{{ macros.answer_row(form.answers.vars.prototype)|e('html_attr') }}">
-                {{ form_label(form.answers) }}
-                {{ form_errors(form.answers) }}
-                <div data-bo--form-collection-target="collection">
-                    {% for answerForm in form.answers %}
-                        {{ macros.answer_row(answerForm) }}
-                    {% endfor %}
-                </div>
-                {% do form.answers.setRendered %}
-                <div class="d-flex gap-2 mb-3">
-                    <button type="button" class="btn btn-sm btn-outline-primary"
-                            data-action="bo--form-collection#addItem">{{ 'Add answer'|trans }}</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                            data-action="bo--form-collection#sortAlphabetically">{{ 'Sort A–Z'|trans }}</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                            data-action="bo--form-collection#randomize">{{ 'Randomize'|trans }}</button>
-                </div>
-            </div>
-
-            {{ form_end(form) }}
+            {{ include('backoffice/quiz/_question_form_body.html.twig') }}
         </div>
         <div class="col-md-6 col-12">
             {{ include('backoffice/help/quiz_question_bank_form.html.twig') }}

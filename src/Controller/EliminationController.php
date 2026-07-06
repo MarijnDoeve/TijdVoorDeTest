@@ -23,7 +23,7 @@ use Tvdt\Security\Voter\SeasonVoter;
 use function Symfony\Component\Translation\t;
 
 #[AsController]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED')]
 final class EliminationController extends AbstractController
 {
     public function __construct(private readonly TranslatorInterface $translator, private readonly CandidateRepository $candidateRepository) {}

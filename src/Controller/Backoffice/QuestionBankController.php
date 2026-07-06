@@ -38,7 +38,7 @@ use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuestionBankService;
 
 #[AsController]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED')]
 class QuestionBankController extends AbstractController
 {
     public function __construct(
@@ -120,6 +120,8 @@ class QuestionBankController extends AbstractController
     {
         $this->assertSameSeason($season, $bankQuestion->season);
 
+        $isModalRequest = $request->headers->has('X-Modal-Request');
+
         $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
         $form->handleRequest($request);
 
@@ -130,14 +132,29 @@ class QuestionBankController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
 
+            if ($isModalRequest) {
+                return new Response('', Response::HTTP_NO_CONTENT);
+            }
+
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
-        return $this->render('backoffice/question_bank/form.html.twig', [
+        $template = $isModalRequest
+            ? 'backoffice/question_bank/_form_body.html.twig'
+            : 'backoffice/question_bank/form.html.twig';
+
+        $response = $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => $bankQuestion,
+            'isModal' => $isModalRequest,
         ]);
+
+        if ($form->isSubmitted()) {
+            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return $response;
     }
 
     #[IsCsrfTokenValid('delete_bank_question')]
