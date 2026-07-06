@@ -45,6 +45,7 @@ export default class extends Controller {
 
   removeItem(event) {
     event.target.closest('[data-collection-item]').remove();
+    this._notifyChange();
   }
 
   sortAlphabetically() {
@@ -56,6 +57,7 @@ export default class extends Controller {
     });
     items.forEach(item => this.collectionTarget.appendChild(item));
     this._syncOrdering();
+    this._notifyChange();
   }
 
   randomize() {
@@ -66,6 +68,11 @@ export default class extends Controller {
     }
     items.forEach(item => this.collectionTarget.appendChild(item));
     this._syncOrdering();
+    this._notifyChange();
+  }
+
+  _notifyChange() {
+    this.element.dispatchEvent(new Event('change', {bubbles: true}));
   }
 
   // — drag-and-drop —
@@ -115,6 +122,7 @@ export default class extends Controller {
       const isBottom = e.clientY > rect.top + rect.height / 2;
       this.collectionTarget.insertBefore(this._dragging, isBottom ? el.nextSibling : el);
       this._syncOrdering();
+      this._notifyChange();
     });
   }
 
