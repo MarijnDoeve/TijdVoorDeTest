@@ -257,6 +257,10 @@
         <source>Error clearing quiz</source>
         <target>Fout bij het leegmaken van de test</target>
       </trans-unit>
+      <trans-unit id="NXU7HO." resname="Error saving order">
+        <source>Error saving order</source>
+        <target>Fout bij opslaan volgorde</target>
+      </trans-unit>
       <trans-unit id="bgWPQMg" resname="Export to XLSX">
         <source>Export to XLSX</source>
         <target>Exporteren naar XLSX</target>
@@ -409,13 +413,17 @@
         <source>Open</source>
         <target>Openen</target>
       </trans-unit>
+      <trans-unit id="vhCGOEN" resname="Order saved">
+        <source>Order saved</source>
+        <target>Volgorde opgeslagen</target>
+      </trans-unit>
       <trans-unit id="HmgPmMV" resname="Overview">
         <source>Overview</source>
         <target>Overzicht</target>
       </trans-unit>
       <trans-unit id="PywqOf4" resname="Owner(s)">
         <source>Owner(s)</source>
-        <target>Eigenaar(s)</target>
+        <target>Eigena(a)r(en)</target>
       </trans-unit>
       <trans-unit id="GqmFSHc" resname="Password">
         <source>Password</source>
@@ -472,6 +480,10 @@
       <trans-unit id="katmLq0" resname="Question bank">
         <source>Question bank</source>
         <target>Vragenbank</target>
+      </trans-unit>
+      <trans-unit id="z7Pp9b9" resname="Question details">
+        <source>Question details</source>
+        <target>Vraagdetails</target>
       </trans-unit>
       <trans-unit id="htaUa1k" resname="Question removed from quiz %quiz%">
         <source>Question removed from quiz %quiz%</source>
@@ -716,6 +728,10 @@
       <trans-unit id="Bdt8q.S" resname="Used in">
         <source>Used in</source>
         <target>Gebruikt in</target>
+      </trans-unit>
+      <trans-unit id=".EmYZIu" resname="View">
+        <source>View</source>
+        <target>Bekijken</target>
       </trans-unit>
       <trans-unit id="JWRtx_o" resname="White">
         <source>White</source>
