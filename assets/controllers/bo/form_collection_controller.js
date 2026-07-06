@@ -8,6 +8,29 @@ export default class extends Controller {
     this.index = this.collectionTarget.children.length;
     this._setupDrag();
     this._syncOrdering();
+
+    if (this.index === 0) {
+      this.addItem();
+    }
+
+    this.collectionTarget.addEventListener('input', (e) => {
+      if (e.target.type !== 'text') return;
+      const item = e.target.closest('[data-collection-item]');
+      const last = [...this.collectionTarget.children].at(-1);
+      if (item && item === last && e.target.value.trim() !== '') {
+        this.addItem();
+      }
+    });
+
+    const form = this.element.closest('form');
+    if (form) {
+      form.addEventListener('submit', () => {
+        [...this.collectionTarget.children].forEach(item => {
+          const input = item.querySelector('input[type="text"]');
+          if (input && input.value.trim() === '') item.remove();
+        });
+      });
+    }
   }
 
   addItem() {
