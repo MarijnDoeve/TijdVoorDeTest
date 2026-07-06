@@ -56,6 +56,12 @@ export default class extends Controller {
   _bindForm(url) {
     const form = this.modalBodyTarget.querySelector('form');
     if (!form) return;
+
+    if (this.hasModalFooterTarget) {
+      const saveBtn = this.modalFooterTarget.querySelector('[type="submit"]');
+      saveBtn?.addEventListener('click', () => form.requestSubmit(), {once: true});
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const res = await fetch(url, {
@@ -69,6 +75,7 @@ export default class extends Controller {
       } else {
         this.modalBodyTarget.innerHTML = await res.text();
         this._moveFooter();
+        this._bindDirty();
         this._bindForm(url);
       }
     }, {once: true});
