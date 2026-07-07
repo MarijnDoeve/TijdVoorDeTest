@@ -15,6 +15,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\UX\StimulusBundle\StimulusBundle;
 use Symfony\UX\Turbo\TurboBundle;
+use SymfonyCasts\Bundle\ResetPassword\SymfonyCastsResetPasswordBundle;
 use SymfonyCasts\Bundle\VerifyEmail\SymfonyCastsVerifyEmailBundle;
 use Symfonycasts\SassBundle\SymfonycastsSassBundle;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
@@ -36,4 +37,5 @@ return [
     TurboBundle::class => ['all' => true],
     DAMADoctrineTestBundle::class => ['test' => true],
     StofDoctrineExtensionsBundle::class => ['all' => true],
+    SymfonyCastsResetPasswordBundle::class => ['all' => true],
 ];

@@ -113,6 +113,10 @@
         <source>Please enter an integer.</source>
         <target>Vul een geldig getal in.</target>
       </trans-unit>
+      <trans-unit id="7VWHcE0" resname="Please enter your email">
+        <source>Please enter your email</source>
+        <target>Voer je e-mailadres in</target>
+      </trans-unit>
       <trans-unit id="9RtYCIm" resname="Please provide a valid phone number.">
         <source>Please provide a valid phone number.</source>
         <target>Vul een geldig telefoonnummer in.</target>

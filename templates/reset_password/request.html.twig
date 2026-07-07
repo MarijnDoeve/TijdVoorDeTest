@@ -1,0 +1,18 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}Wachtwoord vergeten{% endblock %}
+
+{% block body %}
+    <h3 class="mb-3">{{ 'Reset your password'|trans }}</h3>
+
+    {{ form_start(requestForm) }}
+    {{ form_row(requestForm.email) }}
+
+    <small class="d-block mb-3">
+        {{ 'Enter your email address, and we will send you a link to reset your password.'|trans }}
+    </small>
+
+    <button class="btn btn-primary" type="submit">{{ 'Send password reset email'|trans }}</button>
+    <a href="{{ path('tvdt_login_login') }}" class="btn btn-link">{{ 'Back to login'|trans }}</a>
+    {{ form_end(requestForm) }}
+{% endblock %}
