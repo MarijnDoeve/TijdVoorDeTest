@@ -397,6 +397,10 @@
         <source>New label</source>
         <target>Nieuw label</target>
       </trans-unit>
+      <trans-unit id="Zm.jZiK" resname="New password">
+        <source>New password</source>
+        <target>Nieuw wachtwoord</target>
+      </trans-unit>
       <trans-unit id="gefhnBC" resname="Next">
         <source>Next</source>
         <target>Volgende</target>

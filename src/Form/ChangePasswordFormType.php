@@ -11,11 +11,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Entity\User;
 
 /** @extends AbstractType<array{plainPassword: string}> */
 final class ChangePasswordFormType extends AbstractType
 {
+    public function __construct(private readonly TranslatorInterface $translator) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -25,6 +28,7 @@ final class ChangePasswordFormType extends AbstractType
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
                 'first_options' => [
+                    'label' => $this->translator->trans('New password'),
                     'constraints' => [
                         new NotBlank(message: 'Please enter a password'),
                         new Length(
@@ -33,13 +37,13 @@ final class ChangePasswordFormType extends AbstractType
                             minMessage: 'Your password should be at least {{ limit }} characters',
                         ),
                     ],
-                    'label' => 'New password',
                 ],
                 'second_options' => [
-                    'label' => 'Repeat Password',
+                    'label' => $this->translator->trans('Repeat Password'),
                 ],
-                'invalid_message' => 'The password fields must match.',
+                'invalid_message' => $this->translator->trans('The password fields must match.'),
                 'mapped' => false,
+                'translation_domain' => false,
             ]);
     }
 
