@@ -54,6 +54,13 @@ class Question implements \Stringable
         return $this;
     }
 
+    public function removeAnswer(Answer $answer): static
+    {
+        $this->answers->removeElement($answer);
+
+        return $this;
+    }
+
     public function __toString(): string
     {
         return $this->question ?? '';

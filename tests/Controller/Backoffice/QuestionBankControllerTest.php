@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\QuestionBankController;
+use Tvdt\Entity\BankAnswer;
 use Tvdt\Entity\BankQuestion;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\QuestionLabel;
@@ -296,6 +297,79 @@ final class QuestionBankControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testCreateBankQuestionPreservesAnswerOrdering(): void
+    {
+        $this->loginAsOwner();
+        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank/new');
+        $this->assertResponseIsSuccessful();
+        $token = (string) $crawler->filter('input[name="bank_question_form[_token]"]')->attr('value');
+
+        // Submit 3 answers with non-sequential ordering values.
+        // The stored ordering field (not the submission index) must dictate retrieval order.
+        $this->client->request(Request::METHOD_POST, '/backoffice/season/krtek/question-bank/new', [
+            'bank_question_form' => [
+                'question' => 'Volgorderingstest nieuwe vraag',
+                'answers' => [
+                    0 => ['text' => 'Antwoord C', 'isRightAnswer' => '1', 'ordering' => '5'],
+                    1 => ['text' => 'Antwoord A', 'ordering' => '1'],
+                    2 => ['text' => 'Antwoord B', 'ordering' => '3'],
+                ],
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/backoffice/season/krtek/question-bank');
+
+        $this->entityManager->clear();
+        $bankQuestion = $this->getBankQuestion('Volgorderingstest nieuwe vraag');
+        $answers = $bankQuestion->answers->toArray();
+        $this->assertCount(3, $answers);
+        // @OrderBy(['ordering' => 'ASC']): ordering 1 → 3 → 5
+        $this->assertSame('Antwoord A', $answers[0]->text);
+        $this->assertSame('Antwoord B', $answers[1]->text);
+        $this->assertSame('Antwoord C', $answers[2]->text);
+    }
+
+    public function testEditBankQuestionPreservesAnswerOrdering(): void
+    {
+        $this->loginAsOwner();
+        $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
+        // Fixture answers in insertion order (all have ordering=0): Brood (correct), Yoghurt, Niks
+
+        $url = \sprintf('/backoffice/season/krtek/question-bank/%s/edit', $bankQuestion->id);
+        $crawler = $this->client->request(Request::METHOD_GET, $url);
+        $this->assertResponseIsSuccessful();
+        $token = (string) $crawler->filter('input[name="bank_question_form[_token]"]')->attr('value');
+
+        $answers = $bankQuestion->answers->toArray();
+        $this->assertCount(3, $answers);
+        $texts = array_map(static fn (BankAnswer $a): string => $a->text, $answers);
+
+        // Assign ordering values: first answer gets 4, second gets 0, third gets 2.
+        // Expected retrieval order after @OrderBy ASC: index 1 (0) → index 2 (2) → index 0 (4).
+        $this->client->request(Request::METHOD_POST, $url, [
+            'bank_question_form' => [
+                'question' => $bankQuestion->question,
+                'answers' => [
+                    0 => ['text' => $texts[0], 'isRightAnswer' => '1', 'ordering' => '4'],
+                    1 => ['text' => $texts[1], 'ordering' => '0'],
+                    2 => ['text' => $texts[2], 'ordering' => '2'],
+                ],
+                '_token' => $token,
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/backoffice/season/krtek/question-bank');
+
+        $this->entityManager->clear();
+        $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
+        $reloadedAnswers = $bankQuestion->answers->toArray();
+        $this->assertCount(3, $reloadedAnswers);
+        $this->assertSame($texts[1], $reloadedAnswers[0]->text); // ordering=0 → first
+        $this->assertSame($texts[2], $reloadedAnswers[1]->text); // ordering=2 → second
+        $this->assertSame($texts[0], $reloadedAnswers[2]->text); // ordering=4 → third
     }
 
     public function testAddAndDeleteLabel(): void

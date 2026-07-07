@@ -97,7 +97,6 @@ class QuestionBankController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->applyAnswerOrdering($bankQuestion);
             $season->addBankQuestion($bankQuestion);
             $this->em->persist($bankQuestion);
             $this->em->flush();
@@ -387,14 +386,6 @@ class QuestionBankController extends AbstractController
     {
         if ($season !== $subjectSeason) {
             throw new NotFoundHttpException();
-        }
-    }
-
-    private function applyAnswerOrdering(BankQuestion $bankQuestion): void
-    {
-        $ordering = 1;
-        foreach ($bankQuestion->answers as $answer) {
-            $answer->ordering = $ordering++;
         }
     }
 

@@ -1,5 +1,6 @@
 import {Controller} from '@hotwired/stimulus';
 import {Modal} from 'bootstrap';
+import {visit} from '@hotwired/turbo';
 
 export default class extends Controller {
   static targets = ['modal', 'frame'];
@@ -25,7 +26,7 @@ export default class extends Controller {
   frameSubmitEnd(event) {
     if (event.detail.success) {
       Modal.getOrCreateInstance(this.modalTarget).hide();
-      window.location.reload();
+      visit(window.location.href);
     }
   }
 

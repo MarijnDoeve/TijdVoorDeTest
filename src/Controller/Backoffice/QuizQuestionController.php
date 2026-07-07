@@ -56,7 +56,6 @@ class QuizQuestionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->applyAnswerOrdering($question);
             $this->em->flush();
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
@@ -146,13 +145,5 @@ class QuizQuestionController extends AbstractController
         $this->em->flush();
 
         return new Response('', Response::HTTP_NO_CONTENT);
-    }
-
-    private function applyAnswerOrdering(Question $question): void
-    {
-        $ordering = 1;
-        foreach ($question->answers as $answer) {
-            $answer->ordering = $ordering++;
-        }
     }
 }

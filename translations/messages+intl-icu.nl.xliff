@@ -389,6 +389,10 @@
         <source>No candidates</source>
         <target>Geen kandidaten</target>
       </trans-unit>
+      <trans-unit id="WPJalKI" resname="No questions have been added to this quiz yet.">
+        <source>No questions have been added to this quiz yet.</source>
+        <target>__No questions have been added to this quiz yet.</target>
+      </trans-unit>
       <trans-unit id="IsJa5UL" resname="No questions in the question bank yet">
         <source>No questions in the question bank yet</source>
         <target>Nog geen vragen in de vragenbank</target>
@@ -568,6 +572,10 @@
       <trans-unit id="P1HcfAu" resname="Red">
         <source>Red</source>
         <target>Rood</target>
+      </trans-unit>
+      <trans-unit id="plQzNQU" resname="Refresh the page to try again.">
+        <source>Refresh the page to try again.</source>
+        <target>__Refresh the page to try again.</target>
       </trans-unit>
       <trans-unit id="fGfBzt6" resname="Register">
         <source>Register</source>
