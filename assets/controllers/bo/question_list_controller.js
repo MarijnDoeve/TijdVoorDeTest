@@ -1,7 +1,10 @@
 import {Controller} from '@hotwired/stimulus';
+import {Modal} from 'bootstrap';
+
+const RETRY_DELAY_MS = 1000;
 
 export default class extends Controller {
-  static targets = ['list', 'item', 'status'];
+  static targets = ['list', 'item', 'status', 'noticeModal'];
   static values = {
     reorderUrl: String,
     csrf: String,
@@ -24,6 +27,10 @@ export default class extends Controller {
       handle.setAttribute('draggable', 'true');
 
       handle.addEventListener('dragstart', (e) => {
+        if (this._locked) {
+          e.preventDefault();
+          return;
+        }
         this._dragging = el;
         e.dataTransfer.effectAllowed = 'move';
         setTimeout(() => el.classList.add('opacity-50'), 0);
@@ -107,15 +114,40 @@ export default class extends Controller {
       if (numberEl) numberEl.textContent = String(i + 1);
     });
 
-    try {
+    const attempt = async () => {
       const res = await fetch(this.reorderUrlValue, {method: 'POST', body: params});
-      if (res.ok) {
-        this._setStatus('saved');
-      } else {
-        this._setStatus('error');
+      if (!res.ok) {
+        throw new Error(`Unexpected response status: ${res.status}`);
       }
+    };
+
+    try {
+      await attempt();
     } catch {
-      this._setStatus('error');
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+      try {
+        await attempt();
+      } catch {
+        this._setStatus('error');
+        this._lockReordering();
+        return;
+      }
+    }
+
+    this._setStatus('saved');
+  }
+
+  _lockReordering() {
+    this._locked = true;
+    this.itemTargets.forEach(el => {
+      const handle = el.querySelector('[data-drag-handle]');
+      if (handle) {
+        handle.removeAttribute('draggable');
+        handle.classList.add('opacity-25', 'pe-none');
+      }
+    });
+    if (this.hasNoticeModalTarget) {
+      Modal.getOrCreateInstance(this.noticeModalTarget).show();
     }
   }
 }

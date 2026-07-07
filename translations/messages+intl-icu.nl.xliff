@@ -181,6 +181,10 @@
         <source>Could not find candidate with name {name} in elimination.</source>
         <target>Kon geen kandidaat vinden met de naam {name} in de eliminatie</target>
       </trans-unit>
+      <trans-unit id="Cn0sav3" resname="Could not save order">
+        <source>Could not save order</source>
+        <target>Kon volgorde niet opslaan</target>
+      </trans-unit>
       <trans-unit id="0DvmToq" resname="Create a season">
         <source>Create a season</source>
         <target>Maak een seizoen aan</target>
@@ -648,6 +652,10 @@
       <trans-unit id="yqJbSKu" resname="Sync latest changes to this quiz">
         <source>Sync latest changes to this quiz</source>
         <target>Laatste wijzigingen synchroniseren naar deze quiz</target>
+      </trans-unit>
+      <trans-unit id="F3q1oXk" resname="The new question order could not be saved. Reordering has been disabled until you refresh the page.">
+        <source>The new question order could not be saved. Reordering has been disabled until you refresh the page.</source>
+        <target>De nieuwe volgorde van de vragen kon niet worden opgeslagen. Herordenen is uitgeschakeld totdat u de pagina vernieuwt.</target>
       </trans-unit>
       <trans-unit id="_z4el3Z" resname="The password fields must match.">
         <source>The password fields must match.</source>

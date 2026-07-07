@@ -152,6 +152,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" tabindex="-1"
+             data-bo--question-list-target="noticeModal"
+             aria-labelledby="questionReorderErrorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="questionReorderErrorModalLabel">{{ 'Could not save order'|trans }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ 'The new question order could not be saved. Reordering has been disabled until you refresh the page.'|trans }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{ _self.confirm_modal(
