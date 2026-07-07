@@ -15,14 +15,21 @@ export default class extends Controller {
     // `submit` fires on the ancestor <form>, which is outside this controller's
     // subtree. Stimulus data-action only works within the controller element, so
     // addEventListener on the form is the only option here.
-    const form = this.element.closest('form');
-    if (form) {
-      form.addEventListener('submit', () => {
+    this._form = this.element.closest('form');
+    if (this._form) {
+      this._submitHandler = () => {
         [...this.collectionTarget.children].forEach(item => {
           const input = item.querySelector('input[type="text"]');
           if (input && input.value.trim() === '') item.remove();
         });
-      });
+      };
+      this._form.addEventListener('submit', this._submitHandler);
+    }
+  }
+
+  disconnect() {
+    if (this._form && this._submitHandler) {
+      this._form.removeEventListener('submit', this._submitHandler);
     }
   }
 
