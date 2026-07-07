@@ -260,6 +260,8 @@ jobs:
             compose.yaml
             compose.build.yaml
           set: |
+            *.cache-from=type=gha,scope=${{github.ref}}-devbuild
+            *.cache-from=type=gha,scope=refs/heads/main-devbuild
             *.cache-from=type=gha,scope=${{github.ref}}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{github.ref}},mode=max
