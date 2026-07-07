@@ -391,7 +391,7 @@
       </trans-unit>
       <trans-unit id="WPJalKI" resname="No questions have been added to this quiz yet.">
         <source>No questions have been added to this quiz yet.</source>
-        <target>__No questions have been added to this quiz yet.</target>
+        <target>Er zijn nog geen vragen aan deze test toegevoegd.</target>
       </trans-unit>
       <trans-unit id="IsJa5UL" resname="No questions in the question bank yet">
         <source>No questions in the question bank yet</source>
@@ -575,7 +575,7 @@
       </trans-unit>
       <trans-unit id="plQzNQU" resname="Refresh the page to try again.">
         <source>Refresh the page to try again.</source>
-        <target>__Refresh the page to try again.</target>
+        <target>Ververs de pagina om het opnieuw te proberen.</target>
       </trans-unit>
       <trans-unit id="fGfBzt6" resname="Register">
         <source>Register</source>
@@ -723,7 +723,7 @@
       </trans-unit>
       <trans-unit id=".j31AXY" resname="Toggle correct answer">
         <source>Toggle correct answer</source>
-        <target></target>
+        <target>Goed antwoord aan/uitzetten</target>
       </trans-unit>
       <trans-unit id="XLYBGca" resname="Unassign">
         <source>Unassign</source>
