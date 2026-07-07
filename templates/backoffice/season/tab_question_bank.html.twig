@@ -1,7 +1,13 @@
 <div class="row">
-    <div class="col-md-8 col-12">
+    <div class="col-md-8 col-12" data-controller="bo--modal"
+         data-action="turbo:submit-end->bo--modal#frameSubmitEnd">
         <div class="mb-3">
-            <a class="btn btn-sm btn-outline-primary" href="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}">{{ 'Add question'|trans }}</a>
+            <button class="btn btn-sm btn-outline-primary"
+                    data-action="click->bo--modal#open"
+                    data-src="{{ path('tvdt_backoffice_question_bank_new', {seasonCode: season.seasonCode}) }}"
+                    data-modal-title="{{ 'Add question'|trans }}">
+                {{ 'Add question'|trans }}
+            </button>
         </div>
 
     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
@@ -120,9 +126,11 @@
                             </form>
                         {% endif %}
                         <div class="btn-group btn-group-sm" role="group">
-                            <a class="btn btn-outline-secondary"
-                               href="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
-                               title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></a>
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-action="click->bo--modal#open"
+                                    data-src="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
+                                    data-modal-title="{{ 'Edit question'|trans }}"
+                                    title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></button>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}"
                                     title="{{ 'Delete'|trans }}"><i class="bi bi-trash"></i></button>
@@ -163,6 +171,22 @@
         {% endfor %}
         </tbody>
     </table>
+        <div class="modal fade" tabindex="-1"
+             data-bo--modal-target="modal"
+             data-action="hidden.bs.modal->bo--modal#resetDirty"
+             aria-labelledby="bankQuestionEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bankQuestionEditModalLabel">{{ 'Edit question'|trans }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <turbo-frame id="bank-question-modal-frame"
+                                 data-bo--modal-target="frame"
+                                 data-action="input->bo--modal#markDirty change->bo--modal#markDirty"></turbo-frame>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-4 col-12">
         {{ include('backoffice/help/season_question_bank.html.twig') }}

@@ -43,6 +43,7 @@ class BankQuestionFormType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
+                'choice_attr' => static fn (QuestionLabel $label): array => ['data-colour' => $label->colour->value],
                 'query_builder' => static fn (QuestionLabelRepository $repository): QueryBuilder => $repository
                     ->createQueryBuilder('l')
                     ->where('l.season = :season')

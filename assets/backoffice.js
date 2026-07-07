@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import './styles/backoffice.scss';
+import '@hotwired/turbo';
 import './stimulus.js';
 import './bootstrap.js';
 import * as Sentry from '@sentry/browser';
@@ -16,11 +17,13 @@ const effectiveDsn = dsn || 'https://0@o0.ingest.sentry.io/0';
 
 const feedbackIntegration = Sentry.feedbackIntegration({
     colorScheme: 'system',
-    showName: true,
+    showName: false,
     showEmail: true,
-    isNameRequired: false,
     isEmailRequired: false,
     autoInject: false,
+    triggerLabel: 'Report feedback',
+    formTitle: 'Report Feedback',
+    submitButtonLabel: 'Send Feedback',
 });
 
 Sentry.init({

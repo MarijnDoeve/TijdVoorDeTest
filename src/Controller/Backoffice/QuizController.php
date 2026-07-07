@@ -30,7 +30,7 @@ use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 
 #[AsController]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED')]
 class QuizController extends AbstractController
 {
     public function __construct(

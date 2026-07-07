@@ -257,6 +257,10 @@
         <source>Error clearing quiz</source>
         <target>Fout bij het leegmaken van de test</target>
       </trans-unit>
+      <trans-unit id="NXU7HO." resname="Error saving order">
+        <source>Error saving order</source>
+        <target>Fout bij het opslaan van de volgorde</target>
+      </trans-unit>
       <trans-unit id="bgWPQMg" resname="Export to XLSX">
         <source>Export to XLSX</source>
         <target>Exporteren naar XLSX</target>
@@ -385,6 +389,10 @@
         <source>No candidates</source>
         <target>Geen kandidaten</target>
       </trans-unit>
+      <trans-unit id="WPJalKI" resname="No questions have been added to this quiz yet.">
+        <source>No questions have been added to this quiz yet.</source>
+        <target>Er zijn nog geen vragen aan deze test toegevoegd.</target>
+      </trans-unit>
       <trans-unit id="IsJa5UL" resname="No questions in the question bank yet">
         <source>No questions in the question bank yet</source>
         <target>Nog geen vragen in de vragenbank</target>
@@ -409,13 +417,17 @@
         <source>Open</source>
         <target>Openen</target>
       </trans-unit>
+      <trans-unit id="vhCGOEN" resname="Order saved">
+        <source>Order saved</source>
+        <target>Volgorde opgeslagen</target>
+      </trans-unit>
       <trans-unit id="HmgPmMV" resname="Overview">
         <source>Overview</source>
         <target>Overzicht</target>
       </trans-unit>
       <trans-unit id="PywqOf4" resname="Owner(s)">
         <source>Owner(s)</source>
-        <target>Eigenaar(s)</target>
+        <target>Eigenaar/Eigenaren</target>
       </trans-unit>
       <trans-unit id="GqmFSHc" resname="Password">
         <source>Password</source>
@@ -472,6 +484,10 @@
       <trans-unit id="katmLq0" resname="Question bank">
         <source>Question bank</source>
         <target>Vragenbank</target>
+      </trans-unit>
+      <trans-unit id="z7Pp9b9" resname="Question details">
+        <source>Question details</source>
+        <target>Vraagdetails</target>
       </trans-unit>
       <trans-unit id="htaUa1k" resname="Question removed from quiz %quiz%">
         <source>Question removed from quiz %quiz%</source>
@@ -556,6 +572,10 @@
       <trans-unit id="P1HcfAu" resname="Red">
         <source>Red</source>
         <target>Rood</target>
+      </trans-unit>
+      <trans-unit id="plQzNQU" resname="Refresh the page to try again.">
+        <source>Refresh the page to try again.</source>
+        <target>Ververs de pagina om het opnieuw te proberen.</target>
       </trans-unit>
       <trans-unit id="fGfBzt6" resname="Register">
         <source>Register</source>
@@ -703,7 +723,7 @@
       </trans-unit>
       <trans-unit id=".j31AXY" resname="Toggle correct answer">
         <source>Toggle correct answer</source>
-        <target></target>
+        <target>Goed antwoord aan/uitzetten</target>
       </trans-unit>
       <trans-unit id="XLYBGca" resname="Unassign">
         <source>Unassign</source>
@@ -716,6 +736,10 @@
       <trans-unit id="Bdt8q.S" resname="Used in">
         <source>Used in</source>
         <target>Gebruikt in</target>
+      </trans-unit>
+      <trans-unit id=".EmYZIu" resname="View">
+        <source>View</source>
+        <target>Bekijken</target>
       </trans-unit>
       <trans-unit id="JWRtx_o" resname="White">
         <source>White</source>

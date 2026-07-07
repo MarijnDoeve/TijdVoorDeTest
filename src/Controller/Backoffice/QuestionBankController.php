@@ -38,7 +38,7 @@ use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuestionBankService;
 
 #[AsController]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('IS_AUTHENTICATED')]
 class QuestionBankController extends AbstractController
 {
     public function __construct(
@@ -88,25 +88,43 @@ class QuestionBankController extends AbstractController
     {
         $bankQuestion = new BankQuestion();
 
-        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
+
+        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, [
+            'season' => $season,
+            'action' => $this->generateUrl('tvdt_backoffice_question_bank_new', ['seasonCode' => $season->seasonCode]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->applyAnswerOrdering($bankQuestion);
             $season->addBankQuestion($bankQuestion);
             $this->em->persist($bankQuestion);
             $this->em->flush();
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question added to the question bank'));
 
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="bank-question-modal-frame"></turbo-frame>');
+            }
+
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
-        return $this->render('backoffice/question_bank/form.html.twig', [
+        $template = $isTurboFrame
+            ? 'backoffice/question_bank/_frame.html.twig'
+            : 'backoffice/question_bank/form.html.twig';
+
+        $response = $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => null,
         ]);
+
+        if ($form->isSubmitted()) {
+            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return $response;
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -120,7 +138,15 @@ class QuestionBankController extends AbstractController
     {
         $this->assertSameSeason($season, $bankQuestion->season);
 
-        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
+
+        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, [
+            'season' => $season,
+            'action' => $this->generateUrl('tvdt_backoffice_question_bank_edit', [
+                'seasonCode' => $season->seasonCode,
+                'bankQuestion' => $bankQuestion->id,
+            ]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -130,14 +156,28 @@ class QuestionBankController extends AbstractController
 
             $this->addFlash(FlashType::Success, $this->translator->trans('Question updated'));
 
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="bank-question-modal-frame"></turbo-frame>');
+            }
+
             return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
         }
 
-        return $this->render('backoffice/question_bank/form.html.twig', [
+        $template = $isTurboFrame
+            ? 'backoffice/question_bank/_frame.html.twig'
+            : 'backoffice/question_bank/form.html.twig';
+
+        $response = $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => $bankQuestion,
         ]);
+
+        if ($form->isSubmitted()) {
+            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return $response;
     }
 
     #[IsCsrfTokenValid('delete_bank_question')]
@@ -346,14 +386,6 @@ class QuestionBankController extends AbstractController
     {
         if ($season !== $subjectSeason) {
             throw new NotFoundHttpException();
-        }
-    }
-
-    private function applyAnswerOrdering(BankQuestion $bankQuestion): void
-    {
-        $ordering = 1;
-        foreach ($bankQuestion->answers as $answer) {
-            $answer->ordering = $ordering++;
         }
     }
 
