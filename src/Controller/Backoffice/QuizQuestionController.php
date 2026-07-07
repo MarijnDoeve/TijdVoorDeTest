@@ -46,7 +46,13 @@ class QuizQuestionController extends AbstractController
 
         $isTurboFrame = $request->headers->has('Turbo-Frame');
 
-        $form = $this->createForm(QuestionFormType::class, $question);
+        $form = $this->createForm(QuestionFormType::class, $question, [
+            'action' => $this->generateUrl('tvdt_backoffice_quiz_question_edit', [
+                'seasonCode' => $season->seasonCode,
+                'quiz' => $quiz->id,
+                'question' => $question->id,
+            ]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

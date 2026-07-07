@@ -90,7 +90,10 @@ class QuestionBankController extends AbstractController
 
         $isTurboFrame = $request->headers->has('Turbo-Frame');
 
-        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
+        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, [
+            'season' => $season,
+            'action' => $this->generateUrl('tvdt_backoffice_question_bank_new', ['seasonCode' => $season->seasonCode]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -138,7 +141,13 @@ class QuestionBankController extends AbstractController
 
         $isTurboFrame = $request->headers->has('Turbo-Frame');
 
-        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, ['season' => $season]);
+        $form = $this->createForm(BankQuestionFormType::class, $bankQuestion, [
+            'season' => $season,
+            'action' => $this->generateUrl('tvdt_backoffice_question_bank_edit', [
+                'seasonCode' => $season->seasonCode,
+                'bankQuestion' => $bankQuestion->id,
+            ]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
