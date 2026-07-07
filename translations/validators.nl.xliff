@@ -115,7 +115,7 @@
       </trans-unit>
       <trans-unit id="7VWHcE0" resname="Please enter your email">
         <source>Please enter your email</source>
-        <target>__Please enter your email</target>
+        <target>Voer je e-mailadres in</target>
       </trans-unit>
       <trans-unit id="9RtYCIm" resname="Please provide a valid phone number.">
         <source>Please provide a valid phone number.</source>
