@@ -12,15 +12,11 @@ export default class extends Controller {
       const titleEl = this.modalTarget.querySelector('.modal-title');
       if (titleEl) titleEl.textContent = modalTitle;
     }
-    this._resetDirty();
+    this.resetDirty();
     this.frameTarget.innerHTML = '<div class="modal-body text-center py-4"><div class="spinner-border" role="status"></div></div>';
     this.frameTarget.removeAttribute('src');
     this.frameTarget.setAttribute('src', src);
     Modal.getOrCreateInstance(this.modalTarget).show();
-  }
-
-  frameLoad() {
-    this._bindDirty();
   }
 
   frameSubmitEnd(event) {
@@ -30,18 +26,16 @@ export default class extends Controller {
     }
   }
 
-  _bindDirty() {
+  markDirty() {
+    if (this._dirty) return;
+    this._dirty = true;
     const modal = Modal.getOrCreateInstance(this.modalTarget);
-    const markDirty = () => {
-      modal._config.backdrop = 'static';
-      modal._config.keyboard = false;
-    };
-    this.frameTarget.addEventListener('input', markDirty, {once: true});
-    this.frameTarget.addEventListener('change', markDirty, {once: true});
-    this.modalTarget.addEventListener('hidden.bs.modal', () => this._resetDirty(), {once: true});
+    modal._config.backdrop = 'static';
+    modal._config.keyboard = false;
   }
 
-  _resetDirty() {
+  resetDirty() {
+    this._dirty = false;
     const modal = Modal.getOrCreateInstance(this.modalTarget);
     modal._config.backdrop = true;
     modal._config.keyboard = true;

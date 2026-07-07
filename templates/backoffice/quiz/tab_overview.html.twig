@@ -86,10 +86,9 @@
     </div>
 
     <div data-controller="bo--question-list bo--modal"
-         data-action="turbo:frame-load->bo--modal#frameLoad turbo:submit-end->bo--modal#frameSubmitEnd"
+         data-action="turbo:submit-end->bo--modal#frameSubmitEnd"
          data-bo--question-list-reorder-url-value="{{ path('tvdt_backoffice_quiz_questions_reorder', {seasonCode: season.seasonCode, quiz: quiz.id}) }}"
          data-bo--question-list-csrf-value="{{ csrf_token('question_reorder') }}"
-         data-bo--question-list-can-modify-value="{{ is_granted('QUIZ_MODIFY_CONTENT', quiz) ? 'true' : 'false' }}"
          data-bo--question-list-saved-label-value="{{ 'Order saved'|trans }}"
          data-bo--question-list-error-label-value="{{ 'Error saving order'|trans }}"
          data-bo--question-list-error-hint-value="{{ 'Refresh the page to try again.'|trans }}">
@@ -99,7 +98,8 @@
             <span class="badge d-none fw-normal" style="font-size:.7rem;vertical-align:baseline" data-bo--question-list-target="status"></span>
         </h4>
 
-        <div data-bo--question-list-target="list">
+        <div data-bo--question-list-target="list"
+             {% if is_granted('QUIZ_MODIFY_CONTENT', quiz) %}data-action="dragover->bo--question-list#dragOver dragleave->bo--question-list#dragLeave drop->bo--question-list#drop"{% endif %}>
             {%~ for question in quiz.questions ~%}
                 <div class="card mb-2"
                      data-bo--question-list-target="item"
@@ -107,7 +107,9 @@
                     <div class="card-body py-2">
                         <div class="d-flex align-items-center gap-2">
                             {% if is_granted('QUIZ_MODIFY_CONTENT', question) %}
-                                <span class="text-muted" style="cursor:grab" data-drag-handle>
+                                <span class="text-muted" style="cursor:grab"
+                                      draggable="true"
+                                      data-action="dragstart->bo--question-list#dragStart dragend->bo--question-list#dragEnd">
                                     <i class="bi bi-grip-vertical"></i>
                                 </span>
                             {% endif %}
@@ -142,6 +144,7 @@
 
         <div class="modal fade" tabindex="-1"
              data-bo--modal-target="modal"
+             data-action="hidden.bs.modal->bo--modal#resetDirty"
              aria-labelledby="questionEditModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -149,7 +152,9 @@
                         <h5 class="modal-title" id="questionEditModalLabel">{{ 'Edit question'|trans }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <turbo-frame id="question-modal-frame" data-bo--modal-target="frame"></turbo-frame>
+                    <turbo-frame id="question-modal-frame"
+                                 data-bo--modal-target="frame"
+                                 data-action="input->bo--modal#markDirty change->bo--modal#markDirty"></turbo-frame>
                 </div>
             </div>
         </div>

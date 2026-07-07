@@ -5,7 +5,6 @@ export default class extends Controller {
   static values = {
     reorderUrl: String,
     csrf: String,
-    canModify: Boolean,
     savedLabel: String,
     errorLabel: String,
     errorHint: String,
@@ -13,66 +12,56 @@ export default class extends Controller {
 
   connect() {
     this._locked = false;
-    if (this.canModifyValue) {
-      this._setupDrag();
+  }
+
+  dragStart(event) {
+    const item = event.currentTarget.closest('[data-bo--question-list-target="item"]');
+    this._dragging = item;
+    event.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => item.classList.add('opacity-50'), 0);
+  }
+
+  dragEnd(event) {
+    const item = event.currentTarget.closest('[data-bo--question-list-target="item"]');
+    item.classList.remove('opacity-50');
+    this._dragging = null;
+    this._removePlaceholder();
+  }
+
+  dragOver(event) {
+    event.preventDefault();
+    if (!this._dragging) return;
+    event.dataTransfer.dropEffect = 'move';
+
+    const target = event.target.closest('[data-bo--question-list-target="item"]');
+    if (!target || target === this._dragging) return;
+
+    const rect = target.getBoundingClientRect();
+    const insertBefore = event.clientY > rect.top + rect.height / 2 ? target.nextSibling : target;
+
+    if (!this._placeholder) {
+      this._placeholder = document.createElement('div');
+      this._placeholder.className = 'bg-primary rounded mb-2';
+      this._placeholder.style.height = '3px';
+    }
+
+    if (this._placeholder.nextSibling !== insertBefore) {
+      this.listTarget.insertBefore(this._placeholder, insertBefore);
     }
   }
 
-  _setupDrag() {
-    this.itemTargets.forEach(el => {
-      const handle = el.querySelector('[data-drag-handle]');
-      if (!handle) return;
-
-      handle.setAttribute('draggable', 'true');
-
-      handle.addEventListener('dragstart', (e) => {
-        this._dragging = el;
-        e.dataTransfer.effectAllowed = 'move';
-        setTimeout(() => el.classList.add('opacity-50'), 0);
-      });
-
-      handle.addEventListener('dragend', () => {
-        el.classList.remove('opacity-50');
-        this._dragging = null;
-        this._removePlaceholder();
-      });
-    });
-
-    this.listTarget.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (!this._dragging) return;
-      e.dataTransfer.dropEffect = 'move';
-
-      const target = e.target.closest('[data-bo--question-list-target="item"]');
-      if (!target || target === this._dragging) return;
-
-      const rect = target.getBoundingClientRect();
-      const insertBefore = e.clientY > rect.top + rect.height / 2 ? target.nextSibling : target;
-
-      if (!this._placeholder) {
-        this._placeholder = document.createElement('div');
-        this._placeholder.className = 'bg-primary rounded mb-2';
-        this._placeholder.style.height = '3px';
-      }
-
-      if (this._placeholder.nextSibling !== insertBefore) {
-        this.listTarget.insertBefore(this._placeholder, insertBefore);
-      }
-    });
-
-    this.listTarget.addEventListener('dragleave', (e) => {
-      if (!e.relatedTarget || !this.listTarget.contains(e.relatedTarget)) {
-        this._removePlaceholder();
-      }
-    });
-
-    this.listTarget.addEventListener('drop', async (e) => {
-      e.preventDefault();
-      if (!this._dragging || !this._placeholder || this._locked) return;
-      this.listTarget.insertBefore(this._dragging, this._placeholder);
+  dragLeave(event) {
+    if (!event.relatedTarget || !this.listTarget.contains(event.relatedTarget)) {
       this._removePlaceholder();
-      await this._persistOrder();
-    });
+    }
+  }
+
+  async drop(event) {
+    event.preventDefault();
+    if (!this._dragging || !this._placeholder || this._locked) return;
+    this.listTarget.insertBefore(this._dragging, this._placeholder);
+    this._removePlaceholder();
+    await this._persistOrder();
   }
 
   _removePlaceholder() {

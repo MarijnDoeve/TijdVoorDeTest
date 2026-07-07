@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-8 col-12" data-controller="bo--modal"
-         data-action="turbo:frame-load->bo--modal#frameLoad turbo:submit-end->bo--modal#frameSubmitEnd">
+         data-action="turbo:submit-end->bo--modal#frameSubmitEnd">
         <div class="mb-3">
             <button class="btn btn-sm btn-outline-primary"
                     data-action="click->bo--modal#open"
@@ -173,6 +173,7 @@
     </table>
         <div class="modal fade" tabindex="-1"
              data-bo--modal-target="modal"
+             data-action="hidden.bs.modal->bo--modal#resetDirty"
              aria-labelledby="bankQuestionEditModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -180,7 +181,9 @@
                         <h5 class="modal-title" id="bankQuestionEditModalLabel">{{ 'Edit question'|trans }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <turbo-frame id="bank-question-modal-frame" data-bo--modal-target="frame"></turbo-frame>
+                    <turbo-frame id="bank-question-modal-frame"
+                                 data-bo--modal-target="frame"
+                                 data-action="input->bo--modal#markDirty change->bo--modal#markDirty"></turbo-frame>
                 </div>
             </div>
         </div>
