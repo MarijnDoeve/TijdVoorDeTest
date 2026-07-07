@@ -259,7 +259,7 @@
       </trans-unit>
       <trans-unit id="NXU7HO." resname="Error saving order">
         <source>Error saving order</source>
-        <target>Fout bij opslaan volgorde</target>
+        <target>Fout bij het opslaan van de volgorde</target>
       </trans-unit>
       <trans-unit id="bgWPQMg" resname="Export to XLSX">
         <source>Export to XLSX</source>
@@ -423,7 +423,7 @@
       </trans-unit>
       <trans-unit id="PywqOf4" resname="Owner(s)">
         <source>Owner(s)</source>
-        <target>Eigena(a)r(en)</target>
+        <target>Eigenaar/Eigenaren</target>
       </trans-unit>
       <trans-unit id="GqmFSHc" resname="Password">
         <source>Password</source>
