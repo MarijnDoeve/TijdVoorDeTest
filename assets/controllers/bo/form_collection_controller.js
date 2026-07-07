@@ -6,22 +6,15 @@ export default class extends Controller {
 
   connect() {
     this.index = this.collectionTarget.children.length;
-    this._setupDrag();
     this._syncOrdering();
 
     if (this.index === 0) {
       this.addItem();
     }
 
-    this.collectionTarget.addEventListener('input', (e) => {
-      if (e.target.type !== 'text') return;
-      const item = e.target.closest('[data-collection-item]');
-      const last = [...this.collectionTarget.children].at(-1);
-      if (item && item === last && e.target.value.trim() !== '') {
-        this.addItem();
-      }
-    });
-
+    // `submit` fires on the ancestor <form>, which is outside this controller's
+    // subtree. Stimulus data-action only works within the controller element, so
+    // addEventListener on the form is the only option here.
     const form = this.element.closest('form');
     if (form) {
       form.addEventListener('submit', () => {
@@ -38,7 +31,6 @@ export default class extends Controller {
     item.innerHTML = this.prototypeValue.replace(/__name__/g, this.index);
     const el = item.firstElementChild;
     this.collectionTarget.appendChild(el);
-    this._makeDraggable(el);
     this.index++;
     this._syncOrdering();
   }
@@ -71,59 +63,61 @@ export default class extends Controller {
     this._notifyChange();
   }
 
-  _notifyChange() {
-    this.element.dispatchEvent(new Event('change', {bubbles: true}));
+  autoExpand(event) {
+    if (event.target.type !== 'text') return;
+    const item = event.target.closest('[data-collection-item]');
+    const last = [...this.collectionTarget.children].at(-1);
+    if (item && item === last && event.target.value.trim() !== '') {
+      this.addItem();
+    }
   }
 
   // — drag-and-drop —
 
-  _setupDrag() {
-    [...this.collectionTarget.children].forEach(el => this._makeDraggable(el));
+  dragStart(event) {
+    this._dragging = event.currentTarget.closest('[data-collection-item]');
+    this._dragging.classList.add('opacity-50');
+    event.dataTransfer.effectAllowed = 'move';
   }
 
-  _makeDraggable(el) {
-    const handle = el.querySelector('[data-drag-handle]');
-    if (!handle) return;
+  dragEnd(event) {
+    event.currentTarget.closest('[data-collection-item]').classList.remove('opacity-50');
+    this._dragging = null;
+    this.collectionTarget.querySelectorAll('[data-collection-item]').forEach(i =>
+      i.classList.remove('border-top', 'border-bottom', 'border-primary'),
+    );
+  }
 
-    handle.setAttribute('draggable', 'true');
+  dragOver(event) {
+    event.preventDefault();
+    const el = event.currentTarget;
+    if (!this._dragging || this._dragging === el) return;
+    event.dataTransfer.dropEffect = 'move';
+    const rect = el.getBoundingClientRect();
+    const isBottom = event.clientY > rect.top + rect.height / 2;
+    el.classList.toggle('border-top', !isBottom);
+    el.classList.toggle('border-bottom', isBottom);
+    el.classList.add('border-primary');
+  }
 
-    handle.addEventListener('dragstart', (e) => {
-      this._dragging = el;
-      el.classList.add('opacity-50');
-      e.dataTransfer.effectAllowed = 'move';
-    });
+  dragLeave(event) {
+    event.currentTarget.classList.remove('border-top', 'border-bottom', 'border-primary');
+  }
 
-    handle.addEventListener('dragend', () => {
-      this._dragging = null;
-      el.classList.remove('opacity-50');
-      this.collectionTarget.querySelectorAll('[data-collection-item]').forEach(i => i.classList.remove('border-top', 'border-bottom', 'border-primary'));
-    });
+  drop(event) {
+    event.preventDefault();
+    const el = event.currentTarget;
+    el.classList.remove('border-top', 'border-bottom', 'border-primary');
+    if (!this._dragging || this._dragging === el) return;
+    const rect = el.getBoundingClientRect();
+    const isBottom = event.clientY > rect.top + rect.height / 2;
+    this.collectionTarget.insertBefore(this._dragging, isBottom ? el.nextSibling : el);
+    this._syncOrdering();
+    this._notifyChange();
+  }
 
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (!this._dragging || this._dragging === el) return;
-      e.dataTransfer.dropEffect = 'move';
-      const rect = el.getBoundingClientRect();
-      const isBottom = e.clientY > rect.top + rect.height / 2;
-      el.classList.toggle('border-top', !isBottom);
-      el.classList.toggle('border-bottom', isBottom);
-      el.classList.add('border-primary');
-    });
-
-    el.addEventListener('dragleave', () => {
-      el.classList.remove('border-top', 'border-bottom', 'border-primary');
-    });
-
-    el.addEventListener('drop', (e) => {
-      e.preventDefault();
-      el.classList.remove('border-top', 'border-bottom', 'border-primary');
-      if (!this._dragging || this._dragging === el) return;
-      const rect = el.getBoundingClientRect();
-      const isBottom = e.clientY > rect.top + rect.height / 2;
-      this.collectionTarget.insertBefore(this._dragging, isBottom ? el.nextSibling : el);
-      this._syncOrdering();
-      this._notifyChange();
-    });
+  _notifyChange() {
+    this.element.dispatchEvent(new Event('change', {bubbles: true}));
   }
 
   _syncOrdering() {

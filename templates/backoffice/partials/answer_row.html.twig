@@ -1,7 +1,10 @@
 {% macro answer_row(answerForm) %}
-    <div class="d-flex align-items-center gap-2 mb-2" data-collection-item>
+    <div class="d-flex align-items-center gap-2 mb-2" data-collection-item
+         data-action="dragover->bo--form-collection#dragOver dragleave->bo--form-collection#dragLeave drop->bo--form-collection#drop">
         {{ form_widget(answerForm.ordering) }}
-        <span class="text-muted" data-drag-handle style="cursor: grab" title="{{ 'Drag to reorder'|trans }}"><i class="bi bi-grip-vertical"></i></span>
+        <span class="text-muted" data-drag-handle style="cursor: grab" title="{{ 'Drag to reorder'|trans }}"
+              draggable="true"
+              data-action="dragstart->bo--form-collection#dragStart dragend->bo--form-collection#dragEnd"><i class="bi bi-grip-vertical"></i></span>
         <div class="flex-grow-1">{{ form_widget(answerForm.text) }}</div>
         <div class="d-none">{{ form_widget(answerForm.isRightAnswer) }}</div>
         <button type="button"

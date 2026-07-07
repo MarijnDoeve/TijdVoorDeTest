@@ -10,7 +10,8 @@
              data-bo--form-collection-prototype-value="{{ macros.answer_row(form.answers.vars.prototype)|e('html_attr') }}">
             {{ form_label(form.answers) }}
             {{ form_errors(form.answers) }}
-            <div data-bo--form-collection-target="collection">
+            <div data-bo--form-collection-target="collection"
+                 data-action="input->bo--form-collection#autoExpand">
                 {% for answerForm in form.answers %}
                     {{ macros.answer_row(answerForm) }}
                 {% endfor %}
