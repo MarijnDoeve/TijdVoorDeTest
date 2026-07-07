@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import './styles/backoffice.scss';
-import {Turbo} from '@hotwired/turbo';
-Turbo.session.drive = false;
+import {session as turboSession} from '@hotwired/turbo';
+turboSession.drive = false;
 import './stimulus.js';
 import './bootstrap.js';
 import * as Sentry from '@sentry/browser';
