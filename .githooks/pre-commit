@@ -4,7 +4,7 @@ setopt ERR_EXIT PIPE_FAIL NOUNSET
 # Collect staged PHP and Twig files
 STAGED_PHP=()
 while IFS= read -r file; do
-    [[ -n "$file" ]] && STAGED_PHP+=("$file")
+    [[ -n "$file" && "$file" != "config/reference.php" ]] && STAGED_PHP+=("$file")
 done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.php$' || true)
 
 STAGED_TWIG=()
@@ -32,7 +32,7 @@ if [[ ${#STAGED_PHP[@]} -gt 0 ]]; then
     git add "${STAGED_PHP[@]}"
 
     echo "  → PHP-CS-Fixer"
-    "${DOCKER_CMD[@]}" vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php "${STAGED_PHP[@]}"
+    "${DOCKER_CMD[@]}" vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --path-mode=intersection "${STAGED_PHP[@]}"
     git add "${STAGED_PHP[@]}"
 
     echo "  → PHPStan"
