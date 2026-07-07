@@ -38,9 +38,10 @@ final class ResetPasswordControllerTest extends WebTestCase
     public function testRequestWithUnknownEmailRedirectsToCheckEmail(): void
     {
         $this->client->request(Request::METHOD_GET, '/reset-password');
-        $this->client->submitForm('Send password reset email', [
+        $form = $this->client->getCrawler()->filter('form')->form([
             'reset_password_request_form[email]' => 'unknown@example.org',
         ]);
+        $this->client->submit($form);
 
         $this->assertResponseRedirects('/reset-password/check-email');
     }
@@ -48,9 +49,10 @@ final class ResetPasswordControllerTest extends WebTestCase
     public function testRequestWithKnownEmailRedirectsToCheckEmail(): void
     {
         $this->client->request(Request::METHOD_GET, '/reset-password');
-        $this->client->submitForm('Send password reset email', [
+        $form = $this->client->getCrawler()->filter('form')->form([
             'reset_password_request_form[email]' => 'test@example.org',
         ]);
+        $this->client->submit($form);
 
         $this->assertResponseRedirects('/reset-password/check-email');
     }
@@ -85,10 +87,11 @@ final class ResetPasswordControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->client->submitForm('Reset password', [
+        $form = $this->client->getCrawler()->filter('form')->form([
             'change_password_form[plainPassword][first]' => 'NewPass123!',
             'change_password_form[plainPassword][second]' => 'NewPass123!',
         ]);
+        $this->client->submit($form);
         $this->assertResponseRedirects('/backoffice/');
 
         $this->entityManager->clear();
