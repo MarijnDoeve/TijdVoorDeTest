@@ -83,6 +83,7 @@ class QuizQuestionController extends AbstractController
         return $response;
     }
 
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/question/{question}/view',
         name: 'tvdt_backoffice_quiz_question_view',
@@ -125,6 +126,10 @@ class QuizQuestionController extends AbstractController
             if (!isset($questionsById[$questionId])) {
                 throw new BadRequestHttpException(\sprintf('Unknown question id: %s', $questionId));
             }
+        }
+
+        if (\count(array_unique($ordering)) !== \count($questionsById)) {
+            throw new BadRequestHttpException('Ordering must include every question exactly once');
         }
 
         $position = 1;

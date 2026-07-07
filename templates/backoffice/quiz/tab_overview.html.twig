@@ -91,7 +91,8 @@
          data-bo--question-list-csrf-value="{{ csrf_token('question_reorder') }}"
          data-bo--question-list-can-modify-value="{{ is_granted('QUIZ_MODIFY_CONTENT', quiz) ? 'true' : 'false' }}"
          data-bo--question-list-saved-label-value="{{ 'Order saved'|trans }}"
-         data-bo--question-list-error-label-value="{{ 'Error saving order'|trans }}">
+         data-bo--question-list-error-label-value="{{ 'Error saving order'|trans }}"
+         data-bo--question-list-error-hint-value="{{ 'Refresh the page to try again.'|trans }}">
 
         <h4 class="mb-3 d-flex align-items-center gap-2">
             {{ 'Questions'|trans }}
@@ -135,7 +136,7 @@
                     </div>
                 </div>
             {% else %}
-                {{ 'EMPTY'|trans }}
+                {{ 'No questions have been added to this quiz yet.'|trans }}
             {% endfor %}
         </div>
 

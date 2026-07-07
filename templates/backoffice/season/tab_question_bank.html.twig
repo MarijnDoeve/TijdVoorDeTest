@@ -129,6 +129,7 @@
                             <button type="button" class="btn btn-outline-secondary"
                                     data-action="click->bo--modal#open"
                                     data-src="{{ path('tvdt_backoffice_question_bank_edit', {seasonCode: season.seasonCode, bankQuestion: bankQuestion.id}) }}"
+                                    data-modal-title="{{ 'Edit question'|trans }}"
                                     title="{{ 'Edit'|trans }}"><i class="bi bi-pencil"></i></button>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
                                     data-bs-target="#deleteBankQuestion-{{ bankQuestion.id }}"

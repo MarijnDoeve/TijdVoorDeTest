@@ -8,9 +8,11 @@ export default class extends Controller {
     canModify: Boolean,
     savedLabel: String,
     errorLabel: String,
+    errorHint: String,
   };
 
   connect() {
+    this._locked = false;
     if (this.canModifyValue) {
       this._setupDrag();
     }
@@ -66,7 +68,7 @@ export default class extends Controller {
 
     this.listTarget.addEventListener('drop', async (e) => {
       e.preventDefault();
-      if (!this._dragging || !this._placeholder) return;
+      if (!this._dragging || !this._placeholder || this._locked) return;
       this.listTarget.insertBefore(this._dragging, this._placeholder);
       this._removePlaceholder();
       await this._persistOrder();
@@ -107,15 +109,26 @@ export default class extends Controller {
       if (numberEl) numberEl.textContent = String(i + 1);
     });
 
-    try {
-      const res = await fetch(this.reorderUrlValue, {method: 'POST', body: params});
-      if (res.ok) {
-        this._setStatus('saved');
-      } else {
-        this._setStatus('error');
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(this.reorderUrlValue, {method: 'POST', body: params});
+        if (res.ok) {
+          this._setStatus('saved');
+          return;
+        }
+      } catch {
+        // network error — retry on first attempt
       }
-    } catch {
-      this._setStatus('error');
     }
+
+    this._locked = true;
+    this._setStatus('error');
+
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-danger alert-dismissible mt-3';
+    alert.setAttribute('role', 'alert');
+    const hint = this.errorHintValue || 'Refresh the page to try again.';
+    alert.innerHTML = `${this.errorLabelValue || 'Error saving order'} &mdash; ${hint} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    this.listTarget.after(alert);
   }
 }
