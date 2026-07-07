@@ -1,0 +1,16 @@
+{% extends 'backoffice/base.html.twig' %}
+
+{% block title %}E-mail verstuurd{% endblock %}
+
+{% block body %}
+    <h3 class="mb-3">{{ 'Check your email'|trans }}</h3>
+
+    <p>
+        {{ 'If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.'|trans }}
+        {{ 'This link will expire in %count%.'|trans({'%count%': resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle')}) }}
+    </p>
+    <p>
+        {{ 'If you don\'t receive an email please check your spam folder or'|trans }}
+        <a href="{{ path('tvdt_forgot_password_request') }}">{{ 'try again'|trans }}</a>.
+    </p>
+{% endblock %}

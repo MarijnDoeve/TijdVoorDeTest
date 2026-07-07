@@ -21,6 +21,10 @@ use Tvdt\Repository\UserRepository;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const int PASSWORD_MIN_LENGTH = 8;
+
+    public const int PASSWORD_MAX_LENGTH = 4096;
+
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

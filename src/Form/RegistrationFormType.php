@@ -38,7 +38,7 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank(message: 'Please enter a password'),
-                    new Length(min: 8, max: 4096, minMessage: 'Your password should be at least {{ limit }} characters'),
+                    new Length(min: User::PASSWORD_MIN_LENGTH, max: User::PASSWORD_MAX_LENGTH, minMessage: 'Your password should be at least {{ limit }} characters'),
                 ],
                 'translation_domain' => false,
             ])
