@@ -10,12 +10,12 @@
             {% for quiz in season.quizzes %}
                 <a class="list-group-item list-group-item-action d-flex align-items-center gap-2{% if season.activeQuiz == quiz %} active{% endif %}"
                    href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">
-                    {% if season.activeQuiz == quiz %}
-                        <span class="badge text-bg-light">{{ 'Active'|trans }}</span>
-                    {% elseif quiz.isFinalized %}
-                        <span class="badge text-bg-success">{{ 'Ready'|trans }}</span>
-                    {% endif %}
                     {{ quiz.name }}
+                    {% if season.activeQuiz == quiz %}
+                        <span class="badge text-bg-light ms-auto">{{ 'Active'|trans }}</span>
+                    {% elseif quiz.isFinalized %}
+                        <span class="badge text-bg-success ms-auto">{{ 'Ready'|trans }}</span>
+                    {% endif %}
                 </a>
             {% else %}
                 {{ 'No quizzes'|trans }}
