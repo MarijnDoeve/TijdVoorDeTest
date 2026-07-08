@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tvdt\Security;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Tvdt\Entity\User;
 
@@ -18,7 +20,24 @@ readonly class EmailVerifier
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
+        private TranslatorInterface $translator,
+        private LoggerInterface $logger,
     ) {}
+
+    /** Sends the standard confirmation email to the user, logging instead of throwing on transport errors. */
+    public function sendDefaultConfirmation(User $user): void
+    {
+        try {
+            $this->sendEmailConfirmation('tvdt_verify_email', $user,
+                new TemplatedEmail()
+                    ->to($user->email)
+                    ->subject($this->translator->trans('Please Confirm your Email'))
+                    ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
+            );
+        } catch (TransportExceptionInterface $transportException) {
+            $this->logger->error($transportException->getMessage());
+        }
+    }
 
     /** @throws TransportExceptionInterface */
     public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void

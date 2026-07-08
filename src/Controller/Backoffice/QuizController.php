@@ -61,25 +61,7 @@ class QuizController extends AbstractController
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
 
-        // Create indexed lookup for quiz candidates by candidate ID
-        $quizCandidatesByCandidateId = [];
-        foreach ($fetchedQuiz->candidateData as $qc) {
-            $quizCandidatesByCandidateId[$qc->candidate->id->toString()] = $qc;
-        }
-
-        // Get given answers counts efficiently via database query
-        $givenAnswersCountByCandidateId = $this->quizRepository->getGivenAnswersCountPerCandidate($quiz);
-
-        // Pre-compute candidate data to avoid nested loops in template
-        $candidateData = [];
-        foreach ($season->candidates as $candidate) {
-            $candidateIdString = $candidate->id->toString();
-            $candidateData[] = [
-                'candidate' => $candidate,
-                'quizCandidate' => $quizCandidatesByCandidateId[$candidateIdString] ?? null,
-                'givenAnswersCount' => $givenAnswersCountByCandidateId[$candidateIdString] ?? 0,
-            ];
-        }
+        $candidateData = $this->buildCandidateData($season, $quiz, $fetchedQuiz->candidateData);
 
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
@@ -118,25 +100,7 @@ class QuizController extends AbstractController
     )]
     public function candidatesTab(Season $season, Quiz $quiz): Response
     {
-        // Create indexed lookup for quiz candidates by candidate ID
-        $quizCandidatesByCandidateId = [];
-        foreach ($quiz->candidateData as $qc) {
-            $quizCandidatesByCandidateId[$qc->candidate->id->toString()] = $qc;
-        }
-
-        // Get given answers counts efficiently via database query
-        $givenAnswersCountByCandidateId = $this->quizRepository->getGivenAnswersCountPerCandidate($quiz);
-
-        // Pre-compute candidate data to avoid nested loops in template
-        $candidateData = [];
-        foreach ($season->candidates as $candidate) {
-            $candidateIdString = $candidate->id->toString();
-            $candidateData[] = [
-                'candidate' => $candidate,
-                'quizCandidate' => $quizCandidatesByCandidateId[$candidateIdString] ?? null,
-                'givenAnswersCount' => $givenAnswersCountByCandidateId[$candidateIdString] ?? 0,
-            ];
-        }
+        $candidateData = $this->buildCandidateData($season, $quiz, $quiz->candidateData);
 
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
@@ -431,5 +395,34 @@ class QuizController extends AbstractController
         $this->addFlash(FlashType::Success, $this->translator->trans('Candidate status updated'));
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_tab', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    /**
+     * Pre-computes per-candidate data (quiz participation and given answer counts) to avoid nested loops in templates.
+     *
+     * @param iterable<QuizCandidate> $quizCandidates
+     *
+     * @return list<array{candidate: Candidate, quizCandidate: QuizCandidate|null, givenAnswersCount: int}>
+     */
+    private function buildCandidateData(Season $season, Quiz $quiz, iterable $quizCandidates): array
+    {
+        $quizCandidatesByCandidateId = [];
+        foreach ($quizCandidates as $qc) {
+            $quizCandidatesByCandidateId[$qc->candidate->id->toString()] = $qc;
+        }
+
+        $givenAnswersCountByCandidateId = $this->quizRepository->getGivenAnswersCountPerCandidate($quiz);
+
+        $candidateData = [];
+        foreach ($season->candidates as $candidate) {
+            $candidateIdString = $candidate->id->toString();
+            $candidateData[] = [
+                'candidate' => $candidate,
+                'quizCandidate' => $quizCandidatesByCandidateId[$candidateIdString] ?? null,
+                'givenAnswersCount' => $givenAnswersCountByCandidateId[$candidateIdString] ?? 0,
+            ];
+        }
+
+        return $candidateData;
     }
 }

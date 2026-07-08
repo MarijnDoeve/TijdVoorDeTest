@@ -74,18 +74,12 @@ class QuizQuestionController extends AbstractController
             ? 'backoffice/quiz/_question_frame.html.twig'
             : 'backoffice/quiz/question_form.html.twig';
 
-        $response = $this->render($template, [
+        return $this->render($template, [
             'season' => $season,
             'quiz' => $quiz,
             'question' => $question,
             'form' => $form,
         ]);
-
-        if ($form->isSubmitted()) {
-            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $response;
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]

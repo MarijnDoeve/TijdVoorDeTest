@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
@@ -35,7 +32,6 @@ final class SettingsController extends AbstractController
         private readonly EmailVerifier $emailVerifier,
         private readonly Security $security,
         private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger,
     ) {}
 
     #[Route('/backoffice/settings', name: 'tvdt_backoffice_settings', methods: ['GET'])]
@@ -57,7 +53,7 @@ final class SettingsController extends AbstractController
     #[Route('/backoffice/settings/password', name: 'tvdt_backoffice_settings_password', methods: ['POST'])]
     public function changePassword(Request $request): Response
     {
-        $user = $this->getSettingsUser();
+        $user = $this->authenticatedUser;
         $form = $this->createForm(ChangeUserPasswordFormType::class);
         $form->handleRequest($request);
 
@@ -74,13 +70,13 @@ final class SettingsController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_settings');
         }
 
-        return $this->renderSettings(passwordForm: $form, status: Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->renderSettings(passwordForm: $form);
     }
 
     #[Route('/backoffice/settings/email', name: 'tvdt_backoffice_settings_email', methods: ['POST'])]
     public function changeEmail(Request $request): Response
     {
-        $user = $this->getSettingsUser();
+        $user = $this->authenticatedUser;
         $form = $this->createForm(ChangeEmailFormType::class);
         $form->handleRequest($request);
 
@@ -91,14 +87,14 @@ final class SettingsController extends AbstractController
             if ($this->userRepository->findOneBy(['email' => $email]) instanceof User) {
                 $form->get('email')->addError(new FormError($this->translator->trans('There is already an account with this email')));
 
-                return $this->renderSettings(emailForm: $form, status: Response::HTTP_UNPROCESSABLE_ENTITY);
+                return $this->renderSettings(emailForm: $form);
             }
 
             $user->email = $email;
             $user->isVerified = false;
             $this->entityManager->flush();
 
-            $this->sendConfirmationEmail($user);
+            $this->emailVerifier->sendDefaultConfirmation($user);
 
             $this->security->login($user, 'form_login', 'main');
             $this->addFlash(FlashType::Success, $this->translator->trans('Your email address has been changed. Please check your inbox to confirm it.'));
@@ -106,14 +102,14 @@ final class SettingsController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_settings');
         }
 
-        return $this->renderSettings(emailForm: $form, status: Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->renderSettings(emailForm: $form);
     }
 
     #[IsCsrfTokenValid('resend_confirmation')]
     #[Route('/backoffice/settings/resend-confirmation', name: 'tvdt_backoffice_settings_resend_confirmation', methods: ['POST'])]
     public function resendConfirmationEmail(): RedirectResponse
     {
-        $user = $this->getSettingsUser();
+        $user = $this->authenticatedUser;
 
         if ($user->isVerified) {
             $this->addFlash(FlashType::Info, $this->translator->trans('Your email address is already confirmed.'));
@@ -121,7 +117,7 @@ final class SettingsController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_settings');
         }
 
-        $this->sendConfirmationEmail($user);
+        $this->emailVerifier->sendDefaultConfirmation($user);
         $this->addFlash(FlashType::Success, $this->translator->trans('A new confirmation email has been sent. Please check your inbox.'));
 
         return $this->redirectToRoute('tvdt_backoffice_settings');
@@ -131,7 +127,7 @@ final class SettingsController extends AbstractController
     #[Route('/backoffice/settings/delete', name: 'tvdt_backoffice_settings_delete', methods: ['POST'])]
     public function deleteAccount(Request $request): Response
     {
-        $user = $this->getSettingsUser();
+        $user = $this->authenticatedUser;
         $password = (string) $request->request->get('password', '');
 
         if (!$this->passwordHasher->isPasswordValid($user, $password)) {
@@ -145,37 +141,15 @@ final class SettingsController extends AbstractController
         return $this->security->logout(false) ?? $this->redirectToRoute('tvdt_login_login');
     }
 
-    private function sendConfirmationEmail(User $user): void
-    {
-        try {
-            $this->emailVerifier->sendEmailConfirmation('tvdt_verify_email', $user,
-                new TemplatedEmail()
-                    ->to($user->email)
-                    ->subject($this->translator->trans('Please Confirm your Email'))
-                    ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
-            );
-        } catch (TransportExceptionInterface $transportException) {
-            $this->logger->error($transportException->getMessage());
-        }
-    }
-
-    private function getSettingsUser(): User
-    {
-        $user = $this->getUser();
-        \assert($user instanceof User);
-
-        return $user;
-    }
-
     /**
      * @param FormInterface<array{currentPassword: string, plainPassword: string}|null>|null $passwordForm
      * @param FormInterface<array{email: string}|null>|null                                  $emailForm
      */
-    private function renderSettings(?FormInterface $passwordForm = null, ?FormInterface $emailForm = null, int $status = Response::HTTP_OK): Response
+    private function renderSettings(?FormInterface $passwordForm = null, ?FormInterface $emailForm = null): Response
     {
         return $this->render('backoffice/settings/index.html.twig', [
             'passwordForm' => $passwordForm ?? $this->createForm(ChangeUserPasswordFormType::class),
             'emailForm' => $emailForm ?? $this->createForm(ChangeEmailFormType::class),
-        ], new Response(status: $status));
+        ]);
     }
 }

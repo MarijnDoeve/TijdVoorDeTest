@@ -17,7 +17,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
-use Tvdt\Entity\User;
 use Tvdt\Form\CreateSeasonFormType;
 use Tvdt\Repository\SeasonRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -37,12 +36,9 @@ final class BackofficeController extends AbstractController
     #[Route('/backoffice/', name: 'tvdt_backoffice_index')]
     public function index(): Response
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
-
         $seasons = $this->security->isGranted('ROLE_ADMIN')
             ? $this->seasonRepository->findAll()
-            : $this->seasonRepository->getSeasonsForUser($user);
+            : $this->seasonRepository->getSeasonsForUser($this->authenticatedUser);
 
         return $this->render('backoffice/index.html.twig', [
             'seasons' => $seasons,
@@ -58,10 +54,7 @@ final class BackofficeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
-            \assert($user instanceof User);
-
-            $season->addOwner($user);
+            $season->addOwner($this->authenticatedUser);
             $season->generateSeasonCode();
 
             $this->em->persist($season);
