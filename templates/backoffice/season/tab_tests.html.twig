@@ -8,14 +8,14 @@
         </div>
         <div class="list-group mb-3">
             {% for quiz in season.quizzes %}
-                <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
+                <a class="list-group-item list-group-item-action d-flex align-items-center gap-2{% if season.activeQuiz == quiz %} active{% endif %}"
                    href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">
-                    {{ quiz.name }}
                     {% if season.activeQuiz == quiz %}
                         <span class="badge text-bg-light">{{ 'Active'|trans }}</span>
                     {% elseif quiz.isFinalized %}
                         <span class="badge text-bg-success">{{ 'Ready'|trans }}</span>
                     {% endif %}
+                    {{ quiz.name }}
                 </a>
             {% else %}
                 {{ 'No quizzes'|trans }}
