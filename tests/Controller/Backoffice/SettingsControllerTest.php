@@ -1,0 +1,286 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tvdt\Tests\Controller\Backoffice;
+
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Tvdt\Controller\Backoffice\SettingsController;
+use Tvdt\DataFixtures\TestFixtures;
+use Tvdt\Entity\Quiz;
+use Tvdt\Entity\Season;
+use Tvdt\Entity\User;
+
+#[CoversClass(SettingsController::class)]
+final class SettingsControllerTest extends WebTestCase
+{
+    private KernelBrowser $client;
+
+    private EntityManagerInterface $entityManager;
+
+    protected function setUp(): void
+    {
+        $this->client = self::createClient();
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $this->loginAs('test@example.org');
+    }
+
+    private function loginAs(string $email): void
+    {
+        $user = $this->getUserByEmail($email);
+        $this->assertInstanceOf(User::class, $user);
+        $this->client->loginUser($user);
+    }
+
+    private function getUserByEmail(string $email): ?User
+    {
+        return $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+    }
+
+    private function getCsrfTokenFromSettings(string $formActionContains): string
+    {
+        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        self::assertResponseIsSuccessful();
+
+        $input = $crawler->filter(\sprintf('form[action*="%s"] input[name="_token"]', $formActionContains));
+        $this->assertGreaterThan(0, $input->count(), \sprintf('No form found with action containing "%s"', $formActionContains));
+
+        return (string) $input->first()->attr('value');
+    }
+
+    public function testSettingsPageLoadsAndNavContainsSettingsLink(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('nav a[href="/backoffice/settings"]');
+    }
+
+    public function testSettingsPageRequiresAuthentication(): void
+    {
+        $this->client->restart();
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+
+        self::assertResponseRedirects();
+    }
+
+    public function testLanguageSaveRedirectsBackToSettings(): void
+    {
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/language');
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/language', [
+            '_token' => $token,
+            'language' => 'nl',
+        ]);
+
+        self::assertResponseRedirects('/backoffice/settings');
+    }
+
+    public function testChangePassword(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
+            'change_user_password_form[currentPassword]' => TestFixtures::PASSWORD,
+            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
+            'change_user_password_form[plainPassword][second]' => 'NewPass123!',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        $this->entityManager->clear();
+
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+        $this->assertTrue($hasher->isPasswordValid($user, 'NewPass123!'));
+
+        // User stays logged in
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testChangePasswordWithWrongCurrentPasswordIsRejected(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
+            'change_user_password_form[currentPassword]' => 'wrong-password',
+            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
+            'change_user_password_form[plainPassword][second]' => 'NewPass123!',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseStatusCodeSame(422);
+        $this->entityManager->clear();
+
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+        $this->assertTrue($hasher->isPasswordValid($user, TestFixtures::PASSWORD));
+    }
+
+    public function testChangePasswordWithMismatchedRepeatIsRejected(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
+            'change_user_password_form[currentPassword]' => TestFixtures::PASSWORD,
+            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
+            'change_user_password_form[plainPassword][second]' => 'SomethingElse!',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseStatusCodeSame(422);
+        $this->entityManager->clear();
+
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
+        $this->assertTrue($hasher->isPasswordValid($user, TestFixtures::PASSWORD));
+    }
+
+    public function testChangeEmailSendsConfirmationAndKeepsUserLoggedIn(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/email"]')->form([
+            'change_email_form[email]' => 'new-address@example.org',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        self::assertEmailCount(1);
+        $this->entityManager->clear();
+
+        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+        $user = $this->getUserByEmail('new-address@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertFalse($user->isVerified);
+
+        // User stays logged in
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testChangeEmailToTakenAddressIsRejected(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/email"]')->form([
+            'change_email_form[email]' => 'user1@example.org',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseStatusCodeSame(422);
+        self::assertEmailCount(0);
+        $this->entityManager->clear();
+
+        $this->assertInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+    }
+
+    public function testResendConfirmationEmailSendsEmail(): void
+    {
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/resend-confirmation');
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/resend-confirmation', [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        self::assertEmailCount(1);
+    }
+
+    public function testResendConfirmationEmailForVerifiedUserSendsNothing(): void
+    {
+        // Get a valid CSRF token while still unverified, then mark the user as verified
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/resend-confirmation');
+
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $user->isVerified = true;
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        self::assertResponseIsSuccessful();
+        $this->assertCount(0, $crawler->filter('form[action*="/backoffice/settings/resend-confirmation"]'));
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/resend-confirmation', [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        self::assertEmailCount(0);
+    }
+
+    public function testDeleteAccountWithWrongPasswordIsRejected(): void
+    {
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/delete');
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/delete', [
+            '_token' => $token,
+            'password' => 'wrong-password',
+        ]);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        $this->entityManager->clear();
+
+        $this->assertInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+    }
+
+    public function testDeleteAccountRemovesSoleOwnerSeasonsAndKeepsSharedSeasons(): void
+    {
+        $this->loginAs('sole-owner@example.org');
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/delete');
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/delete', [
+            '_token' => $token,
+            'password' => TestFixtures::PASSWORD,
+        ]);
+
+        self::assertResponseRedirects();
+        $this->entityManager->clear();
+
+        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('sole-owner@example.org'));
+
+        // Sole-owner season is removed, including its quiz
+        $this->assertNotInstanceOf(Season::class, $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'doomd']));
+        $this->assertNotInstanceOf(Quiz::class, $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Doomed Quiz']));
+
+        // Shared season survives, without the deleted owner
+        $anotherSeason = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'bbbbb']);
+        $this->assertInstanceOf(Season::class, $anotherSeason);
+        $ownerEmails = $anotherSeason->owners->map(static fn (User $owner): string => $owner->email)->toArray();
+        $this->assertNotContains('sole-owner@example.org', $ownerEmails);
+        $this->assertContains('user1@example.org', $ownerEmails);
+
+        // User is logged out
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        self::assertResponseRedirects();
+    }
+
+    public function testDeleteAccountKeepsMultiOwnerSeasons(): void
+    {
+        $this->loginAs('user2@example.org');
+        $token = $this->getCsrfTokenFromSettings('/backoffice/settings/delete');
+
+        $this->client->request(Request::METHOD_POST, '/backoffice/settings/delete', [
+            '_token' => $token,
+            'password' => TestFixtures::PASSWORD,
+        ]);
+
+        self::assertResponseRedirects();
+        $this->entityManager->clear();
+
+        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('user2@example.org'));
+
+        foreach (['krtek', 'bbbbb'] as $seasonCode) {
+            $season = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => $seasonCode]);
+            $this->assertInstanceOf(Season::class, $season);
+            $ownerEmails = $season->owners->map(static fn (User $owner): string => $owner->email)->toArray();
+            $this->assertNotContains('user2@example.org', $ownerEmails);
+            $this->assertNotEmpty($ownerEmails);
+        }
+    }
+}
