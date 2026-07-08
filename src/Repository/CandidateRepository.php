@@ -19,6 +19,12 @@ class CandidateRepository extends ServiceEntityRepository
         parent::__construct($registry, Candidate::class);
     }
 
+    public function deleteCandidate(Candidate $candidate): void
+    {
+        $this->getEntityManager()->remove($candidate);
+        $this->getEntityManager()->flush();
+    }
+
     public function getCandidateByHash(Season $season, string $hash): ?Candidate
     {
         try {
