@@ -13,8 +13,7 @@
                     {{ quiz.name }}
                     {% if season.activeQuiz == quiz %}
                         <span class="badge text-bg-light">{{ 'Active'|trans }}</span>
-                    {% endif %}
-                    {% if quiz.isFinalized %}
+                    {% elseif quiz.isFinalized %}
                         <span class="badge text-bg-success">{{ 'Ready'|trans }}</span>
                     {% endif %}
                 </a>
