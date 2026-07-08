@@ -11,8 +11,11 @@
                 <a class="list-group-item list-group-item-action{% if season.activeQuiz == quiz %} active{% endif %}"
                    href="{{ path('tvdt_backoffice_quiz', {seasonCode: season.seasonCode, quiz: quiz.id}) }}">
                     {{ quiz.name }}
+                    {% if season.activeQuiz == quiz %}
+                        <span class="badge text-bg-light">{{ 'Active'|trans }}</span>
+                    {% endif %}
                     {% if quiz.isFinalized %}
-                        <span class="badge text-bg-success">{{ 'Finalized'|trans }}</span>
+                        <span class="badge text-bg-success">{{ 'Ready'|trans }}</span>
                     {% endif %}
                 </a>
             {% else %}

@@ -661,6 +661,10 @@
         <source>Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.</source>
         <target>Heropent de test voor bewerking. Deelnemers kunnen de test niet meer afnemen totdat deze opnieuw is afgerond.</target>
       </trans-unit>
+      <trans-unit id="MuwD4xO" resname="Ready">
+        <source>Ready</source>
+        <target>Voorbereid</target>
+      </trans-unit>
       <trans-unit id="P1HcfAu" resname="Red">
         <source>Red</source>
         <target>Rood</target>
