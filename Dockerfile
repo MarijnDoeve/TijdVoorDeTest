@@ -87,10 +87,6 @@ RUN rm -rf /var/lib/apt/lists/*
 
 ENV APP_ENV=prod
 
-# Build timestamp, used for the Expires field of /.well-known/security.txt
-ARG BUILD_TIME=""
-ENV BUILD_TIME=$BUILD_TIME
-
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
@@ -113,3 +109,7 @@ RUN set -eux; \
 	bin/console sass:build; \
 	bin/console asset-map:compile --no-debug --quiet --no-ansi; \
 	sync;
+
+# Build timestamp for /.well-known/security.txt Expires; must be injected last to avoid cache busting.
+ARG BUILD_TIME=""
+ENV BUILD_TIME=$BUILD_TIME

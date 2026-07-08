@@ -64,6 +64,7 @@ final class SettingsController extends AbstractController
 
             $user->password = $this->passwordHasher->hashPassword($user, $plainPassword);
             $this->entityManager->flush();
+            $this->userRepository->invalidateResetPasswordRequests($user);
 
             $this->security->login($user, 'form_login', 'main');
             $this->addFlash(FlashType::Success, $this->translator->trans('Your password has been changed.'));
@@ -85,7 +86,8 @@ final class SettingsController extends AbstractController
             /** @var string $email */
             $email = $form->get('email')->getData();
 
-            if ($this->userRepository->findOneBy(['email' => $email]) instanceof User) {
+            $found = $this->userRepository->findOneBy(['email' => $email]);
+            if ($found instanceof User && $found !== $user) {
                 $form->get('email')->addError(new FormError($this->translator->trans('There is already an account with this email')));
 
                 return $this->renderSettings(emailForm: $form);
@@ -108,10 +110,16 @@ final class SettingsController extends AbstractController
                 return $this->renderSettings(emailForm: $form);
             }
 
-            $this->emailVerifier->sendDefaultConfirmation($user);
+            $this->userRepository->invalidateResetPasswordRequests($user);
+
+            if ($this->emailVerifier->sendDefaultConfirmation($user)) {
+                $this->addFlash(FlashType::Success, $this->translator->trans('Your email address has been changed. Please check your inbox to confirm it.'));
+            } else {
+                $this->addFlash(FlashType::Success, $this->translator->trans('Your email address has been changed.'));
+                $this->addFlash(FlashType::Warning, $this->translator->trans('The confirmation email could not be sent. Please use the resend button to try again.'));
+            }
 
             $this->security->login($user, 'form_login', 'main');
-            $this->addFlash(FlashType::Success, $this->translator->trans('Your email address has been changed. Please check your inbox to confirm it.'));
 
             return $this->redirectToRoute('tvdt_backoffice_settings');
         }
@@ -131,8 +139,11 @@ final class SettingsController extends AbstractController
             return $this->redirectToRoute('tvdt_backoffice_settings');
         }
 
-        $this->emailVerifier->sendDefaultConfirmation($user);
-        $this->addFlash(FlashType::Success, $this->translator->trans('A new confirmation email has been sent. Please check your inbox.'));
+        if ($this->emailVerifier->sendDefaultConfirmation($user)) {
+            $this->addFlash(FlashType::Success, $this->translator->trans('A new confirmation email has been sent. Please check your inbox.'));
+        } else {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('The confirmation email could not be sent. Please try again later.'));
+        }
 
         return $this->redirectToRoute('tvdt_backoffice_settings');
     }

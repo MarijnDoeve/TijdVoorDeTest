@@ -24,8 +24,8 @@ readonly class EmailVerifier
         private LoggerInterface $logger,
     ) {}
 
-    /** Sends the standard confirmation email to the user, logging instead of throwing on transport errors. */
-    public function sendDefaultConfirmation(User $user): void
+    /** Sends the standard confirmation email to the user. Returns false (and logs) on transport errors. */
+    public function sendDefaultConfirmation(User $user): bool
     {
         try {
             $this->sendEmailConfirmation('tvdt_verify_email', $user,
@@ -34,8 +34,12 @@ readonly class EmailVerifier
                     ->subject($this->translator->trans('Please Confirm your Email'))
                     ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
             );
+
+            return true;
         } catch (TransportExceptionInterface $transportException) {
             $this->logger->error($transportException->getMessage());
+
+            return false;
         }
     }
 

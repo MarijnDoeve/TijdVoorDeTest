@@ -6,6 +6,7 @@ namespace Tvdt\Tests\Controller\Backoffice;
 
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Safe\DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Tvdt\Controller\Backoffice\SettingsController;
 use Tvdt\DataFixtures\TestFixtures;
 use Tvdt\Entity\Quiz;
+use Tvdt\Entity\ResetPasswordRequest;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 
@@ -212,6 +214,71 @@ final class SettingsControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/backoffice/settings');
         self::assertEmailCount(0);
+    }
+
+    public function testChangeEmailToSameAddressIsAccepted(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/email"]')->form([
+            'change_email_form[email]' => 'test@example.org',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/settings');
+    }
+
+    private function createResetPasswordRequest(User $user): void
+    {
+        $request = new ResetPasswordRequest(
+            $user,
+            new DateTimeImmutable('+1 hour'),
+            str_repeat('a', 20),
+            str_repeat('b', 100),
+        );
+        $this->entityManager->persist($request);
+        $this->entityManager->flush();
+    }
+
+    public function testChangePasswordInvalidatesResetPasswordRequests(): void
+    {
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->createResetPasswordRequest($user);
+
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
+            'change_user_password_form[currentPassword]' => TestFixtures::PASSWORD,
+            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
+            'change_user_password_form[plainPassword][second]' => 'NewPass123!',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        $this->entityManager->clear();
+
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertSame(0, $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $user]));
+    }
+
+    public function testChangeEmailInvalidatesResetPasswordRequests(): void
+    {
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->createResetPasswordRequest($user);
+
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
+        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/email"]')->form([
+            'change_email_form[email]' => 'new-address@example.org',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/settings');
+        $this->entityManager->clear();
+
+        $user = $this->getUserByEmail('new-address@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertSame(0, $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $user]));
     }
 
     public function testDeleteAccountWithWrongPasswordIsRejected(): void

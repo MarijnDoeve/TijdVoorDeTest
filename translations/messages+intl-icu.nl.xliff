@@ -905,6 +905,14 @@
         <source>Your email address has been changed. Please check your inbox to confirm it.</source>
         <target>Je e-mailadres is gewijzigd. Check je inbox om het te bevestigen.</target>
       </trans-unit>
+      <trans-unit id="kWpL7Rn" resname="The confirmation email could not be sent. Please use the resend button to try again.">
+        <source>The confirmation email could not be sent. Please use the resend button to try again.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.</target>
+      </trans-unit>
+      <trans-unit id="mQxV2Jf" resname="The confirmation email could not be sent. Please try again later.">
+        <source>The confirmation email could not be sent. Please try again later.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.</target>
+      </trans-unit>
       <trans-unit id="m80cBv0" resname="Your email address has been verified.">
         <source>Your email address has been verified.</source>
         <target>Je e-mailadres is geverifieerd.</target>

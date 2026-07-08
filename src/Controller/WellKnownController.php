@@ -17,6 +17,8 @@ final class WellKnownController extends AbstractController
     public function __construct(
         #[Autowire(env: 'default::BUILD_TIME')]
         private readonly ?string $buildTime,
+        #[Autowire(env: 'APP_ENV')]
+        private readonly string $appEnv,
     ) {}
 
     /** @see https://w3c.github.io/webappsec-change-password-url/ */
@@ -36,8 +38,13 @@ final class WellKnownController extends AbstractController
     public function securityTxt(): Response
     {
         // One year after the container build, so the file goes stale when deployments stop.
-        // Falls back to the request time in dev, where no build time is baked in.
-        $buildTime = null !== $this->buildTime && '' !== $this->buildTime ? $this->buildTime : 'now';
+        // In prod the build arg must be set; falling back to 'now' would renew Expires on every request,
+        // defeating the go-stale purpose. In dev/test 'now' is fine — no build bake happens there.
+        if ((null === $this->buildTime || '' === $this->buildTime) && 'prod' === $this->appEnv) {
+            throw new \LogicException('BUILD_TIME env var must be set in production (baked in during Docker build).');
+        }
+
+        $buildTime = (null !== $this->buildTime && '' !== $this->buildTime) ? $this->buildTime : 'now';
         $expires = new DateTimeImmutable($buildTime)->modify('+1 year')->format(\DATE_RFC3339);
 
         $content = <<<TXT
