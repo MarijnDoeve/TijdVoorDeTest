@@ -172,7 +172,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          max_attempts=40
+          max_attempts=30
           attempt=0
           triggered=false
 
@@ -199,8 +199,8 @@ jobs:
             fi
 
             if [[ "$triggered" == "false" ]]; then
-              echo "No prior CI run found for ${{ github.sha }}. Triggering CI on main branch..."
-              gh workflow run ci.yml --repo "${{ github.repository }}" --ref main
+              echo "No prior CI run found for ${{ github.sha }}. Triggering CI on ${{ github.ref }}..."
+              gh workflow run ci.yml --repo "${{ github.repository }}" --ref "${{ github.ref }}"
               triggered=true
               echo "Triggered. Waiting 20s for run to register..."
               sleep 20
