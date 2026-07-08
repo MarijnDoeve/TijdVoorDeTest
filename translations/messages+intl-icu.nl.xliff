@@ -221,6 +221,10 @@
         <source>Create an empty quiz and add questions from the question bank.</source>
         <target>Maak een lege quiz aan en voeg vragen toe vanuit de vragenbank.</target>
       </trans-unit>
+      <trans-unit id="jrXhJOR" resname="Current code:">
+        <source>Current code:</source>
+        <target>Huidige code:</target>
+      </trans-unit>
       <trans-unit id="3leUyoA" resname="Current email address:">
         <source>Current email address:</source>
         <target>Huidig e-mailadres:</target>
@@ -669,6 +673,14 @@
         <source>Refresh the page to try again.</source>
         <target>Ververs de pagina om het opnieuw te proberen.</target>
       </trans-unit>
+      <trans-unit id="EGW_4W_" resname="Regenerate season code">
+        <source>Regenerate season code</source>
+        <target>Seizoenscode opnieuw genereren</target>
+      </trans-unit>
+      <trans-unit id="EWuNNNu" resname="Regenerate season code...">
+        <source>Regenerate season code...</source>
+        <target>Seizoenscode opnieuw genereren...</target>
+      </trans-unit>
       <trans-unit id="fGfBzt6" resname="Register">
         <source>Register</source>
         <target>Registreren</target>
@@ -729,6 +741,14 @@
         <source>Season Name</source>
         <target>Seizoennaam</target>
       </trans-unit>
+      <trans-unit id="IxKDF4a" resname="Season code">
+        <source>Season code</source>
+        <target>Seizoenscode</target>
+      </trans-unit>
+      <trans-unit id="iigT2eM" resname="Season code regenerated">
+        <source>Season code regenerated</source>
+        <target>Seizoenscode opnieuw gegenereerd</target>
+      </trans-unit>
       <trans-unit id="kc_J96C" resname="Seasons">
         <source>Seasons</source>
         <target>Seizoenen</target>
@@ -769,6 +789,14 @@
         <source>Sync latest changes to this quiz</source>
         <target>Laatste wijzigingen synchroniseren naar deze quiz</target>
       </trans-unit>
+      <trans-unit id="XwQ1Fav" resname="The confirmation email could not be sent. Please try again later.">
+        <source>The confirmation email could not be sent. Please try again later.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.</target>
+      </trans-unit>
+      <trans-unit id="mMDwcxj" resname="The confirmation email could not be sent. Please use the resend button to try again.">
+        <source>The confirmation email could not be sent. Please use the resend button to try again.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.</target>
+      </trans-unit>
       <trans-unit id="_z4el3Z" resname="The password fields must match.">
         <source>The password fields must match.</source>
         <target>De wachtwoorden moeten overeen komen.</target>
@@ -793,6 +821,10 @@
         <source>The quiz must be finalized before it can be activated</source>
         <target>De test moet afgerond zijn voordat deze geactiveerd kan worden</target>
       </trans-unit>
+      <trans-unit id="IKPt_Pf" resname="The season code is used by candidates to join this season. Regenerating it invalidates the current code, so make sure to share the new one.">
+        <source>The season code is used by candidates to join this season. Regenerating it invalidates the current code, so make sure to share the new one.</source>
+        <target>De seizoenscode wordt door kandidaten gebruikt om dit seizoen te vinden. Als je een nieuwe code genereert, werkt de oude niet meer, dus deel de nieuwe code opnieuw.</target>
+      </trans-unit>
       <trans-unit id="HuzRgeN" resname="There are no answers for this question">
         <source>There are no answers for this question</source>
         <target>Er zijn geen antwoorden voor deze vraag</target>
@@ -808,6 +840,10 @@
       <trans-unit id="nv0a7LG" resname="This deletes your account and every season you are the only owner of. Enter your password to confirm.">
         <source>This deletes your account and every season you are the only owner of. Enter your password to confirm.</source>
         <target>Dit verwijdert je account en alle seizoenen waarvan jij de enige eigenaar bent. Vul je wachtwoord in om te bevestigen.</target>
+      </trans-unit>
+      <trans-unit id="EBWUWJu" resname="This invalidates the current season code. Anyone using the old code will no longer be able to join this season.">
+        <source>This invalidates the current season code. Anyone using the old code will no longer be able to join this season.</source>
+        <target>Hiermee wordt de huidige seizoenscode ongeldig. Iedereen die de oude code gebruikt, kan dit seizoen niet meer vinden.</target>
       </trans-unit>
       <trans-unit id="YueaA2f" resname="This link will expire in %count%.">
         <source>This link will expire in %count%.</source>
@@ -901,17 +937,13 @@
         <source>Your data</source>
         <target>Je gegevens</target>
       </trans-unit>
+      <trans-unit id="sAb9l8I" resname="Your email address has been changed.">
+        <source>Your email address has been changed.</source>
+        <target>Je e-mailadres is gewijzigd.</target>
+      </trans-unit>
       <trans-unit id="OqDtnJw" resname="Your email address has been changed. Please check your inbox to confirm it.">
         <source>Your email address has been changed. Please check your inbox to confirm it.</source>
         <target>Je e-mailadres is gewijzigd. Check je inbox om het te bevestigen.</target>
-      </trans-unit>
-      <trans-unit id="kWpL7Rn" resname="The confirmation email could not be sent. Please use the resend button to try again.">
-        <source>The confirmation email could not be sent. Please use the resend button to try again.</source>
-        <target>De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.</target>
-      </trans-unit>
-      <trans-unit id="mQxV2Jf" resname="The confirmation email could not be sent. Please try again later.">
-        <source>The confirmation email could not be sent. Please try again later.</source>
-        <target>De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.</target>
       </trans-unit>
       <trans-unit id="m80cBv0" resname="Your email address has been verified.">
         <source>Your email address has been verified.</source>
