@@ -14,7 +14,7 @@ when@prod:
         # shortcut for private IP address ranges of your proxy
         trusted_proxies: 'private_ranges'
         # or, if your proxy instead uses the "Forwarded" header
-        trusted_headers: [ 'forwarded' ]
+        trusted_headers: [ 'x-forwarded-proto' ]
 
 when@test:
     framework:
