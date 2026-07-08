@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tvdt\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,7 +23,7 @@ use Tvdt\Security\EmailVerifier;
 
 final class RegistrationController extends AbstractController
 {
-    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security, private readonly LoggerInterface $logger, private readonly UserRepository $userRepository, private readonly EntityManagerInterface $entityManager) {}
+    public function __construct(private readonly EmailVerifier $emailVerifier, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $userPasswordHasher, private readonly Security $security, private readonly UserRepository $userRepository, private readonly EntityManagerInterface $entityManager) {}
 
     #[Route('/register', name: 'tvdt_register')]
     public function register(
@@ -49,17 +46,8 @@ final class RegistrationController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            try {
-                // generate a signed url and email it to the user
-                $this->emailVerifier->sendEmailConfirmation('tvdt_verify_email', $user,
-                    new TemplatedEmail()
-                        ->to($user->email)
-                        ->subject($this->translator->trans('Please Confirm your Email'))
-                        ->htmlTemplate('backoffice/registration/confirmation_email.html.twig'),
-                );
-            } catch (TransportExceptionInterface $e) {
-                $this->logger->error($e->getMessage());
-            }
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendDefaultConfirmation($user);
 
             $response = $this->security->login($user, 'form_login', 'main');
             \assert($response instanceof Response);

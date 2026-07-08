@@ -9,6 +9,10 @@
         <source>A label with a similar name already exists</source>
         <target>Er bestaat al een label met deze naam</target>
       </trans-unit>
+      <trans-unit id="Yu2_QSh" resname="A new confirmation email has been sent. Please check your inbox.">
+        <source>A new confirmation email has been sent. Please check your inbox.</source>
+        <target>Er is een nieuwe bevestigingsmail verstuurd. Check je inbox.</target>
+      </trans-unit>
       <trans-unit id="spyU5K3" resname="A quiz with this name already exists in this season">
         <source>A quiz with this name already exists in this season</source>
         <target>Er bestaat al een test met deze naam in dit seizoen</target>
@@ -72,6 +76,10 @@
       <trans-unit id="gjGGGsg" resname="Add question">
         <source>Add question</source>
         <target>Vraag toevoegen</target>
+      </trans-unit>
+      <trans-unit id="nLlOrcy" resname="After changing your email address you will receive a new confirmation email.">
+        <source>After changing your email address you will receive a new confirmation email.</source>
+        <target>Na het wijzigen van je e-mailadres ontvang je een nieuwe bevestigingsmail.</target>
       </trans-unit>
       <trans-unit id="tHdA52O" resname="All">
         <source>All</source>
@@ -149,6 +157,14 @@
         <source>Candidates</source>
         <target>Kandidaten</target>
       </trans-unit>
+      <trans-unit id="BqCoDf2" resname="Change email">
+        <source>Change email</source>
+        <target>E-mailadres wijzigen</target>
+      </trans-unit>
+      <trans-unit id="EbzUhXX" resname="Change password">
+        <source>Change password</source>
+        <target>Wachtwoord wijzigen</target>
+      </trans-unit>
       <trans-unit id="o6WwCao" resname="Check your email">
         <source>Check your email</source>
         <target>Controleer je e-mail</target>
@@ -172,6 +188,10 @@
       <trans-unit id="7sfvWUb" resname="Confirm Answers">
         <source>Confirm Answers</source>
         <target>Bevestig antwoorden</target>
+      </trans-unit>
+      <trans-unit id="PiAVEe9" resname="Confirmed">
+        <source>Confirmed</source>
+        <target>Bevestigd</target>
       </trans-unit>
       <trans-unit id="sFpB4C2" resname="Correct Answers">
         <source>Correct Answers</source>
@@ -201,9 +221,21 @@
         <source>Create an empty quiz and add questions from the question bank.</source>
         <target>Maak een lege quiz aan en voeg vragen toe vanuit de vragenbank.</target>
       </trans-unit>
+      <trans-unit id="3leUyoA" resname="Current email address:">
+        <source>Current email address:</source>
+        <target>Huidig e-mailadres:</target>
+      </trans-unit>
+      <trans-unit id="ukaFrcB" resname="Current password">
+        <source>Current password</source>
+        <target>Huidig wachtwoord</target>
+      </trans-unit>
       <trans-unit id="PkrbQOH" resname="Cyan">
         <source>Cyan</source>
         <target>Cyaan</target>
+      </trans-unit>
+      <trans-unit id="dG6EuYH" resname="Danger zone">
+        <source>Danger zone</source>
+        <target>Gevarenzone</target>
       </trans-unit>
       <trans-unit id="S5P7nQd" resname="Deactivate">
         <source>Deactivate</source>
@@ -225,9 +257,25 @@
         <source>Delete Quiz...</source>
         <target>Test verwijderen...</target>
       </trans-unit>
+      <trans-unit id="rZiKnxa" resname="Delete account">
+        <source>Delete account</source>
+        <target>Account verwijderen</target>
+      </trans-unit>
+      <trans-unit id="S8jZ6w1" resname="Delete account...">
+        <source>Delete account...</source>
+        <target>Account verwijderen...</target>
+      </trans-unit>
+      <trans-unit id="bw.C4wH" resname="Deleting your account also deletes every season you are the only owner of. This cannot be undone.">
+        <source>Deleting your account also deletes every season you are the only owner of. This cannot be undone.</source>
+        <target>Als je je account verwijdert, worden ook alle seizoenen verwijderd waarvan jij de enige eigenaar bent. Dit kan niet ongedaan worden gemaakt.</target>
+      </trans-unit>
       <trans-unit id="R9yHzHv" resname="Download Template">
         <source>Download Template</source>
         <target>Download sjabloon</target>
+      </trans-unit>
+      <trans-unit id="58e2QWG" resname="Download data">
+        <source>Download data</source>
+        <target>Gegevens downloaden</target>
       </trans-unit>
       <trans-unit id="dwUtS3b" resname="Draft">
         <source>Draft</source>
@@ -361,6 +409,14 @@
         <source>Labels</source>
         <target>Labels</target>
       </trans-unit>
+      <trans-unit id="5q6OTdQ" resname="Language">
+        <source>Language</source>
+        <target>Taal</target>
+      </trans-unit>
+      <trans-unit id="dzQVFhY" resname="Language saved">
+        <source>Language saved</source>
+        <target>Taal opgeslagen</target>
+      </trans-unit>
       <trans-unit id="q0FeoCr" resname="Load Prepared Elimination">
         <source>Load Prepared Elimination</source>
         <target>Laad voorbereide eliminatie</target>
@@ -392,6 +448,10 @@
       <trans-unit id="wbMeKOh" resname="Name">
         <source>Name</source>
         <target>Naam</target>
+      </trans-unit>
+      <trans-unit id="uWfLt3x" resname="New email address">
+        <source>New email address</source>
+        <target>Nieuw e-mailadres</target>
       </trans-unit>
       <trans-unit id="lqTjJ4a" resname="New label">
         <source>New label</source>
@@ -436,6 +496,10 @@
       <trans-unit id="tbd1luF" resname="Not Started">
         <source>Not Started</source>
         <target>Niet gestart</target>
+      </trans-unit>
+      <trans-unit id="zGRLjYz" resname="Not confirmed">
+        <source>Not confirmed</source>
+        <target>Niet bevestigd</target>
       </trans-unit>
       <trans-unit id="k7Eqnjt" resname="Number of dropouts:">
         <source>Number of dropouts:</source>
@@ -621,6 +685,10 @@
         <source>Repeat Password</source>
         <target>Herhaal wachtwoord</target>
       </trans-unit>
+      <trans-unit id="UJ54wLL" resname="Resend confirmation email">
+        <source>Resend confirmation email</source>
+        <target>Bevestigingsmail opnieuw versturen</target>
+      </trans-unit>
       <trans-unit id="9JCvQkt" resname="Reset password">
         <source>Reset password</source>
         <target>Wachtwoord herstellen</target>
@@ -681,6 +749,10 @@
         <source>Sign in</source>
         <target>Log in</target>
       </trans-unit>
+      <trans-unit id=".9GO03z" resname="Soon™">
+        <source>Soon™</source>
+        <target>Soon™</target>
+      </trans-unit>
       <trans-unit id="A0aGG7W" resname="Sort A–Z">
         <source>Sort A–Z</source>
         <target>Sorteer A-Z</target>
@@ -725,9 +797,17 @@
         <source>There are no answers for this question</source>
         <target>Er zijn geen antwoorden voor deze vraag</target>
       </trans-unit>
+      <trans-unit id="vsM4tSv" resname="There is already an account with this email">
+        <source>There is already an account with this email</source>
+        <target>Er is al een account met dit e-mailadres</target>
+      </trans-unit>
       <trans-unit id=".LrcTyU" resname="There is no active quiz">
         <source>There is no active quiz</source>
         <target>Er is geen test actief</target>
+      </trans-unit>
+      <trans-unit id="nv0a7LG" resname="This deletes your account and every season you are the only owner of. Enter your password to confirm.">
+        <source>This deletes your account and every season you are the only owner of. Enter your password to confirm.</source>
+        <target>Dit verwijdert je account en alle seizoenen waarvan jij de enige eigenaar bent. Vul je wachtwoord in om te bevestigen.</target>
       </trans-unit>
       <trans-unit id="YueaA2f" resname="This link will expire in %count%.">
         <source>This link will expire in %count%.</source>
@@ -789,6 +869,10 @@
         <source>White</source>
         <target>Wit</target>
       </trans-unit>
+      <trans-unit id="AVLy021" resname="Wrong password, your account has not been deleted.">
+        <source>Wrong password, your account has not been deleted.</source>
+        <target>Verkeerd wachtwoord, je account is niet verwijderd.</target>
+      </trans-unit>
       <trans-unit id="RV6M450" resname="Yellow">
         <source>Yellow</source>
         <target>Geel</target>
@@ -813,9 +897,33 @@
         <source>Your Seasons</source>
         <target>Jouw seizoenen</target>
       </trans-unit>
+      <trans-unit id="Eh0pcpd" resname="Your data">
+        <source>Your data</source>
+        <target>Je gegevens</target>
+      </trans-unit>
+      <trans-unit id="OqDtnJw" resname="Your email address has been changed. Please check your inbox to confirm it.">
+        <source>Your email address has been changed. Please check your inbox to confirm it.</source>
+        <target>Je e-mailadres is gewijzigd. Check je inbox om het te bevestigen.</target>
+      </trans-unit>
+      <trans-unit id="kWpL7Rn" resname="The confirmation email could not be sent. Please use the resend button to try again.">
+        <source>The confirmation email could not be sent. Please use the resend button to try again.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.</target>
+      </trans-unit>
+      <trans-unit id="mQxV2Jf" resname="The confirmation email could not be sent. Please try again later.">
+        <source>The confirmation email could not be sent. Please try again later.</source>
+        <target>De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.</target>
+      </trans-unit>
       <trans-unit id="m80cBv0" resname="Your email address has been verified.">
         <source>Your email address has been verified.</source>
         <target>Je e-mailadres is geverifieerd.</target>
+      </trans-unit>
+      <trans-unit id="mPitWNe" resname="Your email address is already confirmed.">
+        <source>Your email address is already confirmed.</source>
+        <target>Je e-mailadres is al bevestigd.</target>
+      </trans-unit>
+      <trans-unit id="yAT.oxx" resname="Your password has been changed.">
+        <source>Your password has been changed.</source>
+        <target>Je wachtwoord is gewijzigd.</target>
       </trans-unit>
       <trans-unit id="YDIkAA1" resname="Your password reset request">
         <source>Your password reset request</source>

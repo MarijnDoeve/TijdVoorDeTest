@@ -109,3 +109,7 @@ RUN set -eux; \
 	bin/console sass:build; \
 	bin/console asset-map:compile --no-debug --quiet --no-ansi; \
 	sync;
+
+# Build timestamp for /.well-known/security.txt Expires; must be injected last to avoid cache busting.
+ARG BUILD_TIME=""
+ENV BUILD_TIME=$BUILD_TIME

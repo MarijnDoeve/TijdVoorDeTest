@@ -28,6 +28,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /** Deletes all outstanding reset-password tokens for the user (e.g. after a password or email change). */
+    public function invalidateResetPasswordRequests(User $user): void
+    {
+        $this->getEntityManager()
+            ->createQuery('delete from Tvdt\Entity\ResetPasswordRequest r where r.user = :user')
+            ->setParameter('user', $user)
+            ->execute();
+    }
+
+    /** Deletes the user, all seasons the user is the sole owner of, and the user's ownership of shared seasons. */
+    public function deleteUser(User $user): void
+    {
+        $em = $this->getEntityManager();
+        $em->wrapInTransaction(function () use ($em, $user): void {
+            $this->invalidateResetPasswordRequests($user);
+
+            foreach ($user->seasons->toArray() as $season) {
+                if (1 === $season->owners->count()) {
+                    $em->remove($season);
+
+                    continue;
+                }
+
+                $season->removeOwner($user);
+            }
+
+            $em->remove($user);
+            $em->flush();
+        });
+    }
+
     public function makeAdmin(string $email): void
     {
         $user = $this->findOneBy(['email' => $email]);

@@ -114,17 +114,11 @@ class QuestionBankController extends AbstractController
             ? 'backoffice/question_bank/_frame.html.twig'
             : 'backoffice/question_bank/form.html.twig';
 
-        $response = $this->render($template, [
+        return $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => null,
         ]);
-
-        if ($form->isSubmitted()) {
-            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $response;
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -167,17 +161,11 @@ class QuestionBankController extends AbstractController
             ? 'backoffice/question_bank/_frame.html.twig'
             : 'backoffice/question_bank/form.html.twig';
 
-        $response = $this->render($template, [
+        return $this->render($template, [
             'season' => $season,
             'form' => $form,
             'bankQuestion' => $bankQuestion,
         ]);
-
-        if ($form->isSubmitted()) {
-            $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $response;
     }
 
     #[IsCsrfTokenValid('delete_bank_question')]
@@ -380,13 +368,6 @@ class QuestionBankController extends AbstractController
         $this->addFlash(FlashType::Success, $this->translator->trans('Question synced to quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
-    }
-
-    private function assertSameSeason(Season $season, Season $subjectSeason): void
-    {
-        if ($season !== $subjectSeason) {
-            throw new NotFoundHttpException();
-        }
     }
 
     private function syncUsagesAfterEdit(BankQuestion $bankQuestion): void

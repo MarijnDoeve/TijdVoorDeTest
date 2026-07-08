@@ -256,6 +256,7 @@ jobs:
         id: meta
         run: |
           REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "build_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
             SENTRY_VERSION="${TAG#v}"
@@ -287,6 +288,7 @@ jobs:
             *.cache-from=type=gha,scope=${{github.ref}}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{github.ref}},mode=max
+            *.args.BUILD_TIME=${{ steps.meta.outputs.build_time }}
             *.tags=${{ steps.meta.outputs.full_name }}
 
       - name: Create Sentry release

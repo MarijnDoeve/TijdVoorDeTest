@@ -109,9 +109,17 @@
         <source>Please enter a valid week.</source>
         <target>Vul een geldige week in.</target>
       </trans-unit>
+      <trans-unit id="PI63Rjp" resname="Please enter an email address">
+        <source>Please enter an email address</source>
+        <target>Vul een e-mailadres in</target>
+      </trans-unit>
       <trans-unit id="o.y86J1" resname="Please enter an integer.">
         <source>Please enter an integer.</source>
         <target>Vul een geldig getal in.</target>
+      </trans-unit>
+      <trans-unit id="Vl4HgaN" resname="Please enter your current password">
+        <source>Please enter your current password</source>
+        <target>Vul je huidige wachtwoord in</target>
       </trans-unit>
       <trans-unit id="7VWHcE0" resname="Please enter your email">
         <source>Please enter your email</source>
@@ -436,6 +444,10 @@
       <trans-unit id="GO8.wou" resname="This is not a valid UUID.">
         <source>This is not a valid UUID.</source>
         <target>Deze waarde is geen geldige UUID.</target>
+      </trans-unit>
+      <trans-unit id="E7D7p81" resname="This is not your current password.">
+        <source>This is not your current password.</source>
+        <target>Dit is niet je huidige wachtwoord.</target>
       </trans-unit>
       <trans-unit id="o0vqbDQ" resname="This password has been leaked in a data breach, it must not be used. Please use another password.">
         <source>This password has been leaked in a data breach, it must not be used. Please use another password.</source>

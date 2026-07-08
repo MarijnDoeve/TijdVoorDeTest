@@ -151,6 +151,7 @@ tests/
 ### Testing Conventions (TDD)
 - **Write the failing test first.** When fixing any PHP-reachable bug, write a PHPUnit test that reproduces the failure before touching the production code. Fix the code until the test passes.
 - Only skip a test if the bug is purely in JavaScript/frontend where PHPUnit cannot reach it.
+- Don't write tests for trivial presentational markup (e.g. asserting a tooltip/popover attribute or a CSS class exists in a template). Tests cover behavior: routing, forms, persistence, authorization.
 - Follow the pattern in `tests/Controller/Backoffice/` for controller/integration tests: log in, GET for CSRF token, POST form data, assert redirect, clear entity manager, assert DB state.
 
 ### Code Style & Standards
