@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Controller;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use Safe\DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,7 @@ final class WellKnownControllerTest extends WebTestCase
         self::assertResponseRedirects('/backoffice/settings');
     }
 
+    /** @throws \Exception */
     public function testSecurityTxt(): void
     {
         $this->client->request(Request::METHOD_GET, '/.well-known/security.txt');
@@ -36,6 +38,11 @@ final class WellKnownControllerTest extends WebTestCase
 
         $content = (string) $this->client->getResponse()->getContent();
         $this->assertStringContainsString('Contact:', $content);
-        $this->assertStringContainsString('Expires:', $content);
+        $this->assertMatchesRegularExpression('/^Expires: (.+)$/m', $content);
+
+        \Safe\preg_match('/^Expires: (.+)$/m', $content, $matches);
+        $this->assertArrayHasKey(1, $matches);
+        $expires = new DateTimeImmutable($matches[1]);
+        $this->assertGreaterThan(new DateTimeImmutable('now'), $expires);
     }
 }

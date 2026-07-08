@@ -87,6 +87,10 @@ RUN rm -rf /var/lib/apt/lists/*
 
 ENV APP_ENV=prod
 
+# Build timestamp, used for the Expires field of /.well-known/security.txt
+ARG BUILD_TIME=""
+ENV BUILD_TIME=$BUILD_TIME
+
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
