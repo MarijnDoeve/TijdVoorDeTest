@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller\Backoffice;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -90,9 +91,22 @@ final class SettingsController extends AbstractController
                 return $this->renderSettings(emailForm: $form);
             }
 
+            $originalEmail = $user->email;
+            $originalIsVerified = $user->isVerified;
+
             $user->email = $email;
             $user->isVerified = false;
-            $this->entityManager->flush();
+
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException) {
+                // A concurrent request can claim the email between the uniqueness check above and the flush
+                $user->email = $originalEmail;
+                $user->isVerified = $originalIsVerified;
+                $form->get('email')->addError(new FormError($this->translator->trans('There is already an account with this email')));
+
+                return $this->renderSettings(emailForm: $form);
+            }
 
             $this->emailVerifier->sendDefaultConfirmation($user);
 

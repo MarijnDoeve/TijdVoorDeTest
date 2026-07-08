@@ -43,9 +43,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             foreach ($user->seasons->toArray() as $season) {
                 if (1 === $season->owners->count()) {
                     $em->remove($season);
-                } else {
-                    $season->removeOwner($user);
+
+                    continue;
                 }
+
+                $season->removeOwner($user);
             }
 
             $em->remove($user);

@@ -799,7 +799,7 @@
       </trans-unit>
       <trans-unit id="vsM4tSv" resname="There is already an account with this email">
         <source>There is already an account with this email</source>
-        <target>Er bestaat al een account met dit e-mailadres</target>
+        <target>Er is al een account met dit e-mailadres</target>
       </trans-unit>
       <trans-unit id=".LrcTyU" resname="There is no active quiz">
         <source>There is no active quiz</source>
