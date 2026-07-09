@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\Length;
@@ -28,6 +29,7 @@ use Tvdt\Enum\FlashType;
 use Tvdt\Form\AddCandidatesFormType;
 use Tvdt\Form\SettingsForm;
 use Tvdt\Form\UploadQuizFormType;
+use Tvdt\Repository\CandidateRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuizSpreadsheetService;
 
@@ -39,6 +41,7 @@ class SeasonController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly EntityManagerInterface $em,
         private readonly QuizSpreadsheetService $quizSpreadsheet,
+        private readonly CandidateRepository $candidateRepository,
     ) {}
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
@@ -141,6 +144,56 @@ class SeasonController extends AbstractController
         }
 
         return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form, 'season' => $season]);
+    }
+
+    #[IsCsrfTokenValid('rename_candidate')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'candidate')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/candidate/{candidate}/rename',
+        name: 'tvdt_backoffice_candidate_rename',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function renameCandidate(Season $season, Candidate $candidate, Request $request): RedirectResponse
+    {
+        $name = mb_trim($request->request->getString('name'));
+
+        if ('' === $name || mb_strlen($name) > 16) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('The candidate name must be between 1 and 16 characters'));
+
+            return $this->redirectToRoute('tvdt_backoffice_season_candidates', ['seasonCode' => $season->seasonCode]);
+        }
+
+        $candidate->name = $name;
+
+        try {
+            $this->em->flush();
+        } catch (UniqueConstraintViolationException) {
+            $this->addFlash(FlashType::Danger, $this->translator->trans('A candidate with this name already exists in this season'));
+
+            return $this->redirectToRoute('tvdt_backoffice_season_candidates', ['seasonCode' => $season->seasonCode]);
+        }
+
+        $this->addFlash(FlashType::Success, $this->translator->trans('Candidate renamed'));
+
+        return $this->redirectToRoute('tvdt_backoffice_season_candidates', ['seasonCode' => $season->seasonCode]);
+    }
+
+    #[IsCsrfTokenValid('delete_candidate')]
+    #[IsGranted(SeasonVoter::DELETE, subject: 'candidate')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/candidate/{candidate}/delete',
+        name: 'tvdt_backoffice_candidate_delete',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function deleteCandidate(Season $season, Candidate $candidate): RedirectResponse
+    {
+        $this->candidateRepository->deleteCandidate($candidate);
+
+        $this->addFlash(FlashType::Success, $this->translator->trans('Candidate deleted'));
+
+        return $this->redirectToRoute('tvdt_backoffice_season_candidates', ['seasonCode' => $season->seasonCode]);
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
