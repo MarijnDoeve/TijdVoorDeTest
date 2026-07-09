@@ -293,6 +293,10 @@
         <source>Download Template</source>
         <target>Download sjabloon</target>
       </trans-unit>
+      <trans-unit id="43g0Dc8" resname="Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.">
+        <source>Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.</source>
+        <target>Download een archief met alles wat onder je account is opgeslagen: je profiel, de seizoenen die je bezit, met de bijbehorende testen, resultaten en kandidaten.</target>
+      </trans-unit>
       <trans-unit id="58e2QWG" resname="Download data">
         <source>Download data</source>
         <target>Gegevens downloaden</target>
