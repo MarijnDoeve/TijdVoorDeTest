@@ -4,7 +4,7 @@
             <a href="{{ path('tvdt_backoffice_index') }}" class="btn btn-outline-secondary btn-sm">
                 {{ 'Backoffice'|trans }}
             </a>
-            <a href="{{ path('tvdt_login_logout') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ path('tvdt_login_logout', {target: app.request.pathInfo}) }}" class="btn btn-outline-secondary btn-sm">
                 {{ 'Logout'|trans }}
             </a>
         {% else %}

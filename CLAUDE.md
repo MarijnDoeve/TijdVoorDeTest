@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Tijd voor de test** is a PHP/Symfony 8.1 application for managing quizzes in the style of **Wie is de Mol?** (WIDM) — a Dutch TV show where contestants try to identify a saboteur ("de Mol") among them. At the end of each episode, participants take a quiz about the Mol's identity and actions; the candidate with the least correct answers is eliminated. This app replicates that quiz format with:
+**Tijd voor de test** is a PHP/Symfony 8.1 application for managing quizzes in the style of **Wie is de Mol?** (WIDM) —
+a Dutch TV show where contestants try to identify a saboteur ("de Mol") among them. At the end of each episode,
+participants take a quiz about the Mol's identity and actions; the candidate with the least correct answers is
+eliminated. This app replicates that quiz format with:
+
 - Test creation with variable question counts
 - Season management with active test controls
 - Candidate answer tracking with automatic timing
@@ -12,6 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Backoffice management for quiz administration and statistics
 
 Tech Stack:
+
 - **Framework**: Symfony 8.1
 - **PHP**: 8.5+
 - **Database**: PostgreSQL 16
@@ -76,7 +81,7 @@ All code quality checks run in CI/CD (.github/workflows/ci.yml) and should pass 
 
 ```
 src/
-  Controller/              # HTTP request handlers (attribute-routed)
+  Controller/             # HTTP request handlers (attribute-routed)
     Backoffice/           # Admin panel controllers
   Entity/                 # Doctrine ORM entities
   Repository/             # Database queries
@@ -122,59 +127,151 @@ tests/
 - **Elimination**: Records red/green screens and forced results with joker adjustments.
 - **User**: Administrative accounts for managing the system.
 
+## Domain Context: "De Test" (Wie is de Mol)
+
+**Wie is de Mol?** (WIDM) is a Dutch reality competition: a group of contestants ("kandidaten") travels together while
+one of them, "de Mol", secretly sabotages assignments. Each episode ends with the fixed line: *"Tijd voor de test.
+Twintig vragen over de identiteit en het doen en laten van de Mol. Degene die het minst weet, ligt uit het spel. Behalve
+de Mol. Die hoeft nooit naar huis."* ("Time for the test. Twenty questions about the identity and the actions of the
+Mol. Whoever knows the least is out of the game. Except the Mol — they never have to go home.") The contestant with the
+worst score is eliminated ("afvallen"); the Mol is immune regardless of score, since they already know the answers. This
+app is a generic engine for running that quiz format for private/fan seasons, not just modeling the TV show
+incidentally — the entity model below exists specifically to reproduce WIDM's test mechanics.
+
+### What a test's 20 questions actually are
+
+Per the intro line, questions fall into two factual categories — never opinion ("who would you vote off") — plus a
+third recurring format used on the show:
+
+1. **Identity of the Mol**: guessing which contestant is the Mol.
+2. **The Mol's actions**: what the Mol did or where the Mol was during a specific assignment/moment.
+3. **Candidate self-answered questions**: earlier, every contestant privately answered a question about themselves
+   (an interview-style question); the test then asks other contestants to guess what a *specific* candidate answered
+   about themselves. This tests how well contestants know each other, not just Mol-tracking.
+
+### Why answers can be bound to candidates
+
+All three categories above can have contestants themselves as the answer options rather than free text: "who is the
+Mol" and "who did X" both need contestant names as options, and "what did candidate Y answer" needs Y's own submitted
+answer among the options. In the domain model this is `Answer::$candidates` (a `ManyToMany` to `Candidate`, on both
+sides): an answer option can *be* another contestant, not just text.
+
+Because the relationship is many-to-many on the answer side too, a single answer option can cover **more than one
+candidate at once** — e.g. "Anna en Bram" as one option for "who missed the assignment together", or an option
+representing everyone who gave a particular self-answer in category 3 above. So a candidate-bound answer isn't always
+one candidate, it can be a group; treat `Answer::$candidates` as "the set of contestants this option represents", not
+as a single foreign key.
+
+Combined with `GivenAnswer::$candidate` (who answered), every given answer on a candidate-bound question is a directed
+relationship from the answering candidate to *every* candidate covered by the chosen option — a one-to-many edge when
+the option is a group, not just candidate A pointed at candidate B. This is the mechanic behind any "who's suspected of
+what" or sociogram-style statistic — it only applies to candidate-bound questions, plain trivia questions have no such
+relationship. `Quiz::getQuestionErrors()` already relies on this distinction to validate that every active candidate is
+covered exactly once per candidate-bound question (a candidate appearing across multiple group-options on the same
+question counts as covered more than once).
+
+### Elimination mechanics
+
+- **Red/green screens**: at the end of a test, contestants are shown red or green screens one at a time to build tension
+  before the elimination is revealed. `Elimination::$data` stores the colour shown per candidate (
+  `SCREEN_RED/SCREEN_GREEN` via `getScreenColour()`), independent of the actual quiz score.
+- **Jokers / corrections**: contestants can hold a "joker" (an advantage, e.g. an extra correct answer) that adjusts
+  their effective score without changing what they actually answered. This is `QuizCandidate::$corrections` — a float
+  added to the raw score, kept separate from `GivenAnswer` so the audit trail of what was actually answered stays
+  untouched.
+- **Dropouts**: `Quiz::$dropouts` controls how many contestants can be eliminated in a single test (normally 1, but some
+  episodes eliminate more).
+- **Finalization/locking**: `Quiz::$isFinalized` and `$isLocked` gate when a quiz's questions/answers can still be
+  edited — a quiz becomes immutable once a candidate has started it or an admin explicitly finalizes it. Treat this as
+  the natural point where computed results (scores, statistics) can be cached indefinitely, since nothing that feeds
+  them can change afterward.
+
+### Terminology map (Dutch UI ↔ domain code)
+
+| UI/domain term (Dutch)       | Code                          |
+|------------------------------|-------------------------------|
+| Test                         | `Quiz`                        |
+| Vraag                        | `Question`                    |
+| Antwoord                     | `Answer`                      |
+| Kandidaat                    | `Candidate`                   |
+| Ingevuld antwoord            | `GivenAnswer`                 |
+| Afvallen / rood-groen scherm | `Elimination`                 |
+| Joker / correctie            | `QuizCandidate::$corrections` |
+
 ## Architecture Notes
 
 ### Routing
+
 - Routes are **attribute-based** (PHP 8 attributes in controller methods)
 - Configured in `config/routes/attributes.yaml` for automatic discovery
 - Main entry point: `config/routes.yaml`
 
 ### Service Container & Dependency Injection
+
 - Services in `src/` are automatically registered via PSR-4 namespace `Tvdt\`
 - Exclusions: Entity, DependencyInjection, Kernel classes
 - Autowiring and autoconfiguration enabled by default
 - Service definitions in `config/services.yaml`
 
 ### Database & Migrations
+
 - PostgreSQL-based with Doctrine ORM
-- Migrations in `migrations/` at project root, namespace `DoctrineMigrations` (intentionally not autoloaded); generate with `bin/console make:migration`
+- Migrations in `migrations/` at project root, namespace `DoctrineMigrations` (intentionally not autoloaded); generate
+  with `bin/console make:migration`
 - Test fixtures in `src/DataFixtures/` (loaded with `--group=test`)
 - Test database configured separately via `.env.test`
 
 ### Testing Infrastructure
+
 - **PHPUnit 13** with DAMA Doctrine Test Bundle for transaction rollback
-- Bootstrap: `tests/bootstrap.php` loads env vars and autoloader; `tests/symfony-container.php` boots the test kernel/container (used by Rector)
+- Bootstrap: `tests/bootstrap.php` loads env vars and autoloader; `tests/symfony-container.php` boots the test
+  kernel/container (used by Rector)
 - Symfony test utilities (BrowserKit, CSS selectors) available
 - Coverage excluded from: `src/DataFixtures/`
 - Test environment: `APP_ENV=test` (set in phpunit.dist.xml)
 
 ### Testing Conventions (TDD)
-- **Write the failing test first.** When fixing any PHP-reachable bug, write a PHPUnit test that reproduces the failure before touching the production code. Fix the code until the test passes.
+
+- **Write the failing test first.** When fixing any PHP-reachable bug, write a PHPUnit test that reproduces the failure
+  before touching the production code. Fix the code until the test passes.
 - Only skip a test if the bug is purely in JavaScript/frontend where PHPUnit cannot reach it.
-- Don't write tests for trivial presentational markup (e.g. asserting a tooltip/popover attribute or a CSS class exists in a template). Tests cover behavior: routing, forms, persistence, authorization.
-- Follow the pattern in `tests/Controller/Backoffice/` for controller/integration tests: log in, GET for CSRF token, POST form data, assert redirect, clear entity manager, assert DB state.
+- Don't write tests for trivial presentational markup (e.g. asserting a tooltip/popover attribute or a CSS class exists
+  in a template). Tests cover behavior: routing, forms, persistence, authorization.
+- Follow the pattern in `tests/Controller/Backoffice/` for controller/integration tests: log in, GET for CSRF token,
+  POST form data, assert redirect, clear entity manager, assert DB state.
+- **Prefer `TestCase` over `WebTestCase`/`KernelTestCase`.** Reach for the full kernel/DB boot only when the test
+  genuinely needs routing, persistence, or the container — pure logic (services, listeners, helpers) should be tested
+  with plain PHPUnit `TestCase` and mocked dependencies; it's faster and more isolated.
+- **Boy Scout Rule**: when you're already touching a file for an unrelated change, fix small nearby issues in the same
+  commit (e.g. a test that unnecessarily extends `WebTestCase`, a stale comment) rather than leaving them for later —
+  but don't let this balloon into an unrelated refactor.
 
 ### Code Style & Standards
+
 - **PHP-CS-Fixer**: Symfony ruleset + risky rules enabled
-  - Strict types declaration required
-  - Trailing commas in multiline structures
-  - No else-only blocks
-- **Rector**: Aggressive modernization with all attribute sets + prepared sets (dead code, code quality, Doctrine, Symfony, PHPUnit)
+    - Strict types declaration required
+    - Trailing commas in multiline structures
+    - No else-only blocks
+- **Rector**: Aggressive modernization with all attribute sets + prepared sets (dead code, code quality, Doctrine,
+  Symfony, PHPUnit)
 - **PHPStan**: Level 8 with extensions for Doctrine and Symfony
 - **Twig-CS-Fixer**: Template style enforcement
-- **Safe functions**: Use `thecodingmachine/safe` wrappers for standard PHP functions that return `false` on failure — they throw exceptions instead
+- **Safe functions**: Use `thecodingmachine/safe` wrappers for standard PHP functions that return `false` on failure —
+  they throw exceptions instead
 
 ### Environment Configuration
+
 - `.env` - Local development defaults (uncommitted in .env.local)
 - `.env.dev` - Development overrides
 - `.env.test` - Test environment configuration
 - Production uses `composer dump-env prod` for compiled configuration
 - Key variables:
-  - `APP_ENV` - Environment (dev/test/prod)
-  - `DATABASE_URL` - PostgreSQL connection string
-  - `MAILER_SENDER` - From address for emails
+    - `APP_ENV` - Environment (dev/test/prod)
+    - `DATABASE_URL` - PostgreSQL connection string
+    - `MAILER_SENDER` - From address for emails
 
 ### Frontend Build
+
 - Asset mapper (no Node.js/Webpack) for JS/CSS bundling; JS modules declared in `importmap.php`
 - **Stimulus** controllers in `assets/controllers/`, **Turbo** for SPA-like navigation
 - Sass sources in `assets/styles/`, compiled via `bin/console sass:build`
@@ -187,27 +284,28 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 
 1. **Linting**: Dockerfile (hadolint), Twig templates
 2. **Code Quality**:
-   - PHP-CS-Fixer style check
-   - Twig-CS-Fixer style check
-   - PHPStan static analysis
-   - Rector dry-run
+    - PHP-CS-Fixer style check
+    - Twig-CS-Fixer style check
+    - PHPStan static analysis
+    - Rector dry-run
 3. **Integration Tests**:
-   - Docker image build and start services
-   - Database creation and migration
-   - Fixture loading
-   - Full PHPUnit test suite with JUnit XML output
-   - Doctrine schema validation
+    - Docker image build and start services
+    - Database creation and migration
+    - Fixture loading
+    - Full PHPUnit test suite with JUnit XML output
+    - Doctrine schema validation
 4. **Build & Deploy** (on tags or main, disabled currently):
-   - Docker image push to GitHub Container Registry
-   - Sentry release creation
-   - Portainer webhook trigger for production deployment
+    - Docker image push to GitHub Container Registry
+    - Sentry release creation
+    - Portainer webhook trigger for production deployment
 
 Runs on all pushes to main and pull requests. Concurrency cancels old runs on new commits.
 
 ## Important Files & Conventions
 
 - **Kernel**: `src/Kernel.php` - Symfony kernel class
-- **AbstractController**: Base class for all controllers — defines route parameter regexes (`SEASON_CODE_REGEX`, `CANDIDATE_HASH_REGEX`) and flash helpers
+- **AbstractController**: Base class for all controllers — defines route parameter regexes (`SEASON_CODE_REGEX`,
+  `CANDIDATE_HASH_REGEX`) and flash helpers
 - **Flash Messages**: Use `FlashType` enum instead of string literals
 - **QuizSpreadsheetService**: Handles importing quizzes from XLSX files
 - **Rector container**: `tests/symfony-container.php` — boots a test kernel so Rector can resolve Symfony service types
@@ -226,6 +324,7 @@ Runs on all pushes to main and pull requests. Concurrency cancels old runs on ne
 ## Composer Scripts
 
 Auto-executed scripts on install/update:
+
 - `cache:clear` - Symfony cache clear
 - `assets:install` - Copy public assets
 - `importmap:install` - JS import map setup
@@ -244,4 +343,5 @@ When writing Dutch help content in `templates/backoffice/help/nl/`:
 - The backoffice elimination logic is in `Controller/Backoffice/PrepareEliminationController.php`
 - Quiz timing logic starts on candidate start click and stops on final answer selection
 - Background music feature noted but not yet implemented (requirements only)
-- Statistics functionality is marked TBD in README
+- Statistics module (per-quiz statistics page, candidate accusation matrix, caching) is planned per GitHub issue #199 —
+  see "Domain Context" above for why candidate-bound answers matter to it
