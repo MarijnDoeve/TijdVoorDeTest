@@ -13,6 +13,7 @@ use Safe\Exceptions\FilesystemException;
 use Tvdt\Dto\Result;
 use Tvdt\Entity\BankQuestionUsage;
 use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Question;
 use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
@@ -137,6 +138,10 @@ class DataExportService
 
         $this->quizSpreadsheetService->fillQuestionsSheet($questions, $quiz);
 
+        $rawAnswers = $spreadsheet->createSheet();
+        $rawAnswers->setTitle('Raw answers');
+        $this->fillRawAnswersSheet($rawAnswers, $quiz);
+
         $results = $spreadsheet->createSheet();
         $results->setTitle('Results');
         $this->fillResultsSheet($results, $quiz);
@@ -182,6 +187,52 @@ class DataExportService
 
         foreach (range('A', 'I') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+    }
+
+    /** Raw crosstab: one row per candidate, one column per question, cell = the answer text they gave. */
+    private function fillRawAnswersSheet(Worksheet $sheet, Quiz $quiz): void
+    {
+        /** @var list<Question> $questions */
+        $questions = $quiz->questions->toArray();
+
+        $header = ['Candidate'];
+        foreach ($questions as $question) {
+            $header[] = $question->question;
+        }
+
+        $sheet->fromArray($header, null, 'A1');
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+        $sheet->getStyle('1:1')->getAlignment()->setWrapText(true);
+
+        /** @var array<string, array<string, string>> $answersByCandidateAndQuestion */
+        $answersByCandidateAndQuestion = [];
+        foreach ($questions as $question) {
+            foreach ($question->answers as $answer) {
+                foreach ($answer->givenAnswers as $givenAnswer) {
+                    $candidateId = $givenAnswer->candidate->id->toString();
+                    $answersByCandidateAndQuestion[$candidateId][$question->id->toString()] = $answer->text;
+                }
+            }
+        }
+
+        $row = 2;
+        foreach ($quiz->candidateData as $quizCandidate) {
+            $candidate = $quizCandidate->candidate;
+
+            $line = [$candidate->name];
+            foreach ($questions as $question) {
+                $line[] = $answersByCandidateAndQuestion[$candidate->id->toString()][$question->id->toString()] ?? '';
+            }
+
+            $sheet->fromArray($line, null, 'A'.$row);
+            ++$row;
+        }
+
+        $lastColumnIndex = 1 + \count($questions);
+        foreach (range('A', Coordinate::stringFromColumnIndex($lastColumnIndex)) as $column) {
+            $sheet->getColumnDimension($column)->setWidth(30);
+            $sheet->getStyle($column.':'.$column)->getAlignment()->setWrapText(true);
         }
     }
 

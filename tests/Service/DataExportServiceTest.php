@@ -7,6 +7,9 @@ namespace Tvdt\Tests\Service;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Tvdt\Entity\Answer;
+use Tvdt\Entity\GivenAnswer;
+use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\User;
@@ -72,7 +75,7 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $quizContent = $zip->getFromName('krtek-Krtek Weekend/Quiz 1.xlsx');
         $this->assertIsString($quizContent);
-        $this->assertSame(['Questions', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
+        $this->assertSame(['Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
 
         $candidatesContent = $zip->getFromName('krtek-Krtek Weekend/candidates.xlsx');
         $this->assertIsString($candidatesContent);
@@ -158,6 +161,44 @@ final class DataExportServiceTest extends DatabaseTestCase
         $hasDeletedRow = array_any(\array_slice($rows, 1), static fn (array $row): bool => null !== $row[$deletedColumnIndex] && '' !== $row[$deletedColumnIndex]);
 
         $this->assertTrue($hasDeletedRow, 'Expected the soft-deleted QuizCandidate to still appear with a Deleted timestamp');
+    }
+
+    public function testRawAnswersSheetShowsCandidatesByQuestionsGrid(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $candidate = $this->getCandidateBySeasonAndName($season, 'Claudia');
+
+        /** @var Question $firstQuestion */
+        $firstQuestion = $quiz->questions->first();
+        $chosenAnswer = $firstQuestion->answers->filter(static fn (Answer $answer): bool => 'Man' === $answer->text)->first();
+        $this->assertInstanceOf(Answer::class, $chosenAnswer);
+
+        $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
+
+        $givenAnswer = new GivenAnswer($candidate, $quiz, $chosenAnswer);
+        $this->entityManager->persist($givenAnswer);
+        $this->entityManager->flush();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek Weekend/Quiz 1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $rows = $this->loadSheet($quizContent, 'Raw answers')->toArray();
+        $header = $rows[0];
+        $this->assertSame('Candidate', $header[0]);
+
+        $questionColumnIndex = array_search($firstQuestion->question, $header, true);
+        $this->assertIsInt($questionColumnIndex);
+
+        $claudiaRow = current(array_filter(
+            \array_slice($rows, 1),
+            static fn (array $row): bool => 'Claudia' === $row[0],
+        ));
+        $this->assertIsArray($claudiaRow);
+        $this->assertSame('Man', $claudiaRow[$questionColumnIndex]);
     }
 
     private function openZip(User $user): \ZipArchive
