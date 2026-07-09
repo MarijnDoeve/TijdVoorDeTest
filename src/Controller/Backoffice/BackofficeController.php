@@ -14,9 +14,11 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
+use Tvdt\Enum\FlashType;
 use Tvdt\Form\CreateSeasonFormType;
 use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Repository\SeasonRepository;
@@ -32,6 +34,7 @@ final class BackofficeController extends AbstractController
         private readonly Security $security,
         private readonly QuizSpreadsheetService $excel,
         private readonly EntityManagerInterface $em,
+        private readonly TranslatorInterface $translator,
     ) {}
 
     #[Route('/backoffice/', name: 'tvdt_backoffice_index')]
@@ -84,8 +87,14 @@ final class BackofficeController extends AbstractController
         requirements: ['quiz' => Requirement::UUID],
         methods: ['GET'],
     )]
-    public function exportQuiz(Quiz $quiz): StreamedResponse
+    public function exportQuiz(Quiz $quiz): Response
     {
+        if (!$this->authenticatedUser->isVerified) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('Please confirm your email address before exporting a quiz.'));
+
+            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
+        }
+
         $response = new StreamedResponse($this->excel->quizToXlsx($quiz));
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, FilenameSanitizer::sanitize($quiz->name).'.xlsx'));

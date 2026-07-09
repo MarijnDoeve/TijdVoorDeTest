@@ -22,6 +22,8 @@ final class BackofficeControllerTest extends WebTestCase
 
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user2@example.org']);
         $this->assertInstanceOf(User::class, $user);
+        $user->isVerified = true;
+        $entityManager->flush();
         $client->loginUser($user);
 
         $quiz = $entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1']);
@@ -33,5 +35,23 @@ final class BackofficeControllerTest extends WebTestCase
         $disposition = (string) $client->getResponse()->headers->get('Content-Disposition');
         $this->assertStringContainsString('filename=Quiz-1.xlsx', $disposition);
         $this->assertStringNotContainsString('Quiz 1.xlsx', $disposition);
+    }
+
+    public function testExportQuizRequiresVerifiedEmail(): void
+    {
+        $client = self::createClient();
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'user2@example.org']);
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertFalse($user->isVerified);
+        $client->loginUser($user);
+
+        $quiz = $entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1']);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+
+        $client->request(Request::METHOD_GET, \sprintf('/backoffice/quiz/%s/export', $quiz->id));
+
+        self::assertResponseRedirects(\sprintf('/backoffice/season/%s', $quiz->season->seasonCode));
     }
 }

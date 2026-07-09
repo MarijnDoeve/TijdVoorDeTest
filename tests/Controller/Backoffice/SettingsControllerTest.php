@@ -361,6 +361,8 @@ final class SettingsControllerTest extends WebTestCase
 
     public function testDownloadDataReturnsAZipWithATimestampedAccountFilename(): void
     {
+        $this->markUserVerified('test@example.org');
+
         $this->client->request(Request::METHOD_GET, '/backoffice/settings/download-data');
 
         self::assertResponseIsSuccessful();
@@ -371,5 +373,24 @@ final class SettingsControllerTest extends WebTestCase
             '/filename=tijd-voor-de-test-data-test-example-org-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.zip/',
             $disposition,
         );
+    }
+
+    public function testDownloadDataRequiresVerifiedEmail(): void
+    {
+        $user = $this->getUserByEmail('test@example.org');
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertFalse($user->isVerified);
+
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings/download-data');
+
+        self::assertResponseRedirects('/backoffice/settings');
+    }
+
+    private function markUserVerified(string $email): void
+    {
+        $user = $this->getUserByEmail($email);
+        $this->assertInstanceOf(User::class, $user);
+        $user->isVerified = true;
+        $this->entityManager->flush();
     }
 }

@@ -155,8 +155,14 @@ final class SettingsController extends AbstractController
     }
 
     #[Route('/backoffice/settings/download-data', name: 'tvdt_backoffice_settings_download_data', methods: ['GET'])]
-    public function downloadData(): BinaryFileResponse
+    public function downloadData(): Response
     {
+        if (!$this->authenticatedUser->isVerified) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('Please confirm your email address before downloading your data.'));
+
+            return $this->redirectToRoute('tvdt_backoffice_settings');
+        }
+
         $zipPath = $this->dataExportService->exportForUser($this->authenticatedUser);
 
         $filename = \sprintf(
