@@ -368,7 +368,7 @@ final class SettingsControllerTest extends WebTestCase
 
         $disposition = (string) $this->client->getResponse()->headers->get('Content-Disposition');
         $this->assertMatchesRegularExpression(
-            '/filename="tijd-voor-de-test-data-test@example\.org-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.zip"/',
+            '/filename=tijd-voor-de-test-data-test-example-org-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.zip/',
             $disposition,
         );
     }

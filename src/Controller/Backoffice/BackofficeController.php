@@ -18,6 +18,7 @@ use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Form\CreateSeasonFormType;
+use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Repository\SeasonRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 use Tvdt\Service\QuizSpreadsheetService;
@@ -87,7 +88,7 @@ final class BackofficeController extends AbstractController
     {
         $response = new StreamedResponse($this->excel->quizToXlsx($quiz));
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $quiz->name.'.xlsx'));
+        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, FilenameSanitizer::sanitize($quiz->name).'.xlsx'));
 
         return $response;
     }

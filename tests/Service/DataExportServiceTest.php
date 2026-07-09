@@ -61,27 +61,27 @@ final class DataExportServiceTest extends DatabaseTestCase
         $names = $this->entryNames($zip);
 
         $this->assertContains('profile.xlsx', $names);
-        $this->assertContains('krtek-Krtek Weekend/Quiz 1.xlsx', $names);
-        $this->assertContains('krtek-Krtek Weekend/Quiz 2.xlsx', $names);
-        $this->assertContains('krtek-Krtek Weekend/candidates.xlsx', $names);
-        $this->assertContains('krtek-Krtek Weekend/question-bank.xlsx', $names);
-        $this->assertContains('bbbbb-Another Season/candidates.xlsx', $names);
-        $this->assertContains('bbbbb-Another Season/question-bank.xlsx', $names);
+        $this->assertContains('krtek-Krtek-Weekend/Quiz-1.xlsx', $names);
+        $this->assertContains('krtek-Krtek-Weekend/Quiz-2.xlsx', $names);
+        $this->assertContains('krtek-Krtek-Weekend/candidates.xlsx', $names);
+        $this->assertContains('krtek-Krtek-Weekend/question-bank.xlsx', $names);
+        $this->assertContains('bbbbb-Another-Season/candidates.xlsx', $names);
+        $this->assertContains('bbbbb-Another-Season/question-bank.xlsx', $names);
 
         // Another Season has no quizzes, so no quiz xlsx should be present for it.
         foreach ($names as $name) {
-            $this->assertStringStartsNotWith('bbbbb-Another Season/Quiz', $name);
+            $this->assertStringStartsNotWith('bbbbb-Another-Season/Quiz', $name);
         }
 
-        $quizContent = $zip->getFromName('krtek-Krtek Weekend/Quiz 1.xlsx');
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
         $this->assertSame(['Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
 
-        $candidatesContent = $zip->getFromName('krtek-Krtek Weekend/candidates.xlsx');
+        $candidatesContent = $zip->getFromName('krtek-Krtek-Weekend/candidates.xlsx');
         $this->assertIsString($candidatesContent);
         $this->assertSame(['Candidates', 'Season info'], $this->sheetNames($candidatesContent));
 
-        $questionBankContent = $zip->getFromName('krtek-Krtek Weekend/question-bank.xlsx');
+        $questionBankContent = $zip->getFromName('krtek-Krtek-Weekend/question-bank.xlsx');
         $this->assertIsString($questionBankContent);
         $this->assertSame(['Questions', 'Labels'], $this->sheetNames($questionBankContent));
 
@@ -92,7 +92,7 @@ final class DataExportServiceTest extends DatabaseTestCase
     {
         $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
 
-        $questionBankContent = $zip->getFromName('krtek-Krtek Weekend/question-bank.xlsx');
+        $questionBankContent = $zip->getFromName('krtek-Krtek-Weekend/question-bank.xlsx');
         $this->assertIsString($questionBankContent);
         $zip->close();
 
@@ -151,7 +151,7 @@ final class DataExportServiceTest extends DatabaseTestCase
         $this->entityManager->clear();
 
         $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
-        $quizContent = $zip->getFromName('krtek-Krtek Weekend/Quiz 1.xlsx');
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
         $zip->close();
 
@@ -182,7 +182,7 @@ final class DataExportServiceTest extends DatabaseTestCase
         $this->entityManager->flush();
 
         $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
-        $quizContent = $zip->getFromName('krtek-Krtek Weekend/Quiz 1.xlsx');
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
         $zip->close();
 

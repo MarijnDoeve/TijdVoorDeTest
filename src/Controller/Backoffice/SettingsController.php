@@ -24,6 +24,7 @@ use Tvdt\Entity\User;
 use Tvdt\Enum\FlashType;
 use Tvdt\Form\ChangeEmailFormType;
 use Tvdt\Form\ChangeUserPasswordFormType;
+use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Repository\UserRepository;
 use Tvdt\Security\EmailVerifier;
 use Tvdt\Service\DataExportService;
@@ -160,7 +161,7 @@ final class SettingsController extends AbstractController
 
         $filename = \sprintf(
             'tijd-voor-de-test-data-%s-%s.zip',
-            DataExportService::sanitizeForPath($this->authenticatedUser->email),
+            FilenameSanitizer::sanitize($this->authenticatedUser->email),
             new DateTimeImmutable()->format('Y-m-d_H-i-s'),
         );
 

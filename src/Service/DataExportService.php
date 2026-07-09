@@ -18,9 +18,9 @@ use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
+use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Repository\QuizRepository;
 
-use function Safe\preg_replace;
 use function Safe\tempnam;
 use function Safe\unlink;
 
@@ -60,12 +60,12 @@ class DataExportService
             $zip->addFile($profilePath, 'profile.xlsx');
 
             foreach ($user->seasons as $season) {
-                $folder = self::sanitizeForPath($season->seasonCode.'-'.$season->name).'/';
+                $folder = FilenameSanitizer::sanitize($season->seasonCode.'-'.$season->name).'/';
 
                 foreach ($season->quizzes as $quiz) {
                     $quizPath = $this->writeToTempFile($this->buildQuizWorkbook($quiz));
                     $tempXlsxFiles[] = $quizPath;
-                    $zip->addFile($quizPath, $folder.self::sanitizeForPath($quiz->name).'.xlsx');
+                    $zip->addFile($quizPath, $folder.FilenameSanitizer::sanitize($quiz->name).'.xlsx');
                 }
 
                 $candidatesPath = $this->writeToTempFile($this->buildCandidatesWorkbook($season));
@@ -401,14 +401,5 @@ class DataExportService
         new Writer\Xlsx($spreadsheet)->save($path);
 
         return $path;
-    }
-
-    /** Strips characters that are unsafe in a zip entry name or a downloaded filename (path separators, traversal, control characters). */
-    public static function sanitizeForPath(string $value): string
-    {
-        $sanitized = preg_replace('#[\\\\/:*?"<>|\x00-\x1F]+#', '-', $value);
-        $sanitized = mb_trim($sanitized, " .\t\n\r\0\x0B-");
-
-        return '' === $sanitized ? 'unnamed' : $sanitized;
     }
 }
