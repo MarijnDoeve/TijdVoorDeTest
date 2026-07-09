@@ -11,7 +11,9 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer;
 use Safe\Exceptions\FilesystemException;
 use Tvdt\Dto\Result;
+use Tvdt\Entity\BankQuestionUsage;
 use Tvdt\Entity\Candidate;
+use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
@@ -68,6 +70,10 @@ class DataExportService
                 $candidatesPath = $this->writeToTempFile($this->buildCandidatesWorkbook($season));
                 $tempXlsxFiles[] = $candidatesPath;
                 $zip->addFile($candidatesPath, $folder.'candidates.xlsx');
+
+                $questionBankPath = $this->writeToTempFile($this->buildQuestionBankWorkbook($season));
+                $tempXlsxFiles[] = $questionBankPath;
+                $zip->addFile($questionBankPath, $folder.'question-bank.xlsx');
             }
 
             $zip->close();
@@ -249,6 +255,92 @@ class DataExportService
         $spreadsheet->setActiveSheetIndex(0);
 
         return $spreadsheet;
+    }
+
+    private function buildQuestionBankWorkbook(Season $season): Spreadsheet
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $questions = $spreadsheet->getActiveSheet();
+        $questions->setTitle('Questions');
+        $this->fillBankQuestionsSheet($questions, $season);
+
+        $labels = $spreadsheet->createSheet();
+        $labels->setTitle('Labels');
+        $this->fillQuestionLabelsSheet($labels, $season);
+
+        $spreadsheet->setActiveSheetIndex(0);
+
+        return $spreadsheet;
+    }
+
+    private function fillBankQuestionsSheet(Worksheet $sheet, Season $season): void
+    {
+        $metaColumns = ['Question', 'Reusable', 'Complete for quiz', 'Labels', 'Used in quizzes'];
+        $sheet->fromArray($metaColumns, null, 'A1');
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+
+        $answerStartColumnIndex = \count($metaColumns);
+        $maxAnswers = 0;
+        $row = 2;
+
+        foreach ($season->bankQuestions as $bankQuestion) {
+            $labels = implode(', ', array_map(
+                static fn (QuestionLabel $label): string => $label->name,
+                $bankQuestion->labels->toArray(),
+            ));
+            $usedInQuizzes = implode(', ', array_map(
+                static fn (BankQuestionUsage $usage): string => $usage->quiz->name,
+                $bankQuestion->usages->toArray(),
+            ));
+
+            $sheet->fromArray([
+                $bankQuestion->question,
+                $bankQuestion->reusable ? 'Yes' : 'No',
+                $bankQuestion->isCompleteForQuiz ? 'Yes' : 'No',
+                $labels,
+                $usedInQuizzes,
+            ], null, 'A'.$row);
+
+            $col = 0;
+            foreach ($bankQuestion->answers as $answer) {
+                $sheet->setCellValue(Coordinate::stringFromColumnIndex($answerStartColumnIndex + 1 + 2 * $col).$row, $answer->text);
+                $sheet->setCellValue(Coordinate::stringFromColumnIndex($answerStartColumnIndex + 2 + 2 * $col).$row, $answer->isRightAnswer);
+                ++$col;
+            }
+
+            $maxAnswers = max($maxAnswers, $col);
+            ++$row;
+        }
+
+        for ($i = 0; $i < $maxAnswers; ++$i) {
+            $answerCol = Coordinate::stringFromColumnIndex($answerStartColumnIndex + 1 + 2 * $i);
+            $correctCol = Coordinate::stringFromColumnIndex($answerStartColumnIndex + 2 + 2 * $i);
+
+            $sheet->setCellValue($answerCol.'1', 'Answer '.($i + 1));
+            $sheet->setCellValue($correctCol.'1', 'Correct');
+        }
+
+        $lastColumnIndex = $answerStartColumnIndex + max(1, 2 * $maxAnswers);
+        foreach (range('A', Coordinate::stringFromColumnIndex($lastColumnIndex)) as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+    }
+
+    private function fillQuestionLabelsSheet(Worksheet $sheet, Season $season): void
+    {
+        $sheet->fromArray(['Name', 'Colour', 'Slug'], null, 'A1');
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+
+        $row = 2;
+        foreach ($season->questionLabels as $label) {
+            $sheet->fromArray([$label->name, $label->colour->name, $label->slug], null, 'A'.$row);
+            ++$row;
+        }
+
+        foreach (['A', 'B', 'C'] as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
     }
 
     /** @throws FilesystemException */

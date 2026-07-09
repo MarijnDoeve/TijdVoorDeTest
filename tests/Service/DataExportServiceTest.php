@@ -61,7 +61,9 @@ final class DataExportServiceTest extends DatabaseTestCase
         $this->assertContains('krtek-Krtek Weekend/Quiz 1.xlsx', $names);
         $this->assertContains('krtek-Krtek Weekend/Quiz 2.xlsx', $names);
         $this->assertContains('krtek-Krtek Weekend/candidates.xlsx', $names);
+        $this->assertContains('krtek-Krtek Weekend/question-bank.xlsx', $names);
         $this->assertContains('bbbbb-Another Season/candidates.xlsx', $names);
+        $this->assertContains('bbbbb-Another Season/question-bank.xlsx', $names);
 
         // Another Season has no quizzes, so no quiz xlsx should be present for it.
         foreach ($names as $name) {
@@ -76,7 +78,43 @@ final class DataExportServiceTest extends DatabaseTestCase
         $this->assertIsString($candidatesContent);
         $this->assertSame(['Candidates', 'Season info'], $this->sheetNames($candidatesContent));
 
+        $questionBankContent = $zip->getFromName('krtek-Krtek Weekend/question-bank.xlsx');
+        $this->assertIsString($questionBankContent);
+        $this->assertSame(['Questions', 'Labels'], $this->sheetNames($questionBankContent));
+
         $zip->close();
+    }
+
+    public function testQuestionBankSheetIncludesBankQuestionsAndUsage(): void
+    {
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+
+        $questionBankContent = $zip->getFromName('krtek-Krtek Weekend/question-bank.xlsx');
+        $this->assertIsString($questionBankContent);
+        $zip->close();
+
+        $rows = $this->loadSheet($questionBankContent, 'Questions')->toArray();
+        $header = $rows[0];
+        $dataRows = \array_slice($rows, 1);
+
+        $questionIndex = array_search('Question', $header, true);
+        $reusableIndex = array_search('Reusable', $header, true);
+        $labelsIndex = array_search('Labels', $header, true);
+        $usedInQuizzesIndex = array_search('Used in quizzes', $header, true);
+
+        $reusableRow = current(array_filter($dataRows, static fn (array $row): bool => 'Wie is de Krtek?' === $row[$questionIndex]));
+        $this->assertIsArray($reusableRow);
+        $this->assertSame('Yes', $reusableRow[$reusableIndex]);
+        $this->assertSame('Finale', $reusableRow[$labelsIndex]);
+
+        $usedRow = current(array_filter($dataRows, static fn (array $row): bool => 'Waar sliep de Krtek?' === $row[$questionIndex]));
+        $this->assertIsArray($usedRow);
+        $this->assertSame('Quiz 2', $usedRow[$usedInQuizzesIndex]);
+
+        $labelRows = $this->loadSheet($questionBankContent, 'Labels')->toArray();
+        $labelNames = array_column(\array_slice($labelRows, 1), 0);
+        $this->assertContains('Locatie', $labelNames);
+        $this->assertContains('Finale', $labelNames);
     }
 
     public function testProfileSheetDoesNotContainPasswordHash(): void
