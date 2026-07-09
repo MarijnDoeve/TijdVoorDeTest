@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -15,18 +13,8 @@ use Tvdt\Controller\ResetPasswordController;
 use Tvdt\Entity\User;
 
 #[CoversClass(ResetPasswordController::class)]
-final class ResetPasswordControllerTest extends WebTestCase
+final class ResetPasswordControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    }
-
     public function testRequestPageLoads(): void
     {
         $this->client->request(Request::METHOD_GET, '/reset-password');
@@ -35,22 +23,19 @@ final class ResetPasswordControllerTest extends WebTestCase
         $this->assertSelectorExists('form');
     }
 
-    public function testRequestWithUnknownEmailRedirectsToCheckEmail(): void
+    /** @return iterable<string, array{string}> */
+    public static function emailProvider(): iterable
     {
-        $this->client->request(Request::METHOD_GET, '/reset-password');
-        $form = $this->client->getCrawler()->filter('form')->form([
-            'reset_password_request_form[email]' => 'unknown@example.org',
-        ]);
-        $this->client->submit($form);
-
-        $this->assertResponseRedirects('/reset-password/check-email');
+        yield 'unknown email' => ['unknown@example.org'];
+        yield 'known email' => ['test@example.org'];
     }
 
-    public function testRequestWithKnownEmailRedirectsToCheckEmail(): void
+    #[DataProvider('emailProvider')]
+    public function testRequestRedirectsToCheckEmail(string $email): void
     {
         $this->client->request(Request::METHOD_GET, '/reset-password');
         $form = $this->client->getCrawler()->filter('form')->form([
-            'reset_password_request_form[email]' => 'test@example.org',
+            'reset_password_request_form[email]' => $email,
         ]);
         $this->client->submit($form);
 

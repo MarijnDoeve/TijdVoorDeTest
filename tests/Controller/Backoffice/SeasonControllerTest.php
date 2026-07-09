@@ -4,40 +4,27 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller\Backoffice;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\SeasonController;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Season;
-use Tvdt\Entity\User;
+use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(SeasonController::class)]
-final class SeasonControllerTest extends WebTestCase
+final class SeasonControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
     protected function setUp(): void
     {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        parent::setUp();
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'krtek-admin@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
+        $this->loginAs('krtek-admin@example.org');
     }
 
     public function testRegenerateSeasonCodeChangesTheCode(): void
     {
         $oldCode = 'krtek';
-        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/%s/settings', $oldCode));
-        self::assertResponseIsSuccessful();
-
-        $token = (string) $crawler->filter('form[action*="/regenerate-code"] input[name="_token"]')->first()->attr('value');
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/season/%s/settings', $oldCode), '/regenerate-code');
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/%s/settings/regenerate-code', $oldCode), [
             '_token' => $token,
@@ -54,13 +41,9 @@ final class SeasonControllerTest extends WebTestCase
 
     public function testRegenerateSeasonCodeIsDeniedForNonOwner(): void
     {
-        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/settings');
-        self::assertResponseIsSuccessful();
-        $token = (string) $crawler->filter('form[action*="/regenerate-code"] input[name="_token"]')->first()->attr('value');
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/settings', '/regenerate-code');
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
+        $this->loginAs('test@example.org');
 
         $this->client->request(Request::METHOD_POST, '/backoffice/season/krtek/settings/regenerate-code', [
             '_token' => $token,
@@ -69,29 +52,10 @@ final class SeasonControllerTest extends WebTestCase
         self::assertResponseStatusCodeSame(403);
     }
 
-    private function getCandidate(string $name): Candidate
-    {
-        $candidate = $this->entityManager->getRepository(Candidate::class)->findOneBy(['name' => $name]);
-        $this->assertInstanceOf(Candidate::class, $candidate);
-
-        return $candidate;
-    }
-
-    private function getCsrfTokenFromCandidatesTab(string $formActionContains): string
-    {
-        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/candidates');
-        self::assertResponseIsSuccessful();
-
-        $input = $crawler->filter(\sprintf('form[action*="%s"] input[name="_token"]', $formActionContains));
-        $this->assertGreaterThan(0, $input->count(), \sprintf('No form found with action containing "%s"', $formActionContains));
-
-        return (string) $input->first()->attr('value');
-    }
-
     public function testRenameCandidate(): void
     {
         $candidate = $this->getCandidate('Tom');
-        $token = $this->getCsrfTokenFromCandidatesTab(\sprintf('/candidate/%s/rename', $candidate->id));
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/candidates', \sprintf('/candidate/%s/rename', $candidate->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/candidate/%s/rename', $candidate->id), [
             '_token' => $token,
@@ -109,7 +73,7 @@ final class SeasonControllerTest extends WebTestCase
     public function testRenameCandidateToExistingNameShowsError(): void
     {
         $candidate = $this->getCandidate('Tom');
-        $token = $this->getCsrfTokenFromCandidatesTab(\sprintf('/candidate/%s/rename', $candidate->id));
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/candidates', \sprintf('/candidate/%s/rename', $candidate->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/candidate/%s/rename', $candidate->id), [
             '_token' => $token,
@@ -128,7 +92,7 @@ final class SeasonControllerTest extends WebTestCase
     {
         $candidate = $this->getCandidate('Tom');
         $candidateId = $candidate->id;
-        $token = $this->getCsrfTokenFromCandidatesTab(\sprintf('/candidate/%s/delete', $candidate->id));
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/candidates', \sprintf('/candidate/%s/delete', $candidate->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/candidate/%s/delete', $candidate->id), [
             '_token' => $token,
@@ -143,11 +107,9 @@ final class SeasonControllerTest extends WebTestCase
     public function testRenameCandidateIsDeniedForNonOwner(): void
     {
         $candidate = $this->getCandidate('Tom');
-        $token = $this->getCsrfTokenFromCandidatesTab(\sprintf('/candidate/%s/rename', $candidate->id));
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/candidates', \sprintf('/candidate/%s/rename', $candidate->id));
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
+        $this->loginAs('test@example.org');
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/candidate/%s/rename', $candidate->id), [
             '_token' => $token,

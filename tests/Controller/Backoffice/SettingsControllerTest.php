@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller\Backoffice;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Safe\DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Tvdt\Controller\Backoffice\SettingsController;
@@ -17,43 +15,21 @@ use Tvdt\Entity\Quiz;
 use Tvdt\Entity\ResetPasswordRequest;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
+use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(SettingsController::class)]
-final class SettingsControllerTest extends WebTestCase
+final class SettingsControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
     protected function setUp(): void
     {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        parent::setUp();
 
         $this->loginAs('test@example.org');
     }
 
-    private function loginAs(string $email): void
-    {
-        $user = $this->getUserByEmail($email);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
-    }
-
-    private function getUserByEmail(string $email): ?User
-    {
-        return $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-    }
-
     private function getCsrfTokenFromSettings(string $formActionContains): string
     {
-        $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/settings');
-        self::assertResponseIsSuccessful();
-
-        $input = $crawler->filter(\sprintf('form[action*="%s"] input[name="_token"]', $formActionContains));
-        $this->assertGreaterThan(0, $input->count(), \sprintf('No form found with action containing "%s"', $formActionContains));
-
-        return (string) $input->first()->attr('value');
+        return $this->getCsrfTokenFromPage('/backoffice/settings', $formActionContains);
     }
 
     public function testSettingsPageLoadsAndNavContainsSettingsLink(): void
@@ -98,7 +74,6 @@ final class SettingsControllerTest extends WebTestCase
         $this->entityManager->clear();
 
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
         $this->assertTrue($hasher->isPasswordValid($user, 'NewPass123!'));
 
@@ -107,32 +82,21 @@ final class SettingsControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
-    public function testChangePasswordWithWrongCurrentPasswordIsRejected(): void
+    /** @return iterable<string, array{string, string, string}> */
+    public static function invalidPasswordChangeProvider(): iterable
     {
-        $this->client->request(Request::METHOD_GET, '/backoffice/settings');
-        $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
-            'change_user_password_form[currentPassword]' => 'wrong-password',
-            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
-            'change_user_password_form[plainPassword][second]' => 'NewPass123!',
-        ]);
-        $this->client->submit($form);
-
-        self::assertResponseStatusCodeSame(422);
-        $this->entityManager->clear();
-
-        $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
-        $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
-        $this->assertTrue($hasher->isPasswordValid($user, TestFixtures::PASSWORD));
+        yield 'wrong current password' => ['wrong-password', 'NewPass123!', 'NewPass123!'];
+        yield 'mismatched repeat' => [TestFixtures::PASSWORD, 'NewPass123!', 'SomethingElse!'];
     }
 
-    public function testChangePasswordWithMismatchedRepeatIsRejected(): void
+    #[DataProvider('invalidPasswordChangeProvider')]
+    public function testChangePasswordIsRejected(string $currentPassword, string $first, string $second): void
     {
         $this->client->request(Request::METHOD_GET, '/backoffice/settings');
         $form = $this->client->getCrawler()->filter('form[action*="/backoffice/settings/password"]')->form([
-            'change_user_password_form[currentPassword]' => TestFixtures::PASSWORD,
-            'change_user_password_form[plainPassword][first]' => 'NewPass123!',
-            'change_user_password_form[plainPassword][second]' => 'SomethingElse!',
+            'change_user_password_form[currentPassword]' => $currentPassword,
+            'change_user_password_form[plainPassword][first]' => $first,
+            'change_user_password_form[plainPassword][second]' => $second,
         ]);
         $this->client->submit($form);
 
@@ -140,7 +104,6 @@ final class SettingsControllerTest extends WebTestCase
         $this->entityManager->clear();
 
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $hasher = self::getContainer()->get(UserPasswordHasherInterface::class);
         $this->assertTrue($hasher->isPasswordValid($user, TestFixtures::PASSWORD));
     }
@@ -157,9 +120,8 @@ final class SettingsControllerTest extends WebTestCase
         self::assertEmailCount(1);
         $this->entityManager->clear();
 
-        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+        $this->assertNotInstanceOf(User::class, $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@example.org']));
         $user = $this->getUserByEmail('new-address@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->assertFalse($user->isVerified);
 
         // User stays logged in
@@ -179,7 +141,7 @@ final class SettingsControllerTest extends WebTestCase
         self::assertEmailCount(0);
         $this->entityManager->clear();
 
-        $this->assertInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+        $this->getUserByEmail('test@example.org');
     }
 
     public function testResendConfirmationEmailSendsEmail(): void
@@ -200,8 +162,8 @@ final class SettingsControllerTest extends WebTestCase
         $token = $this->getCsrfTokenFromSettings('/backoffice/settings/resend-confirmation');
 
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $user->isVerified = true;
+
         $this->entityManager->flush();
 
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/settings');
@@ -242,7 +204,6 @@ final class SettingsControllerTest extends WebTestCase
     public function testChangePasswordInvalidatesResetPasswordRequests(): void
     {
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->createResetPasswordRequest($user);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/settings');
@@ -257,14 +218,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->entityManager->clear();
 
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->assertSame(0, $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $user]));
     }
 
     public function testChangeEmailInvalidatesResetPasswordRequests(): void
     {
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->createResetPasswordRequest($user);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/settings');
@@ -277,7 +236,6 @@ final class SettingsControllerTest extends WebTestCase
         $this->entityManager->clear();
 
         $user = $this->getUserByEmail('new-address@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->assertSame(0, $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $user]));
     }
 
@@ -293,7 +251,7 @@ final class SettingsControllerTest extends WebTestCase
         self::assertResponseRedirects('/backoffice/settings');
         $this->entityManager->clear();
 
-        $this->assertInstanceOf(User::class, $this->getUserByEmail('test@example.org'));
+        $this->getUserByEmail('test@example.org');
     }
 
     public function testDeleteAccountRemovesSoleOwnerSeasonsAndKeepsSharedSeasons(): void
@@ -309,7 +267,7 @@ final class SettingsControllerTest extends WebTestCase
         self::assertResponseRedirects();
         $this->entityManager->clear();
 
-        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('sole-owner@example.org'));
+        $this->assertNotInstanceOf(User::class, $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'sole-owner@example.org']));
 
         // Sole-owner season is removed, including its quiz
         $this->assertNotInstanceOf(Season::class, $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'doomd']));
@@ -340,7 +298,7 @@ final class SettingsControllerTest extends WebTestCase
         self::assertResponseRedirects();
         $this->entityManager->clear();
 
-        $this->assertNotInstanceOf(User::class, $this->getUserByEmail('user2@example.org'));
+        $this->assertNotInstanceOf(User::class, $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'user2@example.org']));
 
         foreach (['krtek', 'bbbbb'] as $seasonCode) {
             $season = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => $seasonCode]);
@@ -378,7 +336,6 @@ final class SettingsControllerTest extends WebTestCase
     public function testDownloadDataRequiresVerifiedEmail(): void
     {
         $user = $this->getUserByEmail('test@example.org');
-        $this->assertInstanceOf(User::class, $user);
         $this->assertFalse($user->isVerified);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/settings/download-data');
@@ -389,8 +346,8 @@ final class SettingsControllerTest extends WebTestCase
     private function markUserVerified(string $email): void
     {
         $user = $this->getUserByEmail($email);
-        $this->assertInstanceOf(User::class, $user);
         $user->isVerified = true;
+
         $this->entityManager->flush();
     }
 }

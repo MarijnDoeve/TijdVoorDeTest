@@ -4,47 +4,18 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller\Backoffice;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\QuizQuestionController;
 use Tvdt\Entity\Question;
-use Tvdt\Entity\Quiz;
-use Tvdt\Entity\User;
+use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(QuizQuestionController::class)]
-final class QuizQuestionControllerTest extends WebTestCase
+final class QuizQuestionControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    }
-
-    private function loginAsOwner(): void
-    {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'krtek-admin@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
-    }
-
-    private function getQuizByName(string $name): Quiz
-    {
-        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => $name]);
-        $this->assertInstanceOf(Quiz::class, $quiz);
-
-        return $quiz;
-    }
-
     public function testEditPreservesAnswerOrdering(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
 
         $quiz = $this->getQuizByName('Quiz 2');
         $question = null;
@@ -111,7 +82,7 @@ final class QuizQuestionControllerTest extends WebTestCase
 
     public function testReorderQuestionsWithinQuiz(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
 
         $quiz = $this->getQuizByName('Quiz 2');
         $originalQuestions = $quiz->questions->toArray();

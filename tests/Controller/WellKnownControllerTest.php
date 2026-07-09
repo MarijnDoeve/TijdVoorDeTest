@@ -6,21 +6,12 @@ namespace Tvdt\Tests\Controller;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use Safe\DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\WellKnownController;
 
 #[CoversClass(WellKnownController::class)]
-final class WellKnownControllerTest extends WebTestCase
+final class WellKnownControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = self::createClient();
-    }
-
     public function testChangePasswordRedirectsToSettings(): void
     {
         $this->client->request(Request::METHOD_GET, '/.well-known/change-password');
