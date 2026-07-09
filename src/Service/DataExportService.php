@@ -52,7 +52,11 @@ class DataExportService
         $tempXlsxFiles = [];
 
         $zip = new \ZipArchive();
-        $zip->open($zipPath, \ZipArchive::OVERWRITE);
+        if (true !== $zip->open($zipPath, \ZipArchive::OVERWRITE)) {
+            unlink($zipPath);
+
+            throw new \RuntimeException('Could not create the export zip archive.');
+        }
 
         try {
             $profilePath = $this->writeToTempFile($this->buildProfileWorkbook($user));
@@ -77,7 +81,13 @@ class DataExportService
                 $zip->addFile($questionBankPath, $folder.'question-bank.xlsx');
             }
 
-            $zip->close();
+            if (!$zip->close()) {
+                throw new \RuntimeException('Could not finalize the export zip archive.');
+            }
+        } catch (\Throwable $throwable) {
+            unlink($zipPath);
+
+            throw $throwable;
         } finally {
             foreach ($tempXlsxFiles as $tempXlsxFile) {
                 unlink($tempXlsxFile);
@@ -398,7 +408,14 @@ class DataExportService
     private function writeToTempFile(Spreadsheet $spreadsheet): string
     {
         $path = tempnam(sys_get_temp_dir(), 'tvdt_export_sheet_');
-        new Writer\Xlsx($spreadsheet)->save($path);
+
+        try {
+            new Writer\Xlsx($spreadsheet)->save($path);
+        } catch (\Throwable $throwable) {
+            unlink($path);
+
+            throw $throwable;
+        }
 
         return $path;
     }
