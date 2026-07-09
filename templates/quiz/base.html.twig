@@ -1,3 +1,13 @@
 {% extends 'base.html.twig' %}
 {% block importmap %}{{ importmap('quiz') }}{% endblock %}
 {% block nav %}{{ include('quiz/nav.html.twig') }}{% endblock %}
+{% block main %}
+    <div data-controller="fullscreen" data-action="keydown@document->fullscreen#keydown">
+        <button type="button"
+                class="fullscreen-btn"
+                data-action="fullscreen#toggle"
+                aria-label="{{ 'Fullscreen'|trans }}"
+                title="{{ 'Fullscreen'|trans }}">⛶</button>
+        {{ parent() }}
+    </div>
+{% endblock %}

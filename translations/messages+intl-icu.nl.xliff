@@ -369,6 +369,10 @@
         <source>Forgot your password?</source>
         <target>Wachtwoord vergeten?</target>
       </trans-unit>
+      <trans-unit id="3cWWP_q" resname="Fullscreen">
+        <source>Fullscreen</source>
+        <target>Volledig scherm</target>
+      </trans-unit>
       <trans-unit id="MebBrmp" resname="Gray">
         <source>Gray</source>
         <target>Grijs</target>
