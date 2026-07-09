@@ -285,17 +285,16 @@ class DataExportService
 
         $candidatesSheet = $spreadsheet->getActiveSheet();
         $candidatesSheet->setTitle('Candidates');
-        $candidatesSheet->fromArray(['Name', 'Public link identifier'], null, 'A1');
+        $candidatesSheet->fromArray(['Name'], null, 'A1');
         $candidatesSheet->getStyle('1:1')->getFont()->setBold(true);
 
         $row = 2;
         foreach ($season->candidates as $candidate) {
-            $candidatesSheet->fromArray([$candidate->name, $candidate->nameHash], null, 'A'.$row);
+            $candidatesSheet->fromArray([$candidate->name], null, 'A'.$row);
             ++$row;
         }
 
         $candidatesSheet->getColumnDimension('A')->setAutoSize(true);
-        $candidatesSheet->getColumnDimension('B')->setAutoSize(true);
 
         $infoSheet = $spreadsheet->createSheet();
         $infoSheet->setTitle('Season info');
