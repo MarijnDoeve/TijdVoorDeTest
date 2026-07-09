@@ -10,10 +10,12 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -95,6 +97,24 @@ class SeasonController extends AbstractController
             'activeTab' => 'settings',
             'template' => 'backoffice/season/tab_settings.html.twig',
         ]);
+    }
+
+    #[IsCsrfTokenValid('regenerate_season_code')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'season')]
+    #[Route(
+        '/backoffice/season/{seasonCode:season}/settings/regenerate-code',
+        name: 'tvdt_backoffice_season_regenerate_code',
+        requirements: ['seasonCode' => self::SEASON_CODE_REGEX],
+        methods: ['POST'],
+    )]
+    public function regenerateSeasonCode(Season $season): RedirectResponse
+    {
+        $season->generateSeasonCode();
+        $this->em->flush();
+
+        $this->addFlash(FlashType::Success, $this->translator->trans('Season code regenerated'));
+
+        return $this->redirectToRoute('tvdt_backoffice_season_settings', ['seasonCode' => $season->seasonCode]);
     }
 
     #[IsGranted(SeasonVoter::EDIT, subject: 'season')]

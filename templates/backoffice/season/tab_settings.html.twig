@@ -1,8 +1,40 @@
 <div class="row">
     <div class="col-md-6 col-12">
         {{ form(form) }}
+
+        <hr>
+
+        <h4 class="text-danger">{{ 'Season code'|trans }}</h4>
+        <p>{{ 'The season code is used by candidates to join this season. Regenerating it invalidates the current code, so make sure to share the new one.'|trans }}</p>
+        <p><strong>{{ 'Current code:'|trans }}</strong> {{ season.seasonCode }}</p>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#regenerateSeasonCodeModal">
+            {{ 'Regenerate season code...'|trans }}
+        </button>
     </div>
     <div class="col-md-6 col-12">
         {{ include('backoffice/help/season_settings.html.twig') }}
+    </div>
+</div>
+
+<div class="modal fade" id="regenerateSeasonCodeModal" data-bs-backdrop="static"
+     tabindex="-1"
+     aria-labelledby="regenerateSeasonCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ path('tvdt_backoffice_season_regenerate_code', {seasonCode: season.seasonCode}) }}" method="POST">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="regenerateSeasonCodeModalLabel">{{ 'Regenerate season code'|trans }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ 'This invalidates the current season code. Anyone using the old code will no longer be able to join this season.'|trans }}</p>
+                    <input type="hidden" name="_token" value="{{ csrf_token('regenerate_season_code') }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-danger">{{ 'Regenerate season code'|trans }}</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
