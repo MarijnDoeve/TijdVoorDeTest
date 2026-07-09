@@ -25,15 +25,6 @@ export default class extends Controller {
     }
   }
 
-  keydown(event) {
-    if (event.key.toLowerCase() !== 'f' || document.fullscreenElement) {
-      return;
-    }
-
-    event.preventDefault();
-    this.request();
-  }
-
   request() {
     document.documentElement.requestFullscreen().catch(() => {});
   }

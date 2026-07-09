@@ -2,7 +2,7 @@
 {% block importmap %}{{ importmap('quiz') }}{% endblock %}
 {% block nav %}{{ include('quiz/nav.html.twig') }}{% endblock %}
 {% block main %}
-    <div data-controller="fullscreen" data-action="keydown@document->fullscreen#keydown">
+    <div data-controller="fullscreen">
         <button type="button"
                 class="fullscreen-btn"
                 data-action="fullscreen#toggle"
