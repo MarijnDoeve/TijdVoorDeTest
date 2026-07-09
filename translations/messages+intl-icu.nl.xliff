@@ -205,6 +205,14 @@
         <source>Confirm Answers</source>
         <target>Bevestig antwoorden</target>
       </trans-unit>
+      <trans-unit id="T1Z6nI1" resname="Confirm your email address to enable this feature.">
+        <source>Confirm your email address to enable this feature.</source>
+        <target>Bevestig je e-mailadres om deze functie te kunnen gebruiken.</target>
+      </trans-unit>
+      <trans-unit id="QZfvKMx" resname="Confirm your email address to enable this.">
+        <source>Confirm your email address to enable this.</source>
+        <target>Bevestig je e-mailadres om dit te gebruiken.</target>
+      </trans-unit>
       <trans-unit id="PiAVEe9" resname="Confirmed">
         <source>Confirmed</source>
         <target>Bevestigd</target>
@@ -292,6 +300,10 @@
       <trans-unit id="R9yHzHv" resname="Download Template">
         <source>Download Template</source>
         <target>Download sjabloon</target>
+      </trans-unit>
+      <trans-unit id="43g0Dc8" resname="Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.">
+        <source>Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.</source>
+        <target>Download een archief met alles wat onder je account is opgeslagen: je profiel, de seizoenen die je bezit, met de bijbehorende testen, resultaten en kandidaten.</target>
       </trans-unit>
       <trans-unit id="58e2QWG" resname="Download data">
         <source>Download data</source>
@@ -556,6 +568,18 @@
       <trans-unit id="6EclFME" resname="Please Confirm your Email">
         <source>Please Confirm your Email</source>
         <target>Bevestig je e-mailadres alsjeblieft</target>
+      </trans-unit>
+      <trans-unit id="7osID7L" resname="Please confirm your email address before downloading your data.">
+        <source>Please confirm your email address before downloading your data.</source>
+        <target>Bevestig eerst je e-mailadres voordat je je gegevens downloadt.</target>
+      </trans-unit>
+      <trans-unit id="XS4opCD" resname="Please confirm your email address before exporting a quiz.">
+        <source>Please confirm your email address before exporting a quiz.</source>
+        <target>Bevestig je e-mailadres voordat je een quiz exporteert.</target>
+      </trans-unit>
+      <trans-unit id="y4TgBCP" resname="Please confirm your email address before exporting data.">
+        <source>Please confirm your email address before exporting data.</source>
+        <target>Bevestig eerst je e-mailadres voordat je gegevens exporteert.</target>
       </trans-unit>
       <trans-unit id="mq1QYAv" resname="Please select an answer">
         <source>Please select an answer</source>

@@ -6,9 +6,12 @@ namespace Tvdt\Controller\Backoffice;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Safe\DateTimeImmutable;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +24,10 @@ use Tvdt\Entity\User;
 use Tvdt\Enum\FlashType;
 use Tvdt\Form\ChangeEmailFormType;
 use Tvdt\Form\ChangeUserPasswordFormType;
+use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Repository\UserRepository;
 use Tvdt\Security\EmailVerifier;
+use Tvdt\Service\DataExportService;
 
 final class SettingsController extends AbstractController
 {
@@ -33,6 +38,7 @@ final class SettingsController extends AbstractController
         private readonly EmailVerifier $emailVerifier,
         private readonly Security $security,
         private readonly TranslatorInterface $translator,
+        private readonly DataExportService $dataExportService,
     ) {}
 
     #[Route('/backoffice/settings', name: 'tvdt_backoffice_settings', methods: ['GET'])]
@@ -146,6 +152,34 @@ final class SettingsController extends AbstractController
         }
 
         return $this->redirectToRoute('tvdt_backoffice_settings');
+    }
+
+    #[Route('/backoffice/settings/download-data', name: 'tvdt_backoffice_settings_download_data', methods: ['GET'])]
+    public function downloadData(): Response
+    {
+        if (!$this->authenticatedUser->isVerified) {
+            $this->addFlash(FlashType::Warning, $this->translator->trans('Please confirm your email address before downloading your data.'));
+
+            return $this->redirectToRoute('tvdt_backoffice_settings');
+        }
+
+        $zipPath = $this->dataExportService->exportForUser($this->authenticatedUser);
+
+        $filename = \sprintf(
+            'tijd-voor-de-test-data-%s-%s.zip',
+            FilenameSanitizer::sanitize($this->authenticatedUser->email),
+            new DateTimeImmutable()->format('Y-m-d_H-i-s'),
+        );
+
+        $response = new BinaryFileResponse($zipPath);
+        $response->deleteFileAfterSend(true);
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set(
+            'Content-Disposition',
+            HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $filename),
+        );
+
+        return $response;
     }
 
     #[IsCsrfTokenValid('delete_account')]
