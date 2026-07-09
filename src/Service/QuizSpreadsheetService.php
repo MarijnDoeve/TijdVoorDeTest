@@ -7,6 +7,7 @@ namespace Tvdt\Service;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer;
 use Symfony\Component\HttpFoundation\File\File;
 use Tvdt\Entity\Answer;
@@ -117,8 +118,13 @@ class QuizSpreadsheetService
     public function quizToXlsx(Quiz $quiz): \Closure
     {
         $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        $this->fillQuestionsSheet($spreadsheet->getActiveSheet(), $quiz);
 
+        return $this->toXlsx($spreadsheet);
+    }
+
+    public function fillQuestionsSheet(Worksheet $sheet, Quiz $quiz): void
+    {
         // Write data rows first so we know the maximum answer count.
         $maxAnswers = 0;
         $row = 2;
@@ -153,11 +159,9 @@ class QuizSpreadsheetService
             $sheet->setCellValue($correctCol.'1', 'Correct');
             $sheet->getColumnDimension($correctCol)->setAutoSize(true);
         }
-
-        return $this->toXlsx($spreadsheet);
     }
 
-    private function toXlsx(Spreadsheet $spreadsheet): \Closure
+    public function toXlsx(Spreadsheet $spreadsheet): \Closure
     {
         $writer = new Writer\Xlsx($spreadsheet);
 

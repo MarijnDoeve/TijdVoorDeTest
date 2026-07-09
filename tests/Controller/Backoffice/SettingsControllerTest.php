@@ -350,4 +350,26 @@ final class SettingsControllerTest extends WebTestCase
             $this->assertNotEmpty($ownerEmails);
         }
     }
+
+    public function testDownloadDataRequiresAuthentication(): void
+    {
+        $this->client->restart();
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings/download-data');
+
+        self::assertResponseRedirects();
+    }
+
+    public function testDownloadDataReturnsAZipWithATimestampedAccountFilename(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/settings/download-data');
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseHeaderSame('Content-Type', 'application/zip');
+
+        $disposition = (string) $this->client->getResponse()->headers->get('Content-Disposition');
+        $this->assertMatchesRegularExpression(
+            '/filename="tijd-voor-de-test-data-test@example\.org-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.zip"/',
+            $disposition,
+        );
+    }
 }

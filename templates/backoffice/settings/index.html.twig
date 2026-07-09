@@ -55,14 +55,10 @@
                 {{ form(emailForm, {action: path('tvdt_backoffice_settings_email')}) }}
             </section>
 
-            <section class="mb-5" data-controller="bo--popover">
+            <section class="mb-5">
                 <h4>{{ 'Your data'|trans }}</h4>
-                <span class="d-inline-block" tabindex="0"
-                      data-bs-toggle="popover"
-                      data-bs-trigger="hover focus"
-                      data-bs-content="{{ 'Soon™'|trans }}">
-                    <button type="button" class="btn btn-secondary pe-none" disabled>{{ 'Download data'|trans }}</button>
-                </span>
+                <p>{{ 'Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.'|trans }}</p>
+                <a class="btn btn-secondary" href="{{ path('tvdt_backoffice_settings_download_data') }}">{{ 'Download data'|trans }}</a>
             </section>
 
             <section class="mb-5">
