@@ -143,7 +143,11 @@ class DataExportService
     {
         $spreadsheet = new Spreadsheet();
 
-        $questions = $spreadsheet->getActiveSheet();
+        $info = $spreadsheet->getActiveSheet();
+        $info->setTitle('Quiz info');
+        $this->fillQuizInfoSheet($info, $quiz);
+
+        $questions = $spreadsheet->createSheet();
         $questions->setTitle('Questions');
 
         $this->quizSpreadsheetService->fillQuestionsSheet($questions, $quiz);
@@ -163,6 +167,25 @@ class DataExportService
         $spreadsheet->setActiveSheetIndex(0);
 
         return $spreadsheet;
+    }
+
+    private function fillQuizInfoSheet(Worksheet $sheet, Quiz $quiz): void
+    {
+        $disabledQuestions = $quiz->questions
+            ->filter(static fn (Question $question): bool => !$question->enabled)
+            ->map(static fn (Question $question): string => $question->question)
+            ->toArray();
+
+        $sheet->getStyle('A:A')->getFont()->setBold(true);
+        $sheet->fromArray([
+            ['Quiz name', $quiz->name],
+            ['Number of dropouts', $quiz->dropouts],
+            ['Finalized', $quiz->isFinalized ? 'Yes' : 'No'],
+            ['Finalized at', $quiz->finalizedAt?->format(\DateTimeInterface::ATOM) ?? ''],
+            ['Disabled questions', implode(', ', $disabledQuestions)],
+        ], null, 'A1');
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
     }
 
     private function fillResultsSheet(Worksheet $sheet, Quiz $quiz): void

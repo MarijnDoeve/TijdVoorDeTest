@@ -75,7 +75,7 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
-        $this->assertSame(['Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
+        $this->assertSame(['Quiz info', 'Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
 
         $candidatesContent = $zip->getFromName('krtek-Krtek-Weekend/candidates.xlsx');
         $this->assertIsString($candidatesContent);
@@ -199,6 +199,37 @@ final class DataExportServiceTest extends DatabaseTestCase
         ));
         $this->assertIsArray($claudiaRow);
         $this->assertSame('Man', $claudiaRow[$questionColumnIndex]);
+    }
+
+    public function testQuizInfoSheetShowsDropoutsFinalizationAndDisabledQuestions(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $this->assertTrue($quiz->isFinalized);
+
+        /** @var Question $disabledQuestion */
+        $disabledQuestion = $quiz->questions->first();
+        $disabledQuestion->enabled = false;
+
+        $this->entityManager->flush();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $rows = $this->loadSheet($quizContent, 'Quiz info')->toArray();
+        $values = [];
+        foreach ($rows as $row) {
+            $values[$row[0]] = $row[1];
+        }
+
+        $this->assertSame('Quiz 1', $values['Quiz name']);
+        $this->assertSame($quiz->dropouts, (int) $values['Number of dropouts']);
+        $this->assertSame('Yes', $values['Finalized']);
+        $this->assertNotEmpty($values['Finalized at']);
+        $this->assertStringContainsString($disabledQuestion->question, (string) $values['Disabled questions']);
     }
 
     private function openZip(User $user): \ZipArchive
