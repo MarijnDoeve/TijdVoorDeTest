@@ -32,7 +32,7 @@ init:
         echo "IMAGES_PREFIX=${project}-"
         echo "HTTP_PORT=$(free_port 8080 8179)"
         echo "HTTPS_PORT=$(free_port 8443 8542)"
-        echo "POSTGRES_PORT=$(free_port 5433 5532)"
+        echo "POSTGRES_PORT=$(free_port 5430 5529)"
         echo "MAILPIT_PORT=$(free_port 8025 8124)"
         echo "SPOTLIGHT_PORT=$(free_port 8969 9068)"
     } >> .env.local

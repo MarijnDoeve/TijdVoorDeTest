@@ -56,7 +56,7 @@ services:
   ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "${POSTGRES_PORT:-5430}:5432"
   ###< doctrine/doctrine-bundle ###
   
   ###> symfony/mailer ###
