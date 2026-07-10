@@ -52,6 +52,8 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $this->assertTrue($response->isRedirect());
         $this->assertStringContainsString('/backoffice/elimination/', (string) $response->headers->get('Location'));
 
+        $this->entityManager->clear();
+        $quiz = $this->getQuizByName('Quiz 1');
         $elimination = $this->entityManager->getRepository(Elimination::class)->findOneBy(['quiz' => $quiz]);
         $this->assertInstanceOf(Elimination::class, $elimination);
         $this->assertArrayHasKey('Tom', $elimination->data);

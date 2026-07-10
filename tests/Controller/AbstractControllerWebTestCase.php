@@ -39,17 +39,19 @@ abstract class AbstractControllerWebTestCase extends WebTestCase
         $this->client->loginUser($this->getUserByEmail($email));
     }
 
-    protected function getQuizByName(string $name): Quiz
+    /** Quiz names are only unique per season (see Quiz's UniqueConstraint), so this is scoped by season code. */
+    protected function getQuizByName(string $name, string $seasonCode = 'krtek'): Quiz
     {
-        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => $name]);
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => $name, 'season' => $this->getSeasonByCode($seasonCode)]);
         $this->assertInstanceOf(Quiz::class, $quiz);
 
         return $quiz;
     }
 
-    protected function getCandidate(string $name): Candidate
+    /** Candidate names are only unique per season (see Candidate's UniqueConstraint), so this is scoped by season code. */
+    protected function getCandidate(string $name, string $seasonCode = 'krtek'): Candidate
     {
-        $candidate = $this->entityManager->getRepository(Candidate::class)->findOneBy(['name' => $name]);
+        $candidate = $this->entityManager->getRepository(Candidate::class)->findOneBy(['name' => $name, 'season' => $this->getSeasonByCode($seasonCode)]);
         $this->assertInstanceOf(Candidate::class, $candidate);
 
         return $candidate;

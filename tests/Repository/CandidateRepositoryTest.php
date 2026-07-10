@@ -53,4 +53,22 @@ final class CandidateRepositoryTest extends DatabaseTestCase
         );
         $this->assertNotInstanceOf(Candidate::class, $result);
     }
+
+    /** Candidate names are only unique per season, so a same-named candidate in another season must not leak in. */
+    public function testGetCandidateByHashScopesByCandidateSeasonNotJustName(): void
+    {
+        $krtekSeason = $this->getSeasonByCode('krtek');
+        $anotherSeason = $this->getSeasonByCode('bbbbb');
+
+        $duplicateNamedCandidate = new Candidate('Claudia');
+        $anotherSeason->addCandidate($duplicateNamedCandidate);
+        $this->entityManager->persist($duplicateNamedCandidate);
+        $this->entityManager->flush();
+
+        $candidate = $this->candidateRepository->getCandidateByHash($krtekSeason, 'Q2xhdWRpYQ');
+
+        $this->assertInstanceOf(Candidate::class, $candidate);
+        $this->assertSame($krtekSeason, $candidate->season);
+        $this->assertNotSame($duplicateNamedCandidate, $candidate);
+    }
 }

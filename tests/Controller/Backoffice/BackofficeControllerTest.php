@@ -42,4 +42,15 @@ final class BackofficeControllerTest extends AbstractControllerWebTestCase
 
         self::assertResponseRedirects(\sprintf('/backoffice/season/%s', $quiz->season->seasonCode));
     }
+
+    public function testExportQuizIsDeniedForNonOwner(): void
+    {
+        $this->loginAs('test@example.org');
+
+        $quiz = $this->getQuizByName('Quiz 1');
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/quiz/%s/export', $quiz->id));
+
+        self::assertResponseStatusCodeSame(403);
+    }
 }

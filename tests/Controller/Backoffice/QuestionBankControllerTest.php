@@ -105,6 +105,7 @@ final class QuestionBankControllerTest extends AbstractControllerWebTestCase
         ]);
 
         $this->assertResponseRedirects();
+        $this->entityManager->clear();
         $saved = $this->entityManager->getRepository(BankQuestion::class)->findOneBy(['question' => 'Vraag zonder goed antwoord']);
         $this->assertInstanceOf(BankQuestion::class, $saved);
         $this->assertFalse($saved->isCompleteForQuiz);

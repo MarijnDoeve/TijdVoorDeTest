@@ -115,4 +115,43 @@ final class QuizQuestionControllerTest extends AbstractControllerWebTestCase
         $this->assertSame($originalLastId, (string) $reorderedQuestions[0]->id);
         $this->assertSame($originalFirstId, (string) $reorderedQuestions[\count($reorderedQuestions) - 1]->id);
     }
+
+    public function testEditIsDeniedForNonOwner(): void
+    {
+        $this->loginAs('test@example.org');
+
+        $quiz = $this->getQuizByName('Quiz 2');
+        $question = $quiz->questions->first();
+        $this->assertInstanceOf(Question::class, $question);
+
+        $this->client->request(Request::METHOD_GET, \sprintf(
+            '/backoffice/season/krtek/quiz/%s/question/%s/edit',
+            $quiz->id,
+            $question->id,
+        ));
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testReorderIsDeniedForNonOwner(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 2');
+
+        // Scrape a valid CSRF token as the owner before switching to the non-owner account,
+        // since the token is bound to the session, not the logged-in user.
+        $this->loginAs('krtek-admin@example.org');
+        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/overview', $quiz->id));
+        self::assertResponseIsSuccessful();
+        $csrfToken = $crawler->filter('[data-bo--question-list-csrf-value]')->attr('data-bo--question-list-csrf-value');
+        $this->assertNotEmpty($csrfToken);
+
+        $this->loginAs('test@example.org');
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/quiz/%s/questions/reorder', $quiz->id), [
+            '_token' => $csrfToken,
+            'ordering' => array_map(static fn (Question $q): string => (string) $q->id, $quiz->questions->toArray()),
+        ]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
 }
