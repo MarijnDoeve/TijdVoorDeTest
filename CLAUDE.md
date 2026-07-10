@@ -306,6 +306,7 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
     - Twig-CS-Fixer style check
     - PHPStan static analysis
     - Rector dry-run
+    - Translation extraction check (fails if `translation:extract` produces uncommitted changes)
 3. **Integration Tests**:
     - Docker image build and start services
     - Database creation and migration

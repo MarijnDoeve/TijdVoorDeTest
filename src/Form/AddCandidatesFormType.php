@@ -19,7 +19,9 @@ class AddCandidatesFormType extends AbstractType
     {
         $builder
             ->add('candidates', TextareaType::class, [
-                'label' => $this->translator->trans('Candidates'), 'translation_domain' => false,
+                'label' => $this->translator->trans('Candidates'),
+                'help' => $this->translator->trans('One candidate per line'),
+                'translation_domain' => false,
             ])
         ;
     }

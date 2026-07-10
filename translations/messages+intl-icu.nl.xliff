@@ -117,6 +117,10 @@
         <source>Are you sure you want to delete this quiz?</source>
         <target>Weet je zeker dat je deze test wilt verwijderen?</target>
       </trans-unit>
+      <trans-unit id="6XTrab." resname="Are you sure you want to reset progress for this candidate? Their given answers for this quiz will be deleted.">
+        <source>Are you sure you want to reset progress for this candidate? Their given answers for this quiz will be deleted.</source>
+        <target>Weet je zeker dat je de voortgang van deze kandidaat wilt resetten? De ingevulde antwoorden voor deze test worden verwijderd.</target>
+      </trans-unit>
       <trans-unit id="4bcq6sL" resname="Assign">
         <source>Assign</source>
         <target>Toewijzen</target>
@@ -160,6 +164,10 @@
       <trans-unit id="TiTLBGW" resname="Candidate not found">
         <source>Candidate not found</source>
         <target>Kandidaat niet gevonden</target>
+      </trans-unit>
+      <trans-unit id="fl.hjdA" resname="Candidate progress reset">
+        <source>Candidate progress reset</source>
+        <target>Voortgang kandidaat gereset</target>
       </trans-unit>
       <trans-unit id="QH4e_Ho" resname="Candidate renamed">
         <source>Candidate renamed</source>
@@ -541,6 +549,10 @@
         <source>Number of dropouts:</source>
         <target>Aantal afvallers:</target>
       </trans-unit>
+      <trans-unit id="vxaREnf" resname="One candidate per line">
+        <source>One candidate per line</source>
+        <target>Eén kandidaat per regel</target>
+      </trans-unit>
       <trans-unit id="_SqArFZ" resname="Open">
         <source>Open</source>
         <target>Openen</target>
@@ -760,6 +772,10 @@
       <trans-unit id="9JCvQkt" resname="Reset password">
         <source>Reset password</source>
         <target>Wachtwoord herstellen</target>
+      </trans-unit>
+      <trans-unit id="SSMxy68" resname="Reset progress">
+        <source>Reset progress</source>
+        <target>Voortgang resetten</target>
       </trans-unit>
       <trans-unit id="eyayNGN" resname="Reset your password">
         <source>Reset your password</source>

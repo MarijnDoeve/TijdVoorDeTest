@@ -95,6 +95,15 @@ jobs:
         id: rector
         continue-on-error: true
         run: docker compose exec -T php vendor/bin/rector process --dry-run --no-progress-bar --output-format=github
+      - name: Translations
+        id: translations
+        continue-on-error: true
+        run: |
+          docker compose exec -T php bin/console translation:extract --force --format=xliff --sort=asc nl
+          if ! git diff --exit-code -- translations; then
+            echo "::error::Translations are out of date. Run 'just translations' and commit the changes."
+            exit 1
+          fi
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
       - name: Assert all checks passed
@@ -113,6 +122,7 @@ jobs:
           check "Twig Coding Style" "${{ steps.twig_cs.outcome }}"
           check "PHPStan"          "${{ steps.phpstan.outcome }}"
           check "Rector"           "${{ steps.rector.outcome }}"
+          check "Translations"     "${{ steps.translations.outcome }}"
           exit $failed
 
   tests:
