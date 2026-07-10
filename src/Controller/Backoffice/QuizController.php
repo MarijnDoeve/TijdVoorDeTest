@@ -409,8 +409,10 @@ class QuizController extends AbstractController
     )]
     public function resetCandidateProgress(Quiz $quiz, Candidate $candidate): RedirectResponse
     {
-        $this->givenAnswerRepository->deleteAllForCandidateInQuiz($quiz, $candidate);
-        $this->quizCandidateRepository->resetProgressForCandidate($quiz, $candidate);
+        $this->em->wrapInTransaction(function () use ($quiz, $candidate): void {
+            $this->givenAnswerRepository->deleteAllForCandidateInQuiz($quiz, $candidate);
+            $this->quizCandidateRepository->resetProgressForCandidate($quiz, $candidate);
+        });
 
         $this->addFlash(FlashType::Success, $this->translator->trans('Candidate progress reset'));
 
