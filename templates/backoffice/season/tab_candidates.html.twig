@@ -1,8 +1,10 @@
-<div class="row">
+<div class="row" data-controller="bo--modal" data-action="turbo:submit-end->bo--modal#frameSubmitEnd">
     <div class="col-md-6 col-12">
         <div class="mb-3">
-            <a class="btn btn-sm btn-outline-primary"
-               href="{{ path('tvdt_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}">{{ 'Add Candidate'|trans }}</a>
+            <button type="button" class="btn btn-sm btn-outline-primary"
+                    data-action="click->bo--modal#open"
+                    data-src="{{ path('tvdt_backoffice_add_candidates', {seasonCode: season.seasonCode}) }}"
+                    data-modal-title="{{ 'Add Candidate'|trans }}">{{ 'Add Candidate'|trans }}</button>
         </div>
         <ul class="list-group mb-3">
             {% for candidate in season.candidates %}
@@ -17,7 +19,9 @@
                                 title="{{ 'Delete'|trans }}"><i class="bi bi-trash"></i></button>
                     </div>
 
-                    <div class="modal fade" id="renameCandidate-{{ candidate.id }}" data-bs-backdrop="static"
+                    <div class="modal fade" id="renameCandidate-{{ candidate.id }}"
+                         data-controller="bo--modal" data-bo--modal-target="modal"
+                         data-action="hidden.bs.modal->bo--modal#resetDirty"
                          tabindex="-1" aria-labelledby="renameCandidate-{{ candidate.id }}Label" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -31,7 +35,8 @@
                                         <input type="hidden" name="_token" value="{{ csrf_token('rename_candidate') }}">
                                         <label class="form-label" for="renameCandidateName-{{ candidate.id }}">{{ 'Name'|trans }}</label>
                                         <input type="text" class="form-control" id="renameCandidateName-{{ candidate.id }}"
-                                               name="name" value="{{ candidate.name }}" maxlength="16" required autofocus>
+                                               name="name" value="{{ candidate.name }}" maxlength="16" required autofocus
+                                               data-action="input->bo--modal#markDirty change->bo--modal#markDirty">
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
@@ -69,6 +74,23 @@
                 {{ 'No candidates'|trans }}
             {% endfor %}
         </ul>
+
+        <div class="modal fade" tabindex="-1"
+             data-bo--modal-target="modal"
+             data-action="hidden.bs.modal->bo--modal#resetDirty"
+             aria-labelledby="addCandidatesModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="addCandidatesModalLabel">{{ 'Add Candidate'|trans }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <turbo-frame id="add-candidates-modal-frame"
+                                 data-bo--modal-target="frame"
+                                 data-action="input->bo--modal#markDirty change->bo--modal#markDirty"></turbo-frame>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-6 col-12">
         {{ include('backoffice/help/season_candidates.html.twig') }}

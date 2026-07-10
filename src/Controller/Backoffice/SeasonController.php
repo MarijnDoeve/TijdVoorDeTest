@@ -129,6 +129,8 @@ class SeasonController extends AbstractController
     )]
     public function addCandidates(Season $season, Request $request): Response
     {
+        $isTurboFrame = $request->headers->has('Turbo-Frame');
+
         $form = $this->createForm(AddCandidatesFormType::class);
         $form->handleRequest($request);
 
@@ -140,10 +142,18 @@ class SeasonController extends AbstractController
 
             $this->em->flush();
 
-            return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $season->seasonCode]);
+            if ($isTurboFrame) {
+                return new Response('<turbo-frame id="add-candidates-modal-frame"></turbo-frame>');
+            }
+
+            return $this->redirectToRoute('tvdt_backoffice_season_candidates', ['seasonCode' => $season->seasonCode]);
         }
 
-        return $this->render('backoffice/season_add_candidates.html.twig', ['form' => $form, 'season' => $season]);
+        $template = $isTurboFrame
+            ? 'backoffice/season/_add_candidates_frame.html.twig'
+            : 'backoffice/season_add_candidates.html.twig';
+
+        return $this->render($template, ['form' => $form, 'season' => $season]);
     }
 
     #[IsCsrfTokenValid('rename_candidate')]

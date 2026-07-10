@@ -1,0 +1,11 @@
+<turbo-frame id="add-candidates-modal-frame">
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    <div class="modal-body">
+        {{ form_row(form.candidates) }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'Submit'|trans }}</button>
+    </div>
+    {{ form_end(form) }}
+</turbo-frame>

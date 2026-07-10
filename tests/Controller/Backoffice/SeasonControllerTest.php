@@ -104,6 +104,42 @@ final class SeasonControllerTest extends AbstractControllerWebTestCase
         $this->assertNotInstanceOf(Candidate::class, $this->entityManager->getRepository(Candidate::class)->find($candidateId));
     }
 
+    public function testAddCandidates(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/add-candidate');
+        $form = $this->client->getCrawler()->filter('form')->form([
+            'add_candidates_form[candidates]' => "Nora\nPiet",
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/backoffice/season/krtek/candidates');
+        $this->entityManager->clear();
+
+        $season = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'krtek']);
+        $this->assertInstanceOf(Season::class, $season);
+        $names = array_map(static fn (Candidate $candidate): string => $candidate->name, $season->candidates->toArray());
+        $this->assertContains('Nora', $names);
+        $this->assertContains('Piet', $names);
+    }
+
+    public function testAddCandidatesViaTurboFrameReturnsEmptyFrame(): void
+    {
+        $this->client->xmlHttpRequest(Request::METHOD_GET, '/backoffice/season/krtek/add-candidate', server: ['HTTP_TURBO-FRAME' => 'add-candidates-modal-frame']);
+        $form = $this->client->getCrawler()->filter('form')->form([
+            'add_candidates_form[candidates]' => 'Sanne',
+        ]);
+        $this->client->submit($form, [], ['HTTP_TURBO-FRAME' => 'add-candidates-modal-frame']);
+
+        self::assertResponseIsSuccessful();
+        $this->assertStringContainsString('<turbo-frame id="add-candidates-modal-frame"></turbo-frame>', (string) $this->client->getResponse()->getContent());
+        $this->entityManager->clear();
+
+        $season = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'krtek']);
+        $this->assertInstanceOf(Season::class, $season);
+        $names = array_map(static fn (Candidate $candidate): string => $candidate->name, $season->candidates->toArray());
+        $this->assertContains('Sanne', $names);
+    }
+
     public function testRenameCandidateIsDeniedForNonOwner(): void
     {
         $candidate = $this->getCandidate('Tom');
