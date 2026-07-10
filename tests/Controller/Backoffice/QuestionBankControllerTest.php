@@ -4,39 +4,18 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller\Backoffice;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\QuestionBankController;
 use Tvdt\Entity\BankAnswer;
 use Tvdt\Entity\BankQuestion;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\QuestionLabel;
-use Tvdt\Entity\Quiz;
-use Tvdt\Entity\User;
+use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(QuestionBankController::class)]
-final class QuestionBankControllerTest extends WebTestCase
+final class QuestionBankControllerTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
-    }
-
-    private function loginAsOwner(): void
-    {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'krtek-admin@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
-    }
-
     private function getBankQuestion(string $question): BankQuestion
     {
         $bankQuestion = $this->entityManager->getRepository(BankQuestion::class)->findOneBy(['question' => $question]);
@@ -45,26 +24,9 @@ final class QuestionBankControllerTest extends WebTestCase
         return $bankQuestion;
     }
 
-    private function getQuizByName(string $name): Quiz
-    {
-        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => $name]);
-        $this->assertInstanceOf(Quiz::class, $quiz);
-
-        return $quiz;
-    }
-
-    private function getCsrfToken(string $formActionContains): string
-    {
-        $crawler = $this->client->getCrawler();
-        $input = $crawler->filter(\sprintf('form[action*="%s"] input[name="_token"]', $formActionContains));
-        $this->assertGreaterThan(0, $input->count(), \sprintf('No form found with action containing "%s"', $formActionContains));
-
-        return (string) $input->first()->attr('value');
-    }
-
     public function testIndexListsBankQuestions(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
 
         $this->assertResponseIsSuccessful();
@@ -75,7 +37,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testIndexFiltersByLabel(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $label = $this->entityManager->getRepository(QuestionLabel::class)->findOneBy(['name' => 'Locatie']);
         $this->assertInstanceOf(QuestionLabel::class, $label);
 
@@ -89,9 +51,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testNonOwnerIsDenied(): void
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'test@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
+        $this->loginAs('test@example.org');
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
 
@@ -100,7 +60,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testCreateBankQuestion(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank/new');
         $this->assertResponseIsSuccessful();
 
@@ -129,7 +89,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testCreateAllowedWithoutCorrectAnswer(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank/new');
         $token = (string) $crawler->filter('input[name="bank_question_form[_token]"]')->attr('value');
 
@@ -145,6 +105,7 @@ final class QuestionBankControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects();
+        $this->entityManager->clear();
         $saved = $this->entityManager->getRepository(BankQuestion::class)->findOneBy(['question' => 'Vraag zonder goed antwoord']);
         $this->assertInstanceOf(BankQuestion::class, $saved);
         $this->assertFalse($saved->isCompleteForQuiz);
@@ -152,7 +113,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testEditBankQuestion(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
 
         $url = \sprintf('/backoffice/season/krtek/question-bank/%s/edit', $bankQuestion->id);
@@ -181,12 +142,12 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testDeleteUsedBankQuestionLeavesQuizIntact(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Waar sliep de Krtek?');
         $quiz2QuestionCount = $this->getQuizByName('Quiz 2')->questions->count();
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $token = $this->getCsrfToken(\sprintf('%s/delete', $bankQuestion->id));
+        $token = $this->getCsrfTokenFromCurrentPage(\sprintf('%s/delete', $bankQuestion->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/%s/delete', $bankQuestion->id), [
             '_token' => $token,
@@ -201,13 +162,13 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testAssignCopiesQuestionIntoQuiz(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
         $quiz = $this->getQuizByName('Quiz 2');
         $questionCount = $quiz->questions->count();
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $token = $this->getCsrfToken(\sprintf('%s/assign', $bankQuestion->id));
+        $token = $this->getCsrfTokenFromCurrentPage(\sprintf('%s/assign', $bankQuestion->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/%s/assign', $bankQuestion->id), [
             '_token' => $token,
@@ -240,7 +201,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testAssignUsedNonReusableQuestionIsRefused(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Waar sliep de Krtek?');
         $quiz = $this->getQuizByName('Quiz 2');
         $questionCount = $quiz->questions->count();
@@ -248,7 +209,7 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
 
         // The assign form is not rendered for used questions, so post with another form's token
-        $token = $this->getCsrfToken('/assign');
+        $token = $this->getCsrfTokenFromCurrentPage('/assign');
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/%s/assign', $bankQuestion->id), [
             '_token' => $token,
             'quiz' => (string) $quiz->id,
@@ -262,13 +223,13 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testAssignSameReusableQuestionTwiceToSameQuizIsRefused(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Wie is de Krtek?');
         $quiz = $this->getQuizByName('Quiz 2');
         $questionCount = $quiz->questions->count();
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $token = $this->getCsrfToken(\sprintf('%s/assign', $bankQuestion->id));
+        $token = $this->getCsrfTokenFromCurrentPage(\sprintf('%s/assign', $bankQuestion->id));
 
         $url = \sprintf('/backoffice/season/krtek/question-bank/%s/assign', $bankQuestion->id);
         $this->client->request(Request::METHOD_POST, $url, ['_token' => $token, 'quiz' => (string) $quiz->id]);
@@ -283,13 +244,13 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testAssignIntoFinalizedQuizIsDenied(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Wie is de Krtek?');
         $finalizedQuiz = $this->getQuizByName('Quiz 1');
         $this->assertTrue($finalizedQuiz->isFinalized);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $token = $this->getCsrfToken(\sprintf('%s/assign', $bankQuestion->id));
+        $token = $this->getCsrfTokenFromCurrentPage(\sprintf('%s/assign', $bankQuestion->id));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/%s/assign', $bankQuestion->id), [
             '_token' => $token,
@@ -301,7 +262,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testCreateBankQuestionPreservesAnswerOrdering(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank/new');
         $this->assertResponseIsSuccessful();
         $token = (string) $crawler->filter('input[name="bank_question_form[_token]"]')->attr('value');
@@ -334,7 +295,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testEditBankQuestionPreservesAnswerOrdering(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $bankQuestion = $this->getBankQuestion('Wat at de Krtek als ontbijt?');
         // Fixture answers in insertion order (all have ordering=0): Brood (correct), Yoghurt, Niks
 
@@ -374,7 +335,7 @@ final class QuestionBankControllerTest extends WebTestCase
 
     public function testAddAndDeleteLabel(): void
     {
-        $this->loginAsOwner();
+        $this->loginAs('krtek-admin@example.org');
         $crawler = $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
         $token = (string) $crawler->filter('form[action$="/question-bank/labels"] input[name="_token"]')->attr('value');
 
@@ -389,7 +350,7 @@ final class QuestionBankControllerTest extends WebTestCase
         $this->assertInstanceOf(QuestionLabel::class, $label);
 
         $this->client->request(Request::METHOD_GET, '/backoffice/season/krtek/question-bank');
-        $deleteToken = $this->getCsrfToken(\sprintf('labels/%s/delete', $label->slug));
+        $deleteToken = $this->getCsrfTokenFromCurrentPage(\sprintf('labels/%s/delete', $label->slug));
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/question-bank/labels/%s/delete', $label->slug), [
             '_token' => $deleteToken,

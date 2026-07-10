@@ -5,25 +5,28 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Repository;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tvdt\Entity\Season;
 use Tvdt\Repository\SeasonRepository;
 
 #[CoversClass(SeasonRepository::class)]
 final class SeasonRepositoryTest extends DatabaseTestCase
 {
-    public function testGetSeasonsForUser(): void
+    /** @return iterable<string, array{string, string}> */
+    public static function userSeasonsProvider(): iterable
     {
-        $user = $this->getUserByEmail('krtek-admin@example.org');
+        yield 'krtek admin' => ['krtek-admin@example.org', 'krtek'];
+        yield 'user1' => ['user1@example.org', 'bbbbb'];
+    }
+
+    #[DataProvider('userSeasonsProvider')]
+    public function testGetSeasonsForUser(string $email, string $expectedSeasonCode): void
+    {
+        $user = $this->getUserByEmail($email);
 
         $seasons = $this->seasonRepository->getSeasonsForUser($user);
         $this->assertCount(1, $seasons);
-        $this->assertSame('krtek', $seasons[0]->seasonCode);
-
-        $user = $this->getUserByEmail('user1@example.org');
-
-        $seasons = $this->seasonRepository->getSeasonsForUser($user);
-        $this->assertCount(1, $seasons);
-        $this->assertSame('bbbbb', $seasons[0]->seasonCode);
+        $this->assertSame($expectedSeasonCode, $seasons[0]->seasonCode);
     }
 
     public function testUserWithMultipleSeasons(): void

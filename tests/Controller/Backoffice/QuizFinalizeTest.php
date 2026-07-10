@@ -4,63 +4,29 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Controller\Backoffice;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Safe\DateTimeImmutable;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\QuizController;
 use Tvdt\Entity\Answer;
-use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
-use Tvdt\Entity\Season;
-use Tvdt\Entity\User;
+use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(QuizController::class)]
-final class QuizFinalizeTest extends WebTestCase
+final class QuizFinalizeTest extends AbstractControllerWebTestCase
 {
-    private KernelBrowser $client;
-
-    private EntityManagerInterface $entityManager;
-
     protected function setUp(): void
     {
-        $this->client = self::createClient();
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        parent::setUp();
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'krtek-admin@example.org']);
-        $this->assertInstanceOf(User::class, $user);
-        $this->client->loginUser($user);
-    }
-
-    private function getQuizByName(string $name): Quiz
-    {
-        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => $name]);
-        $this->assertInstanceOf(Quiz::class, $quiz);
-
-        return $quiz;
-    }
-
-    private function getKrtekSeason(): Season
-    {
-        $season = $this->entityManager->getRepository(Season::class)->findOneBy(['seasonCode' => 'krtek']);
-        $this->assertInstanceOf(Season::class, $season);
-
-        return $season;
+        $this->loginAs('krtek-admin@example.org');
     }
 
     private function getCsrfTokenFromOverview(Quiz $quiz, string $formActionContains): string
     {
-        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/overview', $quiz->id));
-        $this->assertResponseIsSuccessful();
-
-        $input = $crawler->filter(\sprintf('form[action*="%s"] input[name="_token"]', $formActionContains));
-        $this->assertGreaterThan(0, $input->count(), \sprintf('No form found with action containing "%s"', $formActionContains));
-
-        return (string) $input->first()->attr('value');
+        return $this->getCsrfTokenFromPage(\sprintf('/backoffice/season/krtek/quiz/%s/overview', $quiz->id), $formActionContains);
     }
 
     public function testFinalizeSetsFinalizedAt(): void
@@ -79,7 +45,7 @@ final class QuizFinalizeTest extends WebTestCase
 
     public function testFinalizeRefusedWhenQuizHasErrors(): void
     {
-        $season = $this->getKrtekSeason();
+        $season = $this->getSeasonByCode('krtek');
 
         $invalidQuiz = new Quiz();
         $invalidQuiz->name = 'Invalid Quiz';
@@ -116,7 +82,7 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $season = $this->getKrtekSeason();
+        $season = $this->getSeasonByCode('krtek');
         $this->assertInstanceOf(Quiz::class, $season->activeQuiz);
         $this->assertSame('Quiz 1', $season->activeQuiz->name);
     }
@@ -134,7 +100,7 @@ final class QuizFinalizeTest extends WebTestCase
         $this->assertResponseRedirects();
 
         $this->entityManager->clear();
-        $season = $this->getKrtekSeason();
+        $season = $this->getSeasonByCode('krtek');
         $this->assertInstanceOf(Quiz::class, $season->activeQuiz);
         $this->assertSame('Quiz 2', $season->activeQuiz->name);
     }
@@ -183,8 +149,7 @@ final class QuizFinalizeTest extends WebTestCase
         // Scrape the token before a candidate starts, since the button disappears afterwards
         $token = $this->getCsrfTokenFromOverview($quiz, '/unfinalize');
 
-        $candidate = $this->entityManager->getRepository(Candidate::class)->findOneBy(['name' => 'Tom']);
-        $this->assertInstanceOf(Candidate::class, $candidate);
+        $candidate = $this->getCandidate('Tom');
         $quizCandidate = new QuizCandidate($quiz, $candidate);
         $quizCandidate->started = new DateTimeImmutable();
 
@@ -229,6 +194,6 @@ final class QuizFinalizeTest extends WebTestCase
         self::assertResponseRedirects(\sprintf('/backoffice/season/krtek/quiz/%s/overview', $quiz2->id));
 
         $this->entityManager->clear();
-        $this->assertNotInstanceOf(Quiz::class, $this->getKrtekSeason()->activeQuiz);
+        $this->assertNotInstanceOf(Quiz::class, $this->getSeasonByCode('krtek')->activeQuiz);
     }
 }

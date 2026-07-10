@@ -4,28 +4,34 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Helpers;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Safe\Exceptions\UrlException;
 use Tvdt\Helpers\Base64;
 
+#[CoversClass(Base64::class)]
 final class Base64Test extends TestCase
 {
-    public function testBase64UrlEncode(): void
+    /** @return iterable<string, array{string, string}> */
+    public static function pairProvider(): iterable
     {
-        $this->assertSame('TWFyaWpu', Base64::base64UrlEncode('Marijn'));
-        $this->assertSame('UGhpbGluZQ', Base64::base64UrlEncode('Philine'));
-
-        $this->assertSame('_g', Base64::base64UrlEncode(\chr(254)));
-        $this->assertSame('-g', Base64::base64UrlEncode(\chr(250)));
+        yield 'Marijn' => ['Marijn', 'TWFyaWpu'];
+        yield 'Philine' => ['Philine', 'UGhpbGluZQ'];
+        yield 'byte 254' => [\chr(254), '_g'];
+        yield 'byte 250' => [\chr(250), '-g'];
     }
 
-    public function testBase64UrlDecode(): void
+    #[DataProvider('pairProvider')]
+    public function testBase64UrlEncode(string $decoded, string $encoded): void
     {
-        $this->assertSame('Marijn', Base64::base64UrlDecode('TWFyaWpu'));
-        $this->assertSame('Philine', Base64::base64UrlDecode('UGhpbGluZQ'));
+        $this->assertSame($encoded, Base64::base64UrlEncode($decoded));
+    }
 
-        $this->assertSame(\chr(254), Base64::base64UrlDecode('_g'));
-        $this->assertSame(\chr(250), Base64::base64UrlDecode('-g'));
+    #[DataProvider('pairProvider')]
+    public function testBase64UrlDecode(string $decoded, string $encoded): void
+    {
+        $this->assertSame($decoded, Base64::base64UrlDecode($encoded));
     }
 
     public function testBase64UrlDecodeCanHandlePadding(): void

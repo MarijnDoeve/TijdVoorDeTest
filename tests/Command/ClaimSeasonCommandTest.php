@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Command;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -48,21 +49,19 @@ final class ClaimSeasonCommandTest extends KernelTestCase
         $this->assertCount(3, $season->owners);
     }
 
-    public function testInvalidEmailFails(): void
+    /** @return iterable<string, array{string, string}> */
+    public static function invalidArgumentsProvider(): iterable
     {
-        $this->commandTester->execute([
-            'season-code' => 'krtek',
-            'email' => 'nonexisting@example.org',
-        ]);
-
-        $this->assertSame(Command::FAILURE, $this->commandTester->getStatusCode());
+        yield 'unknown email' => ['krtek', 'nonexisting@example.org'];
+        yield 'unknown season' => ['dhadk', 'test@example.org'];
     }
 
-    public function testInvalidSeasonCodeFails(): void
+    #[DataProvider('invalidArgumentsProvider')]
+    public function testInvalidArgumentFails(string $seasonCode, string $email): void
     {
         $this->commandTester->execute([
-            'season-code' => 'dhadk',
-            'email' => 'test@example.org',
+            'season-code' => $seasonCode,
+            'email' => $email,
         ]);
 
         $this->assertSame(Command::FAILURE, $this->commandTester->getStatusCode());
