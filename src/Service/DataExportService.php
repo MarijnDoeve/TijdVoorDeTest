@@ -263,7 +263,7 @@ class DataExportService
         }
 
         $lastColumnIndex = 1 + \count($questions);
-        foreach (range('A', Coordinate::stringFromColumnIndex($lastColumnIndex)) as $column) {
+        foreach ($this->columnLetters($lastColumnIndex) as $column) {
             $sheet->getColumnDimension($column)->setWidth(30);
             $sheet->getStyle($column.':'.$column)->getAlignment()->setWrapText(true);
         }
@@ -297,7 +297,7 @@ class DataExportService
             ++$row;
         }
 
-        foreach (range('A', Coordinate::stringFromColumnIndex(2 + \count($candidates))) as $column) {
+        foreach ($this->columnLetters(2 + \count($candidates)) as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
     }
@@ -405,7 +405,7 @@ class DataExportService
         }
 
         $lastColumnIndex = $answerStartColumnIndex + max(1, 2 * $maxAnswers);
-        foreach (range('A', Coordinate::stringFromColumnIndex($lastColumnIndex)) as $column) {
+        foreach ($this->columnLetters($lastColumnIndex) as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
     }
@@ -424,6 +424,22 @@ class DataExportService
         foreach (['A', 'B', 'C'] as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
+    }
+
+    /**
+     * Column letters from 'A' up to and including the given 1-based column index.
+     * Unlike range('A', ...), this works past 'Z' (e.g. index 27 => 'AA').
+     *
+     * @return list<string>
+     */
+    private function columnLetters(int $lastColumnIndex): array
+    {
+        $letters = [];
+        for ($columnIndex = 1; $columnIndex <= $lastColumnIndex; ++$columnIndex) {
+            $letters[] = Coordinate::stringFromColumnIndex($columnIndex);
+        }
+
+        return $letters;
     }
 
     /** @throws FilesystemException */
