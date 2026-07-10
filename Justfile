@@ -25,16 +25,28 @@ init:
         echo "no free port found between $1 and $2" >&2
         exit 1
     }
-    hash=$(pwd | shasum | cut -c1-8)
+    if command -v sha1sum >/dev/null 2>&1; then
+        hash_cmd=(sha1sum)
+    elif command -v shasum >/dev/null 2>&1; then
+        hash_cmd=(shasum)
+    else
+        hash_cmd=(sha256sum)
+    fi
+    hash=$(pwd | "${hash_cmd[@]}" | cut -c1-8)
     project="tvdt-${hash}"
+    http_port=$(free_port 8080 8179)
+    https_port=$(free_port 8443 8542)
+    postgres_port=$(free_port 5430 5529)
+    mailpit_port=$(free_port 8025 8124)
+    spotlight_port=$(free_port 8969 9068)
     {
         echo "COMPOSE_PROJECT_NAME=${project}"
         echo "IMAGES_PREFIX=${project}-"
-        echo "HTTP_PORT=$(free_port 8080 8179)"
-        echo "HTTPS_PORT=$(free_port 8443 8542)"
-        echo "POSTGRES_PORT=$(free_port 5430 5529)"
-        echo "MAILPIT_PORT=$(free_port 8025 8124)"
-        echo "SPOTLIGHT_PORT=$(free_port 8969 9068)"
+        echo "HTTP_PORT=${http_port}"
+        echo "HTTPS_PORT=${https_port}"
+        echo "POSTGRES_PORT=${postgres_port}"
+        echo "MAILPIT_PORT=${mailpit_port}"
+        echo "SPOTLIGHT_PORT=${spotlight_port}"
     } >> .env.local
     echo "Generated .env.local for this worktree:"
     cat .env.local
