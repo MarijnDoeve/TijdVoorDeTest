@@ -37,7 +37,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <form action="{{ path('tvdt_backoffice_toggle_candidate', {quiz: quiz.id, candidate: candidate.id}) }}" method="POST">
+                    <form action="{{ path('tvdt_backoffice_toggle_candidate', {quiz: quiz.id, candidate: candidate.id}) }}" method="POST" class="d-inline">
                         <input type="hidden" name="_token" value="{{ csrf_token('toggle_candidate') }}">
                         <button type="submit" class="btn btn-sm btn-outline-secondary">
                             {% if quizCandidate == null or quizCandidate.active %}
@@ -47,6 +47,12 @@
                             {% endif %}
                         </button>
                     </form>
+                    {% if quizCandidate and quizCandidate.started %}
+                        <form action="{{ path('tvdt_backoffice_reset_candidate_progress', {quiz: quiz.id, candidate: candidate.id}) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ 'Are you sure you want to reset progress for this candidate? Their given answers for this quiz will be deleted.'|trans|e('js') }}');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reset_candidate_progress') }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">{{ 'Reset progress'|trans }}</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

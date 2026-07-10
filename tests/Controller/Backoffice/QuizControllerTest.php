@@ -173,6 +173,47 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
         $this->assertTrue($updated->active);
     }
 
+    public function testResetCandidateProgressDeletesGivenAnswersAndClearsStarted(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $candidate = $this->getCandidate('Tom');
+
+        $quizCandidate = new QuizCandidate($quiz, $candidate);
+        $quizCandidate->started = new DateTimeImmutable();
+
+        $this->entityManager->persist($quizCandidate);
+        $firstQuestion = $quiz->questions->first();
+        $this->assertInstanceOf(Question::class, $firstQuestion);
+        $answer = $firstQuestion->answers->first();
+        $this->assertInstanceOf(Answer::class, $answer);
+        $this->entityManager->persist(new GivenAnswer($candidate, $quiz, $answer));
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/candidates-list', $quiz->id));
+        self::assertResponseIsSuccessful();
+        $token = (string) $crawler->filter(\sprintf('form[action*="/%s/reset"] input[name="_token"]', $candidate->id))->first()->attr('value');
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/candidate/%s/reset', $quiz->id, $candidate->id), [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects();
+        $this->entityManager->clear();
+
+        $updated = $this->entityManager->getRepository(QuizCandidate::class)->findOneBy([
+            'quiz' => $this->getQuizByName('Quiz 1'),
+            'candidate' => $this->getCandidate('Tom'),
+        ]);
+        $this->assertInstanceOf(QuizCandidate::class, $updated);
+        $this->assertNotInstanceOf(\DateTimeImmutable::class, $updated->started);
+
+        $remainingAnswers = $this->entityManager->getRepository(GivenAnswer::class)->findBy([
+            'quiz' => $quiz,
+            'candidate' => $candidate,
+        ]);
+        $this->assertCount(0, $remainingAnswers);
+    }
+
     public function testModifyCorrection(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
