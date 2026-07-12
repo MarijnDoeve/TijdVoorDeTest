@@ -115,7 +115,7 @@ jobs:
       - name: TypeScript Type Check
         id: ts_check
         continue-on-error: true
-        run: docker compose exec -T php deno check assets/*.ts assets/controllers/*.ts assets/controllers/bo/*.ts
+        run: docker compose exec -T php deno check assets/
       - name: TypeScript Tests
         id: ts_test
         continue-on-error: true

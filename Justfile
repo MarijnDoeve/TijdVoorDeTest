@@ -117,7 +117,7 @@ fix-ts:
     docker compose exec php deno lint --fix assets/
 
 check-ts:
-    docker compose exec php deno check assets/*.ts assets/controllers/*.ts assets/controllers/bo/*.ts
+    docker compose exec php deno check assets/
 
 test-ts *args:
     docker compose exec php deno test assets/ {{ args }}

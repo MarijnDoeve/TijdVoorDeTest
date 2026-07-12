@@ -1,4 +1,5 @@
 {
+    "exclude": ["assets/vendor/"],
     "compilerOptions": {
         "lib": ["deno.window", "dom", "dom.iterable"],
         "strict": true,
