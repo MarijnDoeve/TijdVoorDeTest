@@ -68,4 +68,15 @@ class QuizCandidateRepository extends ServiceEntityRepository
         $quizCandidate->penaltySeconds = $penalty;
         $this->getEntityManager()->flush();
     }
+
+    public function resetProgressForCandidate(Quiz $quiz, Candidate $candidate): void
+    {
+        $quizCandidate = $this->findOneBy(['candidate' => $candidate, 'quiz' => $quiz]);
+        if (!$quizCandidate instanceof QuizCandidate) {
+            return;
+        }
+
+        $quizCandidate->started = null;
+        $this->getEntityManager()->flush();
+    }
 }

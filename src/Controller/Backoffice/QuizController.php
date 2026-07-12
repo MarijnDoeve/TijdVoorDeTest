@@ -25,6 +25,7 @@ use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Exception\ErrorClearingQuizException;
+use Tvdt\Repository\GivenAnswerRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -37,6 +38,7 @@ class QuizController extends AbstractController
         private readonly QuizRepository $quizRepository,
         private readonly TranslatorInterface $translator,
         private readonly QuizCandidateRepository $quizCandidateRepository,
+        private readonly GivenAnswerRepository $givenAnswerRepository,
         private readonly EntityManagerInterface $em,
     ) {}
 
@@ -393,6 +395,26 @@ class QuizController extends AbstractController
         $this->em->flush();
 
         $this->addFlash(FlashType::Success, $this->translator->trans('Candidate status updated'));
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_tab', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsCsrfTokenValid('reset_candidate_progress')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/reset',
+        name: 'tvdt_backoffice_reset_candidate_progress',
+        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function resetCandidateProgress(Quiz $quiz, Candidate $candidate): RedirectResponse
+    {
+        $this->em->wrapInTransaction(function () use ($quiz, $candidate): void {
+            $this->givenAnswerRepository->deleteAllForCandidateInQuiz($quiz, $candidate);
+            $this->quizCandidateRepository->resetProgressForCandidate($quiz, $candidate);
+        });
+
+        $this->addFlash(FlashType::Success, $this->translator->trans('Candidate progress reset'));
 
         return $this->redirectToRoute('tvdt_backoffice_quiz_candidates_tab', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }

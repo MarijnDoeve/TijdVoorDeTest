@@ -61,9 +61,20 @@ up *args: init
 down *args:
     docker compose down --remove-orphans {{ args }}
 
-# Show the host ports assigned to this worktree (see `just init`)
+# Show the URLs (and DB connection) assigned to this worktree (see `just init`)
 ports:
-    @cat .env.local 2>/dev/null || echo "No .env.local yet, run 'just up' or 'just init' first."
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -f .env.local ]; then
+        echo "No .env.local yet, run 'just up' or 'just init' first."
+        exit 0
+    fi
+    set -a
+    source .env.local
+    set +a
+    echo "Tvdt:      https://localhost:${HTTPS_PORT}"
+    echo "Mailpit:   http://localhost:${MAILPIT_PORT}"
+    echo "Spotlight: http://localhost:${SPOTLIGHT_PORT}"
 
 stop:
     docker compose stop
