@@ -3,3 +3,9 @@
 .col-result-md { width: 20%; }
 
 .modal-content > turbo-frame { display: contents; }
+
+.release-notes {
+  word-wrap: break-word;
+
+  > :last-child { margin-bottom: 0; }
+}
