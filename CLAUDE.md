@@ -264,6 +264,11 @@ question counts as covered more than once).
 - **Boy Scout Rule**: when you're already touching a file for an unrelated change, fix small nearby issues in the same
   commit (e.g. a test that unnecessarily extends `WebTestCase`, a stale comment) rather than leaving them for later —
   but don't let this balloon into an unrelated refactor.
+- **Scope creep as a service**: when a review (yours or `/code-review`'s) turns up a real bug or gap outside the
+  original task's scope — even in already-merged code untouched by the current diff — fix it in the same MR rather
+  than just reporting it and moving on. Write a regression test first per the TDD rule above. Only leave something
+  unaddressed if fixing it would require a design decision only a human can make (e.g. reverting an intentional
+  security/access-control choice) — in that case, say so explicitly instead of silently skipping it.
 
 ### Code Style & Standards
 
