@@ -31,7 +31,7 @@ final readonly class GitHubReleasesService
     }
 
     /** @return list<array{tagName: string, name: string, publishedAt: ?\DateTimeImmutable, body: string, url: string}> */
-    private function fetchReleases(ItemInterface $item): array
+    private function fetchReleases(ItemInterface $item, bool &$save): array
     {
         try {
             $response = $this->httpClient->request('GET', self::RELEASES_URL, [
@@ -45,12 +45,14 @@ final readonly class GitHubReleasesService
             /** @var list<array{tag_name: string, name: ?string, published_at: ?string, body: ?string, html_url: string}> $releases */
             $releases = $response->toArray();
         } catch (ExceptionInterface) {
-            $item->expiresAfter(60);
+            $save = false;
 
             return [];
         }
 
         $item->expiresAfter(3600);
+
+        usort($releases, static fn (array $a, array $b): int => ($b['published_at'] ?? '') <=> ($a['published_at'] ?? ''));
 
         return array_map(static fn (array $release): array => [
             'tagName' => $release['tag_name'],

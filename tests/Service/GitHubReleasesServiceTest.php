@@ -48,4 +48,48 @@ final class GitHubReleasesServiceTest extends TestCase
 
         $this->assertSame([], $subject->getReleases());
     }
+
+    public function testHttpFailureIsNotCached(): void
+    {
+        $requestCount = 0;
+        $httpClient = new MockHttpClient(static function () use (&$requestCount): MockResponse {
+            ++$requestCount;
+
+            return new MockResponse('', ['http_code' => 500]);
+        });
+        $subject = new GitHubReleasesService($httpClient, new ArrayAdapter());
+
+        $subject->getReleases();
+        $subject->getReleases();
+
+        $this->assertSame(2, $requestCount);
+    }
+
+    public function testGetReleasesSortsNewestFirst(): void
+    {
+        $body = json_encode([
+            [
+                'tag_name' => 'v0.7.0',
+                'name' => 'v0.7.0',
+                'published_at' => '2026-07-10T10:00:00Z',
+                'body' => 'Older release',
+                'html_url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.7.0',
+            ],
+            [
+                'tag_name' => 'v0.8.0',
+                'name' => 'v0.8.0',
+                'published_at' => '2026-07-12T10:00:00Z',
+                'body' => 'Newer release',
+                'html_url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.8.0',
+            ],
+        ], \JSON_THROW_ON_ERROR);
+
+        $httpClient = new MockHttpClient([new MockResponse((string) $body, ['response_headers' => ['content-type' => 'application/json']])]);
+        $subject = new GitHubReleasesService($httpClient, new ArrayAdapter());
+
+        $releases = $subject->getReleases();
+
+        $this->assertSame('v0.8.0', $releases[0]['tagName']);
+        $this->assertSame('v0.7.0', $releases[1]['tagName']);
+    }
 }
