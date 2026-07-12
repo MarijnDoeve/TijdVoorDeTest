@@ -176,6 +176,8 @@ jobs:
         run: docker compose up php database --wait --no-build
       - name: Build SCSS
         run: docker compose exec -T php bin/console sass:build
+      - name: Build TypeScript
+        run: docker compose exec -T php bin/console typescript:build
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations
