@@ -19,18 +19,7 @@ final class ReleasesControllerTest extends AbstractControllerWebTestCase
     public function testReleasesFrameRendersReleaseNotes(): void
     {
         $this->loginAs('user2@example.org');
-
-        $body = json_encode([
-            [
-                'tag_name' => 'v0.8.0',
-                'name' => 'v0.8.0',
-                'published_at' => '2026-07-12T10:00:00Z',
-                'body' => 'Some release notes',
-                'html_url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.8.0',
-            ],
-        ], \JSON_THROW_ON_ERROR);
-        $httpClient = new MockHttpClient([new MockResponse((string) $body, ['response_headers' => ['content-type' => 'application/json']])]);
-        self::getContainer()->set(GitHubReleasesService::class, new GitHubReleasesService($httpClient, new ArrayAdapter()));
+        $this->mockReleasesService();
 
         $this->client->request(Request::METHOD_GET, '/backoffice/releases');
 
@@ -41,6 +30,15 @@ final class ReleasesControllerTest extends AbstractControllerWebTestCase
     }
 
     public function testReleasesFrameIsAccessibleWithoutAuthentication(): void
+    {
+        $this->mockReleasesService();
+
+        $this->client->request(Request::METHOD_GET, '/backoffice/releases');
+
+        self::assertResponseIsSuccessful();
+    }
+
+    private function mockReleasesService(): void
     {
         $body = json_encode([
             [
@@ -53,9 +51,5 @@ final class ReleasesControllerTest extends AbstractControllerWebTestCase
         ], \JSON_THROW_ON_ERROR);
         $httpClient = new MockHttpClient([new MockResponse((string) $body, ['response_headers' => ['content-type' => 'application/json']])]);
         self::getContainer()->set(GitHubReleasesService::class, new GitHubReleasesService($httpClient, new ArrayAdapter()));
-
-        $this->client->request(Request::METHOD_GET, '/backoffice/releases');
-
-        self::assertResponseIsSuccessful();
     }
 }

@@ -243,7 +243,7 @@
       </trans-unit>
       <trans-unit id="HL5QYZd" resname="Could not load releases from GitHub.">
         <source>Could not load releases from GitHub.</source>
-        <target>Kon releases niet laden van GitHub.</target>
+        <target>Kan releases niet laden van GitHub.</target>
       </trans-unit>
       <trans-unit id="0DvmToq" resname="Create a season">
         <source>Create a season</source>

@@ -5,7 +5,7 @@
 .modal-content > turbo-frame { display: contents; }
 
 .release-notes {
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   > :last-child { margin-bottom: 0; }
 }

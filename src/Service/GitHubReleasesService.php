@@ -27,30 +27,37 @@ final readonly class GitHubReleasesService
      */
     public function getReleases(): array
     {
-        return $this->cache->get('github_releases', function (ItemInterface $item): array {
-            $item->expiresAfter(3600);
+        return $this->cache->get('github_releases', $this->fetchReleases(...));
+    }
 
-            try {
-                $response = $this->httpClient->request('GET', self::RELEASES_URL, [
-                    'headers' => [
-                        'Accept' => 'application/vnd.github+json',
-                        'User-Agent' => 'TijdVoorDeTest-Backoffice',
-                    ],
-                ]);
+    /** @return list<array{tagName: string, name: string, publishedAt: ?\DateTimeImmutable, body: string, url: string}> */
+    private function fetchReleases(ItemInterface $item): array
+    {
+        try {
+            $response = $this->httpClient->request('GET', self::RELEASES_URL, [
+                'timeout' => 5,
+                'headers' => [
+                    'Accept' => 'application/vnd.github+json',
+                    'User-Agent' => 'TijdVoorDeTest',
+                ],
+            ]);
 
-                /** @var list<array{tag_name: string, name: ?string, published_at: ?string, body: ?string, html_url: string}> $releases */
-                $releases = $response->toArray();
-            } catch (ExceptionInterface) {
-                return [];
-            }
+            /** @var list<array{tag_name: string, name: ?string, published_at: ?string, body: ?string, html_url: string}> $releases */
+            $releases = $response->toArray();
+        } catch (ExceptionInterface) {
+            $item->expiresAfter(60);
 
-            return array_map(static fn (array $release): array => [
-                'tagName' => $release['tag_name'],
-                'name' => $release['name'] ?: $release['tag_name'],
-                'publishedAt' => $release['published_at'] ? new DateTimeImmutable($release['published_at']) : null,
-                'body' => (string) $release['body'],
-                'url' => $release['html_url'],
-            ], $releases);
-        });
+            return [];
+        }
+
+        $item->expiresAfter(3600);
+
+        return array_map(static fn (array $release): array => [
+            'tagName' => $release['tag_name'],
+            'name' => $release['name'] ?: $release['tag_name'],
+            'publishedAt' => $release['published_at'] ? new DateTimeImmutable($release['published_at']) : null,
+            'body' => (string) $release['body'],
+            'url' => $release['html_url'],
+        ], $releases);
     }
 }
