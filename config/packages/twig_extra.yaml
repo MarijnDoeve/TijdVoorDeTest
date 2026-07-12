@@ -1,3 +1,7 @@
 twig_extra:
     commonmark:
         allow_unsafe_links: false
+
+services:
+    League\CommonMark\Extension\Autolink\AutolinkExtension:
+        tags: ['twig.markdown.league_extension']
