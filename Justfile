@@ -4,11 +4,18 @@ set dotenv-filename := ".env.local"
 
 # Generate a per-worktree COMPOSE_PROJECT_NAME, IMAGES_PREFIX and free host ports in .env.local,
 # so multiple worktrees/checkouts of this repo can run `just up` at the same time without their
-# containers, volumes, images or ports colliding. Safe to re-run; no-ops if already configured.
+# containers, volumes, images or ports colliding. Also points CADDY_DATA_DIR at a location shared
+# by all worktrees of the same clone, so they reuse one self-signed CA/cert instead of generating
+# their own. Safe to re-run; no-ops if already configured.
 init:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ -f .env.local ] && grep -q '^COMPOSE_PROJECT_NAME=' .env.local; then
+        if ! grep -q '^CADDY_DATA_DIR=' .env.local; then
+            git_common_dir=$(git rev-parse --path-format=absolute --git-common-dir)
+            echo "CADDY_DATA_DIR=${git_common_dir}/tvdt-caddy-data" >> .env.local
+            echo "Backfilled CADDY_DATA_DIR into existing .env.local."
+        fi
         echo ".env.local already configured for this worktree, skipping (delete it to regenerate)."
         exit 0
     fi
@@ -39,6 +46,11 @@ init:
     postgres_port=$(free_port 5430 5529)
     mailpit_port=$(free_port 8025 8124)
     spotlight_port=$(free_port 8969 9068)
+    # .git is shared by all worktrees of the same clone, so anchoring the Caddy data dir
+    # (self-signed CA + TLS certs) there instead of under the worktree lets every worktree
+    # reuse the same CA, avoiding a fresh cert (and a fresh `just trust-cert`) per checkout.
+    git_common_dir=$(git rev-parse --path-format=absolute --git-common-dir)
+    caddy_data_dir="${git_common_dir}/tvdt-caddy-data"
     {
         echo "COMPOSE_PROJECT_NAME=${project}"
         echo "IMAGES_PREFIX=${project}-"
@@ -47,6 +59,7 @@ init:
         echo "POSTGRES_PORT=${postgres_port}"
         echo "MAILPIT_PORT=${mailpit_port}"
         echo "SPOTLIGHT_PORT=${spotlight_port}"
+        echo "CADDY_DATA_DIR=${caddy_data_dir}"
     } >> .env.local
     echo "Generated .env.local for this worktree:"
     cat .env.local
@@ -128,8 +141,13 @@ install-hooks:
     chmod +x .githooks/pre-commit
     @echo "Pre-commit hook installed."
 
-trust-cert:
+trust-cert: init
+    #!/usr/bin/env bash
+    set -euo pipefail
+    set -a
+    source .env.local
+    set +a
     sudo security add-trusted-cer -d \
-    -r trustRoot \
-    -k "$HOME/Library/Keychains/login.keychain" \
-    ./frankenphp/data/caddy/pki/authorities/local/root.crt
+        -r trustRoot \
+        -k "$HOME/Library/Keychains/login.keychain" \
+        "${CADDY_DATA_DIR:-./frankenphp/data}/caddy/pki/authorities/local/root.crt"
