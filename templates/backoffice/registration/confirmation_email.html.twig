@@ -1,11 +1,22 @@
-<h1>Hi! Please confirm your email!</h1>
+{% extends 'emails/layout.html.twig' %}
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+{% block preheader %}Bevestig je e-mailadres voor Tijd voor de test.{% endblock %}
 
-<p>
-    Cheers!
-</p>
+{% block heading %}Nog één stap voor je mee mag doen{% endblock %}
+
+{% block body %}
+    <p class="text">Beste speler,</p>
+    <p class="text">
+        Welkom bij Tijd voor de test! Voor je echt aan de slag kunt, moeten we nog één ding
+        weten: of jij écht bent wie je zegt dat je bent. Klik daarom op de knop hieronder.
+    </p>
+
+    <center><button href="{{ signedUrl|raw }}">Bevestig e-mailadres</button></center>
+
+    <p class="text">
+        Deze link verloopt over {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}, dus
+        wacht niet te lang.
+    </p>
+
+    <p class="text">Veel plezier!</p>
+{% endblock %}

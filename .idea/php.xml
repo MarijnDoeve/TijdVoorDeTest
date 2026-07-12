@@ -206,6 +206,16 @@
       <path value="$PROJECT_DIR$/vendor/martin-georgiev/postgresql-for-doctrine" />
       <path value="$PROJECT_DIR$/vendor/symfony/object-mapper" />
       <path value="$PROJECT_DIR$/vendor/symfonycasts/reset-password-bundle" />
+      <path value="$PROJECT_DIR$/vendor/lorenzo/pinky" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/twig/inky-extra" />
+      <path value="$PROJECT_DIR$/vendor/twig/markdown-extra" />
+      <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
+      <path value="$PROJECT_DIR$/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/vendor/league/config" />
+      <path value="$PROJECT_DIR$/vendor/nette/utils" />
+      <path value="$PROJECT_DIR$/vendor/nette/schema" />
+      <path value="$PROJECT_DIR$/vendor/dflydev/dot-access-data" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -403,6 +413,7 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="96512cb2-7b9e-4e1d-bfa2-bf7f3be424c8" bootstrap_file_path="./tests/bootstrap.php" configuration_file_path="./phpunit.dist.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_bootstrap_file="true" use_configuration_file="true" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
     </phpunit_settings>
   </component>
   <component name="Psalm">
