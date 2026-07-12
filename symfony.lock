@@ -98,6 +98,9 @@
             "tests/bootstrap.php"
         ]
     },
+    "sensiolabs/typescript-bundle": {
+        "version": "v0.2.2"
+    },
     "sentry/sentry-symfony": {
         "version": "5.8",
         "recipe": {

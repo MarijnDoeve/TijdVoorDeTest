@@ -6,6 +6,7 @@ namespace Tvdt\Service;
 
 use Psr\Cache\InvalidArgumentException;
 use Safe\DateTimeImmutable;
+use Safe\Exceptions\SafeExceptionInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
@@ -44,7 +45,21 @@ final readonly class GitHubReleasesService
 
             /** @var list<array{tag_name: string, name: ?string, published_at: ?string, body: ?string, html_url: string}> $releases */
             $releases = $response->toArray();
-        } catch (ExceptionInterface) {
+
+            usort($releases, static fn (array $a, array $b): int => ($b['published_at'] ?? '') <=> ($a['published_at'] ?? ''));
+
+            $result = array_map(static function (array $release): array {
+                $name = $release['name'] ?? '';
+
+                return [
+                    'tagName' => $release['tag_name'],
+                    'name' => '' !== $name ? $name : $release['tag_name'],
+                    'publishedAt' => $release['published_at'] ? new DateTimeImmutable($release['published_at']) : null,
+                    'body' => (string) $release['body'],
+                    'url' => $release['html_url'],
+                ];
+            }, $releases);
+        } catch (ExceptionInterface|SafeExceptionInterface|\DateMalformedStringException) {
             $save = false;
 
             return [];
@@ -52,14 +67,6 @@ final readonly class GitHubReleasesService
 
         $item->expiresAfter(3600);
 
-        usort($releases, static fn (array $a, array $b): int => ($b['published_at'] ?? '') <=> ($a['published_at'] ?? ''));
-
-        return array_map(static fn (array $release): array => [
-            'tagName' => $release['tag_name'],
-            'name' => $release['name'] ?: $release['tag_name'],
-            'publishedAt' => $release['published_at'] ? new DateTimeImmutable($release['published_at']) : null,
-            'body' => (string) $release['body'],
-            'url' => $release['html_url'],
-        ], $releases);
+        return $result;
     }
 }

@@ -6,6 +6,7 @@ use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use Sensiolabs\TypeScriptBundle\SensiolabsTypeScriptBundle;
 use Sentry\SentryBundle\SentryBundle;
 use Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -38,4 +39,5 @@ return [
     DAMADoctrineTestBundle::class => ['test' => true],
     StofDoctrineExtensionsBundle::class => ['all' => true],
     SymfonyCastsResetPasswordBundle::class => ['all' => true],
+    SensiolabsTypeScriptBundle::class => ['all' => true],
 ];

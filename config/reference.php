@@ -1496,6 +1496,13 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     throttle_limit?: int|Param, // Another password reset cannot be made faster than this throttle time in seconds. // Default: 3600
  *     enable_garbage_collection?: bool|Param, // Enable/Disable automatic garbage collection. // Default: true
  * }
+ * @psalm-type SensiolabsTypescriptConfig = array{
+ *     source_dir?: list<scalar|Param|null>,
+ *     binary_download_dir?: scalar|Param|null, // The directory where the SWC binary will be downloaded // Default: "%kernel.project_dir%/var"
+ *     swc_binary?: scalar|Param|null, // The SWC binary to use // Default: null
+ *     swc_config_file?: scalar|Param|null, // Path to .swcrc configuration file to use // Default: "%kernel.project_dir%/.swcrc"
+ *     swc_version?: scalar|Param|null, // The SWC version to use // Default: "v1.3.92"
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1512,6 +1519,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     turbo?: TurboConfig,
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *     sensiolabs_typescript?: SensiolabsTypescriptConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1531,6 +1539,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         turbo?: TurboConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         sensiolabs_typescript?: SensiolabsTypescriptConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1549,6 +1558,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         turbo?: TurboConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         sensiolabs_typescript?: SensiolabsTypescriptConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1568,6 +1578,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         dama_doctrine_test?: DamaDoctrineTestConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         sensiolabs_typescript?: SensiolabsTypescriptConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

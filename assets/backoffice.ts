@@ -2,12 +2,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.min.css';
 import './styles/backoffice.scss';
 import '@hotwired/turbo';
-import './stimulus.js';
-import './bootstrap.js';
+import './stimulus.ts';
+import './bootstrap.ts';
 import * as Sentry from '@sentry/browser';
 
-const dsn = document.querySelector('meta[name="sentry-dsn"]')?.content ?? '';
-const userEmail = document.querySelector('meta[name="user-email"]')?.content ?? '';
+const dsn = document.querySelector<HTMLMetaElement>('meta[name="sentry-dsn"]')
+    ?.content ?? '';
+const userEmail =
+    document.querySelector<HTMLMetaElement>('meta[name="user-email"]')
+        ?.content ?? '';
 
 // When no real DSN is configured, route to the local Spotlight sidecar so
 // nothing reaches Sentry. A syntactically valid DSN is still required for the

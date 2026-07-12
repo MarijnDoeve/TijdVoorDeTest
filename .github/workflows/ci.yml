@@ -104,6 +104,22 @@ jobs:
             echo "::error::Translations are out of date. Run 'just translations' and commit the changes."
             exit 1
           fi
+      - name: TypeScript Formatting
+        id: ts_fmt
+        continue-on-error: true
+        run: docker compose exec -T php deno fmt --check assets/
+      - name: TypeScript Lint
+        id: ts_lint
+        continue-on-error: true
+        run: docker compose exec -T php deno lint assets/
+      - name: TypeScript Type Check
+        id: ts_check
+        continue-on-error: true
+        run: docker compose exec -T php deno check assets/
+      - name: TypeScript Tests
+        id: ts_test
+        continue-on-error: true
+        run: docker compose exec -T php deno test assets/
       - name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
       - name: Assert all checks passed
@@ -123,6 +139,10 @@ jobs:
           check "PHPStan"          "${{ steps.phpstan.outcome }}"
           check "Rector"           "${{ steps.rector.outcome }}"
           check "Translations"     "${{ steps.translations.outcome }}"
+          check "TypeScript Formatting" "${{ steps.ts_fmt.outcome }}"
+          check "TypeScript Lint"       "${{ steps.ts_lint.outcome }}"
+          check "TypeScript Type Check" "${{ steps.ts_check.outcome }}"
+          check "TypeScript Tests"      "${{ steps.ts_test.outcome }}"
           exit $failed
 
   tests:
@@ -156,6 +176,8 @@ jobs:
         run: docker compose up php database --wait --no-build
       - name: Build SCSS
         run: docker compose exec -T php bin/console sass:build
+      - name: Build TypeScript
+        run: docker compose exec -T php bin/console typescript:build
       - name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       - name: Run migrations

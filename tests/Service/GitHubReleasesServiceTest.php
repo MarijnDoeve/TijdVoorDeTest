@@ -65,6 +65,44 @@ final class GitHubReleasesServiceTest extends TestCase
         $this->assertSame(2, $requestCount);
     }
 
+    public function testGetReleasesReturnsEmptyArrayOnUnparseablePublishedAt(): void
+    {
+        $body = json_encode([
+            [
+                'tag_name' => 'v0.8.0',
+                'name' => 'v0.8.0',
+                'published_at' => 'not-a-valid-date',
+                'body' => 'Some release notes',
+                'html_url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.8.0',
+            ],
+        ], \JSON_THROW_ON_ERROR);
+
+        $httpClient = new MockHttpClient([new MockResponse((string) $body, ['response_headers' => ['content-type' => 'application/json']])]);
+        $subject = new GitHubReleasesService($httpClient, new ArrayAdapter());
+
+        $this->assertSame([], $subject->getReleases());
+    }
+
+    public function testGetReleasesKeepsALiteralZeroReleaseName(): void
+    {
+        $body = json_encode([
+            [
+                'tag_name' => 'v0.9.0',
+                'name' => '0',
+                'published_at' => '2026-07-12T10:00:00Z',
+                'body' => 'Some release notes',
+                'html_url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.9.0',
+            ],
+        ], \JSON_THROW_ON_ERROR);
+
+        $httpClient = new MockHttpClient([new MockResponse((string) $body, ['response_headers' => ['content-type' => 'application/json']])]);
+        $subject = new GitHubReleasesService($httpClient, new ArrayAdapter());
+
+        $releases = $subject->getReleases();
+
+        $this->assertSame('0', $releases[0]['name']);
+    }
+
     public function testGetReleasesSortsNewestFirst(): void
     {
         $body = json_encode([
