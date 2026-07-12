@@ -36,7 +36,7 @@ final class GitHubReleasesServiceTest extends TestCase
             'tagName' => 'v0.8.0',
             'name' => 'v0.8.0',
             'publishedAt' => new DateTimeImmutable('2026-07-12T10:00:00Z'),
-            'bodyHtml' => "<h2>Added</h2>\n<ul>\n<li>Something new</li>\n</ul>\n",
+            'body' => "## Added\n- Something new",
             'url' => 'https://github.com/MarijnDoeve/TijdVoorDeTest/releases/tag/v0.8.0',
         ], $releases[0]);
     }

@@ -28,7 +28,7 @@
                              class="accordion-collapse collapse{% if loop.first %} show{% endif %}"
                              data-bs-parent="#releasesAccordion">
                             <div class="accordion-body">
-                                <div class="release-notes">{{ release.bodyHtml|raw }}</div>
+                                <div class="release-notes">{{ release.body|markdown_to_html }}</div>
                                 <a href="{{ release.url }}" target="_blank" rel="noopener noreferrer" class="small">{{ 'View on GitHub'|trans }}</a>
                             </div>
                         </div>

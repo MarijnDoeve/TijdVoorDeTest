@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tvdt\Service;
 
-use League\CommonMark\CommonMarkConverter;
 use Psr\Cache\InvalidArgumentException;
 use Safe\DateTimeImmutable;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -16,19 +15,15 @@ final readonly class GitHubReleasesService
 {
     private const string RELEASES_URL = 'https://api.github.com/repos/MarijnDoeve/TijdVoorDeTest/releases';
 
-    private CommonMarkConverter $markdownConverter;
-
     public function __construct(
         private HttpClientInterface $httpClient,
         private CacheInterface $cache,
-    ) {
-        $this->markdownConverter = new CommonMarkConverter();
-    }
+    ) {}
 
     /**
      * @throws InvalidArgumentException
      *
-     * @return list<array{tagName: string, name: string, publishedAt: ?\DateTimeImmutable, bodyHtml: string, url: string}>
+     * @return list<array{tagName: string, name: string, publishedAt: ?\DateTimeImmutable, body: string, url: string}>
      */
     public function getReleases(): array
     {
@@ -49,11 +44,11 @@ final readonly class GitHubReleasesService
                 return [];
             }
 
-            return array_map(fn (array $release): array => [
+            return array_map(static fn (array $release): array => [
                 'tagName' => $release['tag_name'],
                 'name' => $release['name'] ?: $release['tag_name'],
                 'publishedAt' => $release['published_at'] ? new DateTimeImmutable($release['published_at']) : null,
-                'bodyHtml' => (string) $this->markdownConverter->convert((string) $release['body']),
+                'body' => (string) $release['body'],
                 'url' => $release['html_url'],
             ], $releases);
         });
