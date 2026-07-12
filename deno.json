@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "lib": ["deno.window", "dom", "dom.iterable"],
+        "strict": true,
+        "noImplicitOverride": false,
+        "types": ["./assets/types/global.d.ts"]
+    },
+    "imports": {
+        "@hotwired/stimulus": "npm:@hotwired/stimulus@^3.2.2",
+        "@hotwired/turbo": "npm:@hotwired/turbo@^8.0.23",
+        "bootstrap": "npm:bootstrap@^5.3.8",
+        "@sentry/browser": "npm:@sentry/browser@^10.63.0",
+        "@std/assert": "jsr:@std/assert@^1.0.19"
+    },
+    "fmt": {
+        "include": ["assets/"],
+        "exclude": ["assets/vendor/", "assets/styles/", "assets/img/"],
+        "singleQuote": true,
+        "indentWidth": 4
+    },
+    "lint": {
+        "include": ["assets/"],
+        "exclude": ["assets/vendor/"],
+        "rules": {
+            "exclude": ["no-window", "no-window-prefix"]
+        }
+    },
+    "test": {
+        "include": ["assets/"],
+        "exclude": ["assets/vendor/"]
+    }
+}

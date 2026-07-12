@@ -62,10 +62,17 @@ ENV APP_ENV=dev XDEBUG_MODE=off
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	bash-completion \
+	unzip \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY --link frankenphp/console-complete.bash /usr/share/bash-completion/completions/console
 COPY --link frankenphp/composer-complete.bash /usr/share/bash-completion/completions/composer
+
+# Deno: standalone binary (no Node/npm) used for TypeScript lint/format/type-check/test,
+# dev-only tooling so it's not installed in the prod stage.
+ENV DENO_INSTALL=/usr/local
+# hadolint ignore=DL4006
+RUN curl -fsSL https://deno.land/install.sh | sh -s v2.9.2
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 

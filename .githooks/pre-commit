@@ -12,7 +12,12 @@ while IFS= read -r file; do
     [[ -n "$file" ]] && STAGED_TWIG+=("$file")
 done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.twig$' || true)
 
-if [[ ${#STAGED_PHP[@]} -eq 0 && ${#STAGED_TWIG[@]} -eq 0 ]]; then
+STAGED_TS=()
+while IFS= read -r file; do
+    [[ -n "$file" ]] && STAGED_TS+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.ts$' || true)
+
+if [[ ${#STAGED_PHP[@]} -eq 0 && ${#STAGED_TWIG[@]} -eq 0 && ${#STAGED_TS[@]} -eq 0 ]]; then
     exit 0
 fi
 
@@ -45,4 +50,19 @@ if [[ ${#STAGED_TWIG[@]} -gt 0 ]]; then
     echo "  → Twig-CS-Fixer"
     "${DOCKER_CMD[@]}" vendor/bin/twig-cs-fixer fix "${STAGED_TWIG[@]}"
     git add "${STAGED_TWIG[@]}"
+fi
+
+if [[ ${#STAGED_TS[@]} -gt 0 ]]; then
+    echo "TypeScript (${#STAGED_TS[@]} file(s)): Deno fmt → lint → check"
+
+    echo "  → Deno fmt"
+    "${DOCKER_CMD[@]}" deno fmt "${STAGED_TS[@]}"
+    git add "${STAGED_TS[@]}"
+
+    echo "  → Deno lint"
+    "${DOCKER_CMD[@]}" deno lint --fix "${STAGED_TS[@]}"
+    git add "${STAGED_TS[@]}"
+
+    echo "  → Deno check"
+    "${DOCKER_CMD[@]}" deno check "${STAGED_TS[@]}"
 fi

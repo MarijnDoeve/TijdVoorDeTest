@@ -23,7 +23,7 @@ Tech Stack:
 - **ORM**: Doctrine
 - **Server**: FrankenPHP with Caddy
 - **Container**: Docker Compose
-- **Frontend**: Twig templates with SASS (via asset mapper)
+- **Frontend**: Twig templates with SASS and TypeScript (via asset mapper)
 - **Testing**: PHPUnit 13 with DAMA Doctrine test bundle
 
 ## Build & Development Commands
@@ -252,7 +252,8 @@ question counts as covered more than once).
 
 - **Write the failing test first.** When fixing any PHP-reachable bug, write a PHPUnit test that reproduces the failure
   before touching the production code. Fix the code until the test passes.
-- Only skip a test if the bug is purely in JavaScript/frontend where PHPUnit cannot reach it.
+- For bugs in `assets/*.ts` logic, write a `deno test` first instead — same TDD rule, different runner. Only skip a
+  test if the bug is in markup/DOM wiring that isn't worth a test per the rule below.
 - Don't write tests for trivial presentational markup (e.g. asserting a tooltip/popover attribute or a CSS class exists
   in a template). Tests cover behavior: routing, forms, persistence, authorization.
 - Follow the pattern in `tests/Controller/Backoffice/` for controller/integration tests: log in, GET for CSRF token,
@@ -276,6 +277,11 @@ question counts as covered more than once).
 - **Twig-CS-Fixer**: Template style enforcement
 - **Safe functions**: Use `thecodingmachine/safe` wrappers for standard PHP functions that return `false` on failure —
   they throw exceptions instead
+- **TypeScript (`assets/`)**: Compiled via `sensiolabs/typescript-bundle` (standalone SWC binary, no Node/npm).
+  Formatting, linting, type-checking, and tests use **Deno** (`deno fmt` / `deno lint` / `deno check` / `deno test`) —
+  a single standalone binary, kept dev-only (installed in the `frankenphp_dev` Docker stage, not prod), consistent
+  with the project's no-Node-anywhere approach. See `deno.json` for config; run via `just fix-ts` / `just check-ts` /
+  `just test-ts`. Tests live alongside their source as `*_test.ts` files
 
 ### Environment Configuration
 

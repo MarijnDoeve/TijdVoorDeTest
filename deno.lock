@@ -1,0 +1,96 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@std/assert@*": "1.0.19",
+    "jsr:@std/assert@^1.0.19": "1.0.19",
+    "jsr:@std/internal@^1.0.12": "1.0.14",
+    "npm:@hotwired/stimulus@^3.2.2": "3.2.2",
+    "npm:@hotwired/turbo@^8.0.23": "8.0.23",
+    "npm:@sentry/browser@^10.63.0": "10.65.0",
+    "npm:bootstrap@^5.3.8": "5.3.8_@popperjs+core@2.11.8"
+  },
+  "jsr": {
+    "@std/assert@1.0.19": {
+      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.14": {
+      "integrity": "291516b3d4c35024d6ffbc0a9df5bf4c64116e05b50012cf846710152d2ffdf7"
+    }
+  },
+  "npm": {
+    "@hotwired/stimulus@3.2.2": {
+      "integrity": "sha512-eGeIqNOQpXoPAIP7tC1+1Yc1yl1xnwYqg+3mzqxyrbE5pg5YFBZcA6YoTiByJB6DKAEsiWtl6tjTJS4IYtbB7A=="
+    },
+    "@hotwired/turbo@8.0.23": {
+      "integrity": "sha512-GZ7cijxEZ6Ig71u7rD6LHaRv/wcE/hNsc+nEfiWOkLNqUgLOwo5MNGWOy5ZV9ZUDSiQx1no7YxjTNnT4O6//cQ=="
+    },
+    "@popperjs/core@2.11.8": {
+      "integrity": "sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A=="
+    },
+    "@sentry/browser-utils@10.65.0": {
+      "integrity": "sha512-4J0mkfNJAGUOkpg1ZggizyftFTn9N20b+Jl87UnWsDUkNG0Ic1l/FIzMPTVxXrAnhBGu0ULO0TFWMoQ5s3QtZw==",
+      "dependencies": [
+        "@sentry/conventions",
+        "@sentry/core"
+      ]
+    },
+    "@sentry/browser@10.65.0": {
+      "integrity": "sha512-XUDDsx0qxzeIlcOu1fDEqTcDl0eiOqghsgV+ReuuNP4jYjZ9kUQxE3rXWM5mlT1pBi4VaQ4FHqvQZZrRXy+oDw==",
+      "dependencies": [
+        "@sentry/browser-utils",
+        "@sentry/conventions",
+        "@sentry/core",
+        "@sentry/feedback",
+        "@sentry/replay",
+        "@sentry/replay-canvas"
+      ]
+    },
+    "@sentry/conventions@0.15.1": {
+      "integrity": "sha512-ZLP8bRdMON3prWE2tJyImuYscCxdcJeIPIhrOs/rgyFm3C1nCh1B6gdvPj3AZ5zW08oSFFCsq7T+tYEW3h8MNA=="
+    },
+    "@sentry/core@10.65.0": {
+      "integrity": "sha512-3aqtmM5NgNGo45BNaaBzi0LPQZAw//NEL4HKS5fXm12pJMa4KEkze8DEKnkTEIrGnWaOJKamecHKlnNg/Mqf/Q==",
+      "dependencies": [
+        "@sentry/conventions"
+      ]
+    },
+    "@sentry/feedback@10.65.0": {
+      "integrity": "sha512-ck8h7wgd3F3bYNk0v1OgohmyLBeXcKxqlfBJRtQq4k6KZUq+pXimOG7ckNguVMYjCo3PEfuG+ckKc21yqotKug==",
+      "dependencies": [
+        "@sentry/core"
+      ]
+    },
+    "@sentry/replay-canvas@10.65.0": {
+      "integrity": "sha512-A7X3RVk1Gk+knK8Ip/2EjejckNCLgCfRZo6eGlsy6qyz904KBpYmys1a0o7QkzFRjhIndjHAfcVxwt6jSLJlrQ==",
+      "dependencies": [
+        "@sentry/core",
+        "@sentry/replay"
+      ]
+    },
+    "@sentry/replay@10.65.0": {
+      "integrity": "sha512-aW988CcQBNArbOMzOFOziipHz6uQyXSa4i5CPWsu+nhVPTJHafosi5Lv9n6NM/icDX5e23VdnX6mZd8SyJuo8A==",
+      "dependencies": [
+        "@sentry/browser-utils",
+        "@sentry/core"
+      ]
+    },
+    "bootstrap@5.3.8_@popperjs+core@2.11.8": {
+      "integrity": "sha512-HP1SZDqaLDPwsNiqRqi5NcP0SSXciX2s9E+RyqJIIqGo+vJeN5AJVM98CXmW/Wux0nQ5L7jeWUdplCEf0Ee+tg==",
+      "dependencies": [
+        "@popperjs/core"
+      ]
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@^1.0.19",
+      "npm:@hotwired/stimulus@^3.2.2",
+      "npm:@hotwired/turbo@^8.0.23",
+      "npm:@sentry/browser@^10.63.0",
+      "npm:bootstrap@^5.3.8"
+    ]
+  }
+}

@@ -112,6 +112,16 @@ phpstan *args:
 test *args:
     docker compose exec php vendor/bin/phpunit {{ args }}
 
+fix-ts:
+    docker compose exec php deno fmt assets/
+    docker compose exec php deno lint --fix assets/
+
+check-ts:
+    docker compose exec php deno check assets/*.ts assets/controllers/*.ts assets/controllers/bo/*.ts
+
+test-ts *args:
+    docker compose exec php deno test assets/ {{ args }}
+
 [confirm]
 clean:
     docker compose down -v --remove-orphans
