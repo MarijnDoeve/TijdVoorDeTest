@@ -223,7 +223,7 @@ class DataExportService
         }
     }
 
-    /** Raw crosstab: one row per candidate, one column per question, cell = the answer text they gave. */
+    /** Raw crosstab: one row per candidate, one column per question, cell = the answer text they gave (bold when correct). */
     private function fillRawAnswersSheet(Worksheet $sheet, Quiz $quiz): void
     {
         /** @var list<Question> $questions */
@@ -240,11 +240,14 @@ class DataExportService
 
         /** @var array<string, array<string, string>> $answersByCandidateAndQuestion */
         $answersByCandidateAndQuestion = [];
+        /** @var array<string, array<string, bool>> $correctnessByCandidateAndQuestion */
+        $correctnessByCandidateAndQuestion = [];
         foreach ($questions as $question) {
             foreach ($question->answers as $answer) {
                 foreach ($answer->givenAnswers as $givenAnswer) {
                     $candidateId = $givenAnswer->candidate->id->toString();
                     $answersByCandidateAndQuestion[$candidateId][$question->id->toString()] = $answer->text;
+                    $correctnessByCandidateAndQuestion[$candidateId][$question->id->toString()] = $answer->isRightAnswer;
                 }
             }
         }
@@ -252,13 +255,22 @@ class DataExportService
         $row = 2;
         foreach ($quiz->candidateData as $quizCandidate) {
             $candidate = $quizCandidate->candidate;
+            $candidateId = $candidate->id->toString();
 
             $line = [$candidate->name];
             foreach ($questions as $question) {
-                $line[] = $answersByCandidateAndQuestion[$candidate->id->toString()][$question->id->toString()] ?? '';
+                $line[] = $answersByCandidateAndQuestion[$candidateId][$question->id->toString()] ?? '';
             }
 
             $sheet->fromArray($line, null, 'A'.$row);
+
+            foreach ($questions as $columnIndex => $question) {
+                if ($correctnessByCandidateAndQuestion[$candidateId][$question->id->toString()] ?? false) {
+                    $column = Coordinate::stringFromColumnIndex(2 + $columnIndex);
+                    $sheet->getStyle($column.$row)->getFont()->setBold(true);
+                }
+            }
+
             ++$row;
         }
 

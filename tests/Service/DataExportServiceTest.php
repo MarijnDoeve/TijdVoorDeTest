@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Service;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -199,6 +200,50 @@ final class DataExportServiceTest extends DatabaseTestCase
         ));
         $this->assertIsArray($claudiaRow);
         $this->assertSame('Man', $claudiaRow[$questionColumnIndex]);
+    }
+
+    public function testRawAnswersSheetBoldsCorrectAnswersOnly(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+
+        /** @var Question $firstQuestion */
+        $firstQuestion = $quiz->questions->first();
+        $correctAnswer = $firstQuestion->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->first();
+        $wrongAnswer = $firstQuestion->answers->filter(static fn (Answer $answer): bool => !$answer->isRightAnswer)->first();
+        $this->assertInstanceOf(Answer::class, $correctAnswer);
+        $this->assertInstanceOf(Answer::class, $wrongAnswer);
+
+        $candidateWithCorrectAnswer = $this->getCandidateBySeasonAndName($season, 'Claudia');
+        $candidateWithWrongAnswer = $this->getCandidateBySeasonAndName($season, 'Eelco');
+
+        $this->quizCandidateRepository->createIfNotExist($quiz, $candidateWithCorrectAnswer);
+        $this->quizCandidateRepository->createIfNotExist($quiz, $candidateWithWrongAnswer);
+
+        $this->entityManager->persist(new GivenAnswer($candidateWithCorrectAnswer, $quiz, $correctAnswer));
+        $this->entityManager->persist(new GivenAnswer($candidateWithWrongAnswer, $quiz, $wrongAnswer));
+        $this->entityManager->flush();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $sheet = $this->loadSheet($quizContent, 'Raw answers');
+        $rows = $sheet->toArray();
+        $header = $rows[0];
+
+        $questionColumnIndex = array_search($firstQuestion->question, $header, true);
+        $this->assertIsInt($questionColumnIndex);
+        $column = Coordinate::stringFromColumnIndex($questionColumnIndex + 1);
+
+        $candidateNames = array_column(\array_slice($rows, 1), 0);
+        $correctRowNumber = 2 + array_search('Claudia', $candidateNames, true);
+        $wrongRowNumber = 2 + array_search('Eelco', $candidateNames, true);
+
+        $this->assertTrue($sheet->getStyle($column.$correctRowNumber)->getFont()->getBold(), 'Expected the correct answer to be bold');
+        $this->assertFalse($sheet->getStyle($column.$wrongRowNumber)->getFont()->getBold(), 'Expected the wrong answer to not be bold');
     }
 
     public function testQuizInfoSheetShowsDropoutsFinalizationAndDisabledQuestions(): void
