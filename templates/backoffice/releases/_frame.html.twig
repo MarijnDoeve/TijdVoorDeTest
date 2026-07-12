@@ -1,0 +1,40 @@
+<turbo-frame id="releases-modal-frame">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="releasesModalLabel">
+            {{ 'Releases'|trans }}
+            {% if releases[0] is defined %}
+                <span class="text-muted fs-6 ms-2">{{ 'Current version'|trans }}: {{ releases[0].tagName }}</span>
+            {% endif %}
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {% if releases is empty %}
+            <p class="text-muted mb-0">{{ 'Could not load releases from GitHub.'|trans }}</p>
+        {% else %}
+            <div class="accordion" id="releasesAccordion">
+                {% for release in releases %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button{% if not loop.first %} collapsed{% endif %}" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#release-{{ loop.index }}">
+                                {{ release.name }}
+                                {% if release.publishedAt %}
+                                    <span class="text-muted ms-2 small">{{ release.publishedAt|date('d-m-Y') }}</span>
+                                {% endif %}
+                            </button>
+                        </h2>
+                        <div id="release-{{ loop.index }}"
+                             class="accordion-collapse collapse{% if loop.first %} show{% endif %}"
+                             data-bs-parent="#releasesAccordion">
+                            <div class="accordion-body">
+                                <div class="release-notes">{{ release.body|markdown_to_html }}</div>
+                                <a href="{{ release.url }}" target="_blank" rel="noopener noreferrer" class="small">{{ 'View on GitHub'|trans }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</turbo-frame>

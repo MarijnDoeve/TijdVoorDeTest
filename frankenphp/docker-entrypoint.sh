@@ -33,6 +33,10 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 		fi
 	fi
 
+	# var/ is a Docker volume that survives redeploys, so cache.app (e.g. the GitHub releases cache)
+	# can carry stale entries from the previous image into the new one unless cleared here.
+	php bin/console cache:pool:clear cache.app
+
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
 	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
 

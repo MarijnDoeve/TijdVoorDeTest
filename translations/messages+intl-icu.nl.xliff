@@ -241,6 +241,10 @@
         <source>Could not find candidate with name {name} in elimination.</source>
         <target>Kon geen kandidaat vinden met de naam {name} in de eliminatie</target>
       </trans-unit>
+      <trans-unit id="HL5QYZd" resname="Could not load releases from GitHub.">
+        <source>Could not load releases from GitHub.</source>
+        <target>Kan releases niet laden van GitHub.</target>
+      </trans-unit>
       <trans-unit id="0DvmToq" resname="Create a season">
         <source>Create a season</source>
         <target>Maak een seizoen aan</target>
@@ -264,6 +268,10 @@
       <trans-unit id="ukaFrcB" resname="Current password">
         <source>Current password</source>
         <target>Huidig wachtwoord</target>
+      </trans-unit>
+      <trans-unit id="xreXHN5" resname="Current version">
+        <source>Current version</source>
+        <target>Huidige versie</target>
       </trans-unit>
       <trans-unit id="PkrbQOH" resname="Cyan">
         <source>Cyan</source>
@@ -745,6 +753,10 @@
         <source>Register</source>
         <target>Registreren</target>
       </trans-unit>
+      <trans-unit id="3s37xTt" resname="Releases">
+        <source>Releases</source>
+        <target>Releases</target>
+      </trans-unit>
       <trans-unit id="WevL4T_" resname="Remember me">
         <source>Remember me</source>
         <target>Onthoud mij</target>
@@ -976,6 +988,10 @@
       <trans-unit id=".EmYZIu" resname="View">
         <source>View</source>
         <target>Bekijken</target>
+      </trans-unit>
+      <trans-unit id="a1.g0sm" resname="View on GitHub">
+        <source>View on GitHub</source>
+        <target>Bekijk op GitHub</target>
       </trans-unit>
       <trans-unit id="JWRtx_o" resname="White">
         <source>White</source>
