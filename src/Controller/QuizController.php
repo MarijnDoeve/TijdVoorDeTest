@@ -41,8 +41,12 @@ final class QuizController extends AbstractController
         $form = $this->createForm(SelectSeasonType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && !$this->seasonCodeLimiter->create($request->getClientIp())->consume()->isAccepted()) {
-            throw new TooManyRequestsHttpException();
+        if ($form->isSubmitted()) {
+            $limit = $this->seasonCodeLimiter->create($request->getClientIp())->consume();
+
+            if (!$limit->isAccepted()) {
+                throw new TooManyRequestsHttpException(max(1, $limit->getRetryAfter()->getTimestamp() - time()));
+            }
         }
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -11,9 +11,9 @@
 | 1  | High     | ~~`PrepareEliminationController` has no authorization guard~~ **Fixed 2026-07-13** | `src/Controller/Backoffice/PrepareEliminationController.php:21-65`            |
 | 2  | High     | Production PostgreSQL published to host + default-password fallback                | `compose.prod.yaml:27-28`, `compose.yaml:11,30`                               |
 | 3  | Medium   | ~~Spreadsheet formula injection in exports~~ **Fixed 2026-07-13**                  | `src/Service/QuizSpreadsheetService.php`, `src/Service/DataExportService.php` |
-| 4  | Medium   | ~~No login throttling / brute-force protection~~ **Fixed 2026-07-13**              | `config/packages/security.yaml:17-29`                                         |
+| 4  | Medium   | ~~No login throttling / brute-force protection~~ **Fixed 2026-07-13**              | `config/packages/security.yaml:30-31`                                         |
 | 5  | Medium   | Open self-registration grants immediate backoffice access                          | `src/Controller/RegistrationController.php:40-56`                             |
-| 6  | Low      | ~~Double-submit race can inflate score~~ **Fixed 2026-07-13**                      | `src/Controller/QuizController.php:120-128`                                   |
+| 6  | Low      | ~~Double-submit race can inflate score~~ **Fixed 2026-07-13**                      | `src/Controller/QuizController.php:135-142`                                   |
 | 7  | Low      | Answer-POST path never checks `isFinalized`/`isLocked`                             | `src/Controller/QuizController.php:102-131`                                   |
 | 8  | Low      | Server-side formula evaluation of uploaded XLSX                                    | `src/Service/QuizSpreadsheetService.php:68`                                   |
 | 9  | Low      | Containers run as root                                                             | `Dockerfile`                                                                  |
@@ -67,7 +67,7 @@ All user-controlled strings were written to XLSX via `setCellValue()`/`fromArray
 
 ### 4. No login throttling / brute-force protection — FIXED
 
-**File:** `config/packages/security.yaml:17-29`
+**File:** `config/packages/security.yaml:30-31`
 
 `form_login` had no `login_throttling` and no rate limiter was configured anywhere. `/login` allowed unlimited password guessing; the public `POST /` season-code entry (`QuizController.php:35`) was likewise an unthrottled oracle for enumerating the ~3.2M-space season codes (5 chars, 20-consonant alphabet).
 
@@ -91,7 +91,7 @@ Registration auto-logs-in a new user *before* email verification, and `^/backoff
 
 ### 6. Double-submit race can inflate score — FIXED
 
-**Files:** `src/Controller/QuizController.php:120-137`, `src/Entity/GivenAnswer.php`, `migrations/Version20260713194340.php`
+**Files:** `src/Controller/QuizController.php:137-146`, `src/Entity/GivenAnswer.php`, `migrations/Version20260713194340.php`
 
 No unique constraint on `GivenAnswer` and a TOCTOU between the "is this the next question" check and the insert. Concurrent POSTs of the known-correct answer could each pass the check before either committed, each inserting a `GivenAnswer` row — `QuizRepository::getScores()` counts every row where the answer is correct, so duplicates inflated the score.
 
