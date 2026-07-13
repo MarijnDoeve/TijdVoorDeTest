@@ -1,7 +1,7 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    
+
     # Note that the session will be started ONLY if you read or write from it.
     session: true
     form:
@@ -9,6 +9,13 @@ framework:
             enabled: true
         #esi: true
         #fragments: true
+    rate_limiter:
+        # Throttles guesses against the public season-code entry point (config/packages/security.yaml
+        # handles throttling for the backoffice /login form separately).
+        season_code:
+            policy: sliding_window
+            limit: 20
+            interval: '1 minute'
 when@prod:
     framework:
         # shortcut for private IP address ranges of your proxy
@@ -21,3 +28,6 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+        rate_limiter:
+            season_code:
+                limit: 3

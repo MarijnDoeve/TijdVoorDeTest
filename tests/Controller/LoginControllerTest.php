@@ -11,6 +11,14 @@ use Tvdt\Controller\LoginController;
 #[CoversClass(LoginController::class)]
 final class LoginControllerTest extends AbstractControllerWebTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Login attempts are rate-limited; start each test with a clean quota.
+        self::getContainer()->get('cache.rate_limiter')->clear();
+    }
+
     public function testLoginPageLoadsWhenNotAuthenticated(): void
     {
         $this->client->request(Request::METHOD_GET, '/login');
@@ -58,6 +66,30 @@ final class LoginControllerTest extends AbstractControllerWebTestCase
         self::assertResponseRedirects('/login');
         $this->client->followRedirect();
         self::assertSelectorTextContains('body', 'Ongeldige inloggegevens.');
+    }
+
+    public function testLoginIsThrottledAfterTooManyFailedAttempts(): void
+    {
+        for ($i = 0; $i < 2; ++$i) {
+            $this->client->request(Request::METHOD_GET, '/login');
+            $form = $this->client->getCrawler()->filter('form')->form([
+                '_username' => 'test@example.org',
+                '_password' => 'wrong-password',
+            ]);
+            $this->client->submit($form);
+            self::assertResponseRedirects('/login');
+        }
+
+        $this->client->request(Request::METHOD_GET, '/login');
+        $form = $this->client->getCrawler()->filter('form')->form([
+            '_username' => 'test@example.org',
+            '_password' => 'wrong-password',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseRedirects('/login');
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('body', 'Te veel onjuiste inlogpogingen');
     }
 
     public function testLogoutIsInterceptedByFirewall(): void

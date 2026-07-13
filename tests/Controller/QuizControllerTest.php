@@ -17,6 +17,14 @@ use Tvdt\Helpers\Base64;
 #[CoversClass(QuizController::class)]
 final class QuizControllerTest extends AbstractControllerWebTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Season-code guessing is rate-limited; start each test with a clean quota.
+        self::getContainer()->get('cache.rate_limiter')->clear();
+    }
+
     private function answerQuestion(Question $question): void
     {
         $tomHash = Base64::base64UrlEncode('Tom');
@@ -67,6 +75,26 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
         $this->client->submit($form);
 
         self::assertResponseRedirects('/krtek');
+    }
+
+    public function testSelectSeasonIsThrottledAfterTooManyAttempts(): void
+    {
+        for ($i = 0; $i < 3; ++$i) {
+            $crawler = $this->client->request(Request::METHOD_GET, '/');
+            $form = $crawler->filter('form')->form([
+                'select_season[season_code]' => 'aaaaa',
+            ]);
+            $this->client->submit($form);
+            self::assertResponseRedirects('/');
+        }
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/');
+        $form = $crawler->filter('form')->form([
+            'select_season[season_code]' => 'aaaaa',
+        ]);
+        $this->client->submit($form);
+
+        self::assertResponseStatusCodeSame(429);
     }
 
     public function testEnterNamePageLoads(): void

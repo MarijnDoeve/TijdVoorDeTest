@@ -11,7 +11,7 @@
 | 1 | High | ~~`PrepareEliminationController` has no authorization guard~~ **Fixed 2026-07-13** | `src/Controller/Backoffice/PrepareEliminationController.php:21-65` |
 | 2 | High | Production PostgreSQL published to host + default-password fallback | `compose.prod.yaml:27-28`, `compose.yaml:11,30` |
 | 3 | Medium | ~~Spreadsheet formula injection in exports~~ **Fixed 2026-07-13** | `src/Service/QuizSpreadsheetService.php`, `src/Service/DataExportService.php` |
-| 4 | Medium | No login throttling / brute-force protection | `config/packages/security.yaml:17-29` |
+| 4 | Medium | ~~No login throttling / brute-force protection~~ **Fixed 2026-07-13** | `config/packages/security.yaml:17-29` |
 | 5 | Medium | Open self-registration grants immediate backoffice access | `src/Controller/RegistrationController.php:40-56` |
 | 6 | Low | Double-submit race can inflate score | `src/Controller/QuizController.php:120-128` |
 | 7 | Low | Answer-POST path never checks `isFinalized`/`isLocked` | `src/Controller/QuizController.php:102-131` |
@@ -65,13 +65,17 @@ All user-controlled strings were written to XLSX via `setCellValue()`/`fromArray
 
 **Fix applied:** Added `src/Helpers/FormulaInjectionSafeValueBinder.php`, a `DefaultValueBinder` override that forces any string starting with `= + - @` (or a leading tab/CR) to be stored as a plain string data type instead of being auto-detected as a formula. Wired it in via `Cell::setValueBinder()` in the constructors of `QuizSpreadsheetService` and `DataExportService`, so it's active before any cell is written. Regression tests added: `tests/Helpers/FormulaInjectionSafeValueBinderTest.php` (unit-level), plus `testQuizToXlsxStoresFormulaLikeAnswerTextAsPlainString` and `testRawAnswersSheetStoresFormulaLikeAnswerTextAsPlainString` (written first, confirmed failing against the old code, now passing).
 
-### 4. No login throttling / brute-force protection
+### 4. No login throttling / brute-force protection — FIXED
 
 **File:** `config/packages/security.yaml:17-29`
 
-`form_login` has no `login_throttling` and no rate limiter is configured anywhere. `/login` allows unlimited password guessing; the public `POST /` season-code entry (`QuizController.php:35`) is likewise an unthrottled oracle for enumerating the ~3.2M-space season codes (5 chars, 20-consonant alphabet).
+`form_login` had no `login_throttling` and no rate limiter was configured anywhere. `/login` allowed unlimited password guessing; the public `POST /` season-code entry (`QuizController.php:35`) was likewise an unthrottled oracle for enumerating the ~3.2M-space season codes (5 chars, 20-consonant alphabet).
 
-**Fix:** Add `login_throttling` and a rate limiter on the public season entry.
+**Fix applied:**
+- Added `symfony/rate-limiter` as a composer dependency and enabled `login_throttling` (`max_attempts: 5`) on the `main` firewall in `config/packages/security.yaml`, using Symfony's built-in per-user/global rate limiter.
+- Added a dedicated `season_code` rate limiter (`framework.rate_limiter`, sliding window, 20 attempts/minute per IP) in `config/packages/framework.yaml`, enforced in `QuizController::selectSeason` — a `TooManyRequestsHttpException` (429) is thrown once the client IP exceeds the limit, before the season-code form is even validated.
+- Both limiters have lower `when@test` overrides so tests run fast and deterministically.
+- Regression tests added: `testLoginIsThrottledAfterTooManyFailedAttempts` (`tests/Controller/LoginControllerTest.php`) and `testSelectSeasonIsThrottledAfterTooManyAttempts` (`tests/Controller/QuizControllerTest.php`), both written first, confirmed failing against the old config, now passing.
 
 ### 5. Open self-registration grants immediate backoffice access
 

@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,13 +32,17 @@ use Tvdt\Repository\SeasonRepository;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository, private readonly RateLimiterFactoryInterface $seasonCodeLimiter) {}
 
     #[Route(path: '/', name: 'tvdt_quiz_select_season', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && !$this->seasonCodeLimiter->create($request->getClientIp())->consume()->isAccepted()) {
+            throw new TooManyRequestsHttpException();
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $seasonCode = $form->get('season_code')->getData();
