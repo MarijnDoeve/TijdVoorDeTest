@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Service;
 
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -14,9 +15,15 @@ use Tvdt\Entity\Answer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Exception\SpreadsheetDataException;
+use Tvdt\Helpers\FormulaInjectionSafeValueBinder;
 
 class QuizSpreadsheetService
 {
+    public function __construct()
+    {
+        Cell::setValueBinder(new FormulaInjectionSafeValueBinder());
+    }
+
     public function generateTemplate(bool $fillExample = true): \Closure
     {
         $quiz = new Quiz();

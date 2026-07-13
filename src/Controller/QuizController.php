@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,13 +33,21 @@ use Tvdt\Repository\SeasonRepository;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository, private readonly RateLimiterFactoryInterface $seasonCodeLimiter) {}
 
     #[Route(path: '/', name: 'tvdt_quiz_select_season', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request): Response
     {
         $form = $this->createForm(SelectSeasonType::class);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $limit = $this->seasonCodeLimiter->create($request->getClientIp())->consume();
+
+            if (!$limit->isAccepted()) {
+                throw new TooManyRequestsHttpException(max(1, $limit->getRetryAfter()->getTimestamp() - time()));
+            }
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $seasonCode = $form->get('season_code')->getData();
@@ -125,7 +136,14 @@ final class QuizController extends AbstractController
 
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
-            $this->entityManager->flush();
+
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('You cannot answer this question'));
+
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
+            }
 
             // end of extracting saving answer logic
             return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
