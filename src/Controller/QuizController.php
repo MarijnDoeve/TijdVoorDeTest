@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -131,7 +132,14 @@ final class QuizController extends AbstractController
 
             $givenAnswer = new GivenAnswer($candidate, $answer->question->quiz, $answer);
             $this->entityManager->persist($givenAnswer);
-            $this->entityManager->flush();
+
+            try {
+                $this->entityManager->flush();
+            } catch (UniqueConstraintViolationException) {
+                $this->addFlash(FlashType::Danger, $this->translator->trans('You cannot answer this question'));
+
+                return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);
+            }
 
             // end of extracting saving answer logic
             return $this->redirectToRoute('tvdt_quiz_quiz_page', ['seasonCode' => $season->seasonCode, 'nameHash' => $nameHash]);

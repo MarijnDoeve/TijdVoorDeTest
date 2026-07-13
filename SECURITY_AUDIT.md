@@ -6,20 +6,20 @@
 
 ## Summary
 
-| # | Severity | Finding | Location |
-|---|----------|---------|----------|
-| 1 | High | ~~`PrepareEliminationController` has no authorization guard~~ **Fixed 2026-07-13** | `src/Controller/Backoffice/PrepareEliminationController.php:21-65` |
-| 2 | High | Production PostgreSQL published to host + default-password fallback | `compose.prod.yaml:27-28`, `compose.yaml:11,30` |
-| 3 | Medium | ~~Spreadsheet formula injection in exports~~ **Fixed 2026-07-13** | `src/Service/QuizSpreadsheetService.php`, `src/Service/DataExportService.php` |
-| 4 | Medium | ~~No login throttling / brute-force protection~~ **Fixed 2026-07-13** | `config/packages/security.yaml:17-29` |
-| 5 | Medium | Open self-registration grants immediate backoffice access | `src/Controller/RegistrationController.php:40-56` |
-| 6 | Low | Double-submit race can inflate score | `src/Controller/QuizController.php:120-128` |
-| 7 | Low | Answer-POST path never checks `isFinalized`/`isLocked` | `src/Controller/QuizController.php:102-131` |
-| 8 | Low | Server-side formula evaluation of uploaded XLSX | `src/Service/QuizSpreadsheetService.php:68` |
-| 9 | Low | Containers run as root | `Dockerfile` |
-| 10 | Low | No security response headers in prod | `frankenphp/Caddyfile:45` |
-| 11 | Low | Committed `APP_SECRET` (dev-only) | `.env.dev:3` |
-| 12 | Low | `zend.exception_ignore_args = Off` in prod | `frankenphp/conf.d/10-app.ini:15` |
+| #  | Severity | Finding                                                                            | Location                                                                      |
+|----|----------|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| 1  | High     | ~~`PrepareEliminationController` has no authorization guard~~ **Fixed 2026-07-13** | `src/Controller/Backoffice/PrepareEliminationController.php:21-65`            |
+| 2  | High     | Production PostgreSQL published to host + default-password fallback                | `compose.prod.yaml:27-28`, `compose.yaml:11,30`                               |
+| 3  | Medium   | ~~Spreadsheet formula injection in exports~~ **Fixed 2026-07-13**                  | `src/Service/QuizSpreadsheetService.php`, `src/Service/DataExportService.php` |
+| 4  | Medium   | ~~No login throttling / brute-force protection~~ **Fixed 2026-07-13**              | `config/packages/security.yaml:17-29`                                         |
+| 5  | Medium   | Open self-registration grants immediate backoffice access                          | `src/Controller/RegistrationController.php:40-56`                             |
+| 6  | Low      | ~~Double-submit race can inflate score~~ **Fixed 2026-07-13**                      | `src/Controller/QuizController.php:120-128`                                   |
+| 7  | Low      | Answer-POST path never checks `isFinalized`/`isLocked`                             | `src/Controller/QuizController.php:102-131`                                   |
+| 8  | Low      | Server-side formula evaluation of uploaded XLSX                                    | `src/Service/QuizSpreadsheetService.php:68`                                   |
+| 9  | Low      | Containers run as root                                                             | `Dockerfile`                                                                  |
+| 10 | Low      | No security response headers in prod                                               | `frankenphp/Caddyfile:45`                                                     |
+| 11 | Low      | Committed `APP_SECRET` (dev-only)                                                  | `.env.dev:3`                                                                  |
+| 12 | Low      | `zend.exception_ignore_args = Off` in prod                                         | `frankenphp/conf.d/10-app.ini:15`                                             |
 
 **Dependencies are clean:** `composer audit` and `bin/console importmap:audit` both report zero known-CVE advisories.
 
@@ -89,7 +89,18 @@ Registration auto-logs-in a new user *before* email verification, and `^/backoff
 
 ## Low
 
-- **6. Double-submit race can inflate score** (`src/Controller/QuizController.php:120-128`): no unique constraint on `GivenAnswer` and a TOCTOU between the "is this the next question" check and the insert. Concurrent POSTs of the known-correct answer each insert a row, each counted correct. Add a unique index on (quizCandidate, question).
+### 6. Double-submit race can inflate score — FIXED
+
+**Files:** `src/Controller/QuizController.php:120-137`, `src/Entity/GivenAnswer.php`, `migrations/Version20260713194340.php`
+
+No unique constraint on `GivenAnswer` and a TOCTOU between the "is this the next question" check and the insert. Concurrent POSTs of the known-correct answer could each pass the check before either committed, each inserting a `GivenAnswer` row — `QuizRepository::getScores()` counts every row where the answer is correct, so duplicates inflated the score.
+
+**Fix applied:** Added a denormalized `GivenAnswer::$question` (derived from `$answer->question` in the constructor, no call-site changes needed) plus a Postgres partial unique index on `(candidate_id, question_id) WHERE deleted_at IS NULL`, matching the pattern already used on `QuizCandidate`. The partial predicate keeps re-answering possible after `GivenAnswerRepository::deleteAllForCandidateInQuiz()` soft-deletes a candidate's answers (backoffice "reset candidate progress"). `QuizController::quizPage` now catches `UniqueConstraintViolationException` on flush and redirects with a flash instead of a 500. Regression test `testDuplicateGivenAnswerForSameQuestionIsRejected` added to `tests/Repository/GivenAnswerRepositoryTest.php` (written first, confirmed failing against the old schema, now passing). Full suite (300 tests), PHPStan, Rector, and CS-Fixer all pass.
+
+---
+
+## Remaining Low findings
+
 - **7. Answer-POST path never checks `isFinalized`/`isLocked`** (`src/Controller/QuizController.php:102-131`): a finalized quiz still set as `activeQuiz` stays answerable. The POST path also doesn't assert a `QuizCandidate` exists (only GET does) — currently not exploitable but worth hardening.
 - **8. Server-side formula evaluation of uploaded XLSX** (`src/Service/QuizSpreadsheetService.php:68`): `toArray()` leaves `calculateFormulas` at default `true`, allowing CPU-burn via nested formulas on import. Pass `calculateFormulas: false`.
 - **9. Containers run as root** (`Dockerfile`, no `USER` directive): any PHP RCE is immediately root in-container.

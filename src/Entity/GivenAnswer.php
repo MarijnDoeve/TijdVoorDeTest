@@ -14,6 +14,7 @@ use Tvdt\Repository\GivenAnswerRepository;
 
 #[Gedmo\SoftDeleteable]
 #[ORM\Entity(repositoryClass: GivenAnswerRepository::class)]
+#[ORM\UniqueConstraint(columns: ['candidate_id', 'question_id'], options: ['where' => '(deleted_at IS NULL)'])]
 class GivenAnswer
 {
     use SoftDeleteableEntity;
@@ -28,6 +29,10 @@ class GivenAnswer
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     public private(set) \DateTimeImmutable $created;
 
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne]
+    public private(set) Question $question;
+
     public function __construct(
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
@@ -40,5 +45,7 @@ class GivenAnswer
         #[ORM\JoinColumn(nullable: false)]
         #[ORM\ManyToOne(inversedBy: 'givenAnswers')]
         public private(set) Answer $answer,
-    ) {}
+    ) {
+        $this->question = $answer->question;
+    }
 }
