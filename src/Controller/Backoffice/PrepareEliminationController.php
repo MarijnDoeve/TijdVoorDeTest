@@ -11,18 +11,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Tvdt\Controller\AbstractController;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Factory\EliminationFactory;
+use Tvdt\Security\Voter\SeasonVoter;
 
 final class PrepareEliminationController extends AbstractController
 {
     public function __construct(private readonly EliminationFactory $eliminationFactory, private readonly EntityManagerInterface $em) {}
 
     #[IsCsrfTokenValid('prepare_elimination')]
+    #[IsGranted(SeasonVoter::ELIMINATION, 'quiz')]
     #[Route(
         '/backoffice/season/{seasonCode:season}/quiz/{quiz}/elimination/prepare',
         name: 'tvdt_prepare_elimination',
@@ -37,6 +40,7 @@ final class PrepareEliminationController extends AbstractController
     }
 
     #[IsCsrfTokenValid('prepare_elimination', methods: ['POST'])]
+    #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     #[Route(
         '/backoffice/elimination/{elimination}',
         name: 'tvdt_prepare_elimination_view',

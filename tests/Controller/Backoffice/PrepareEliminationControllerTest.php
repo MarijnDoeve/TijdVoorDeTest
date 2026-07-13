@@ -117,4 +117,34 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
 
         self::assertResponseRedirects(\sprintf('/elimination/%s', $elimination->id));
     }
+
+    public function testIndexIsDeniedForNonOwner(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/season/krtek/quiz/%s/result', $quiz->id), '/elimination/prepare');
+
+        $this->loginAs('test@example.org');
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/quiz/%s/elimination/prepare', $quiz->id), [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testViewEliminationIsDeniedForNonOwner(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->flush();
+
+        $this->loginAs('test@example.org');
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/elimination/%s', $elimination->id));
+
+        self::assertResponseStatusCodeSame(403);
+    }
 }
