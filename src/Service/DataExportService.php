@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tvdt\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -19,6 +20,7 @@ use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
 use Tvdt\Helpers\FilenameSanitizer;
+use Tvdt\Helpers\FormulaInjectionSafeValueBinder;
 use Tvdt\Repository\QuizRepository;
 
 use function Safe\tempnam;
@@ -31,7 +33,9 @@ class DataExportService
         private readonly EntityManagerInterface $entityManager,
         private readonly QuizSpreadsheetService $quizSpreadsheetService,
         private readonly QuizRepository $quizRepository,
-    ) {}
+    ) {
+        Cell::setValueBinder(new FormulaInjectionSafeValueBinder());
+    }
 
     /** @throws FilesystemException @return string path to a temp zip file; caller is responsible for removing it */
     public function exportForUser(User $user): string

