@@ -12,6 +12,7 @@ services:
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
       - ${CADDY_DATA_DIR:-./frankenphp/data}:/data
       - sass:/app/var/sass
+      - typescript:/app/var/typescript
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
@@ -49,7 +50,23 @@ services:
       - -v
     healthcheck:
       disable: true
-  
+
+  typescript:
+    image: ${IMAGES_PREFIX:-}app-php
+    volumes:
+      - ./:/app:ro
+      - typescript:/app/var/typescript
+    entrypoint: ''
+    depends_on:
+      - php
+    command:
+      - bin/console
+      - typescript:build
+      - --watch
+      - -v
+    healthcheck:
+      disable: true
+
   ###> symfony/mercure-bundle ###
   ###< symfony/mercure-bundle ###
   
@@ -77,3 +94,4 @@ services:
 
 volumes:
   sass:
+  typescript:
