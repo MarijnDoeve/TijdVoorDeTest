@@ -99,9 +99,19 @@ jobs:
         id: translations
         continue-on-error: true
         run: |
-          docker compose exec -T php bin/console translation:extract --force --format=xliff --sort=asc nl
+          docker compose exec -T php bin/console translation:extract --force --format=yaml --sort=asc --domain=messages nl
           if ! git diff --exit-code -- translations; then
             echo "::error::Translations are out of date. Run 'just translations' and commit the changes."
+            exit 1
+          fi
+      - name: Validator translations (new messages check)
+        id: validator_translations
+        continue-on-error: true
+        run: |
+          new_messages=$(docker compose exec -T php bin/console translation:extract --dump-messages --domain=validators --ansi nl | grep -aP '^\s*\* ' | grep -aP '\x1b\[32m' | grep -oP "(?<=\x1b\[32m).*?(?=\x1b\[39m)" || true)
+          if [ -n "$new_messages" ]; then
+            echo "::error::New validator constraint messages found that aren't in translations/validators.nl.yaml yet:"
+            echo "$new_messages" | while IFS= read -r msg; do echo "::error::  - $msg"; done
             exit 1
           fi
       - name: TypeScript Formatting
@@ -139,6 +149,7 @@ jobs:
           check "PHPStan"          "${{ steps.phpstan.outcome }}"
           check "Rector"           "${{ steps.rector.outcome }}"
           check "Translations"     "${{ steps.translations.outcome }}"
+          check "Validator translations" "${{ steps.validator_translations.outcome }}"
           check "TypeScript Formatting" "${{ steps.ts_fmt.outcome }}"
           check "TypeScript Lint"       "${{ steps.ts_lint.outcome }}"
           check "TypeScript Type Check" "${{ steps.ts_check.outcome }}"

@@ -1,0 +1,263 @@
+'A candidate with this name already exists in this season': 'Er bestaat al een kandidaat met deze naam in dit seizoen'
+'A label with a similar name already exists': 'Er bestaat al een label met deze naam'
+'A new confirmation email has been sent. Please check your inbox.': 'Er is een nieuwe bevestigingsmail verstuurd. Check je inbox.'
+'A quiz with this name already exists in this season': 'Er bestaat al een test met deze naam in dit seizoen'
+Actions: Acties
+Activate: Activeren
+Active: Actief
+'Active Quiz': 'Actieve test'
+Add: Toevoegen
+'Add Candidate': 'Voeg kandidaat toe'
+'Add Candidates': 'Voeg kandidaten toe'
+'Add Empty Quiz': 'Voeg een lege test toe'
+'Add Quiz': 'Test toevoegen'
+'Add a quiz to {name}': 'Voeg een test toe aan {name}'
+'Add answer': 'Antwoord toevoegen'
+'Add blank': 'Leeg toevoegen'
+'Add blank quiz': 'Lege quiz toevoegen'
+'Add label': 'Label toevoegen'
+'Add question': 'Vraag toevoegen'
+'After changing your email address you will receive a new confirmation email.': 'Na het wijzigen van je e-mailadres ontvang je een nieuwe bevestigingsmail.'
+All: Alle
+'All Seasons': 'Alle seizoenen'
+'Already have an account? Log in': 'Heb je al een account? Log in'
+'Answer Mapping': 'Antwoord-kandidaat koppeling'
+'Are you sure you want to clear all the results? This will also delete all the eliminations.': 'Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.'
+'Are you sure you want to delete this candidate? All their answers will be lost.': 'Weet je zeker dat je deze kandidaat wilt verwijderen? Alle gegeven antwoorden gaan dan verloren.'
+'Are you sure you want to delete this question from the question bank?': 'Weet je zeker dat je deze vraag uit de vragenbank wilt verwijderen?'
+'Are you sure you want to delete this quiz?': 'Weet je zeker dat je deze test wilt verwijderen?'
+'Are you sure you want to reset progress for this candidate? Their given answers for this quiz will be deleted.': 'Weet je zeker dat je de voortgang van deze kandidaat wilt resetten? De ingevulde antwoorden voor deze test worden verwijderd.'
+Assign: Toewijzen
+Back: Terug
+'Back to login': 'Terug naar inloggen'
+Backoffice: Backoffice
+Blue: Blauw
+Cancel: Annuleren
+Candidate: Kandidaat
+'Candidate Status': Kandidaatstatus
+'Candidate answers saved': 'Kandidaatantwoorden opgeslagen'
+'Candidate deleted': 'Kandidaat verwijderd'
+'Candidate not found': 'Kandidaat niet gevonden'
+'Candidate progress reset': 'Voortgang kandidaat gereset'
+'Candidate renamed': 'Kandidaat hernoemd'
+'Candidate status updated': 'Kandidaatstatus bijgewerkt'
+Candidates: Kandidaten
+'Change email': 'E-mailadres wijzigen'
+'Change password': 'Wachtwoord wijzigen'
+'Check your email': 'Controleer je e-mail'
+'Clear Quiz...': 'Test leegmaken...'
+Close: Sluiten
+Colour: Kleur
+Completed: Voltooid
+'Confirm Answers': 'Bevestig antwoorden'
+'Confirm your email address to enable this feature.': 'Bevestig je e-mailadres om deze functie te kunnen gebruiken.'
+'Confirm your email address to enable this.': 'Bevestig je e-mailadres om dit te gebruiken.'
+Confirmed: Bevestigd
+'Correct Answers': 'Goede antwoorden'
+Corrections: Jokers
+'Could not find candidate with name {name}': 'Kon kandidaat met naam {name} niet vinden'
+'Could not find candidate with name {name} in elimination.': 'Kon geen kandidaat vinden met de naam {name} in de eliminatie'
+'Could not load releases from GitHub.': 'Kan releases niet laden van GitHub.'
+'Create a season': 'Maak een seizoen aan'
+'Create an account': 'Maak een account aan'
+'Create an empty quiz and add questions from the question bank.': 'Maak een lege quiz aan en voeg vragen toe vanuit de vragenbank.'
+'Current code:': 'Huidige code:'
+'Current email address:': 'Huidig e-mailadres:'
+'Current password': 'Huidig wachtwoord'
+'Current version': 'Huidige versie'
+Cyan: Cyaan
+'Danger zone': Gevarenzone
+Deactivate: Deactiveren
+'Deactivate Quiz': 'Deactiveer test'
+'Deactivate the quiz before undoing the finalization': 'Deactiveer de test voordat je het afronden ongedaan maakt'
+Delete: Verwijderen
+'Delete Quiz...': 'Test verwijderen...'
+'Delete account': 'Account verwijderen'
+'Delete account...': 'Account verwijderen...'
+'Deleting your account also deletes every season you are the only owner of. This cannot be undone.': 'Als je je account verwijdert, worden ook alle seizoenen verwijderd waarvan jij de enige eigenaar bent. Dit kan niet ongedaan worden gemaakt.'
+'Download Template': 'Download sjabloon'
+'Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.': 'Download een archief met alles wat onder je account is opgeslagen: je profiel, de seizoenen die je bezit, met de bijbehorende testen, resultaten en kandidaten.'
+'Download data': 'Gegevens downloaden'
+Draft: Concept
+'Drag to reorder': 'Sleep om te sorteren'
+EMPTY: LEEG
+Edit: Bewerken
+'Edit question': 'Vraag bewerken'
+Email: E-mail
+'Enter name': 'Voer een naam in'
+'Enter your email address, and we will send you a link to reset your password.': 'Voer je e-mailadres in en we sturen je een link om je wachtwoord te resetten.'
+'Enter your name': 'Voer je naam in'
+'Error clearing quiz': 'Fout bij het leegmaken van de test'
+'Error saving order': 'Fout bij het opslaan van de volgorde'
+'Export to XLSX': 'Exporteren naar XLSX'
+Finalize: Afronden
+Finalized: Afgerond
+'Forgot your password?': 'Wachtwoord vergeten?'
+Fullscreen: 'Volledig scherm'
+Gray: Grijs
+Green: Groen
+'Help text for adding a quiz': 'Upload een XLSX-bestand met vragen en antwoorden voor je test.'
+'Help text for adding candidates': 'Voeg kandidaten toe aan dit seizoen. Eén naam per regel.'
+'Help text for creating a season': 'Maak een nieuw seizoen aan om tests en kandidaten te beheren.'
+'Help text for preparing elimination': 'Kies welke kandidaten groen of rood krijgen voor de eliminatie.'
+Home: Home
+'If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.': 'Als er een account met dit e-mailadres bestaat, is er zojuist een e-mail verstuurd met een link om je wachtwoord te resetten.'
+"If you don't receive an email please check your spam folder or": 'Als je geen e-mail ontvangt, controleer dan je spammap of'
+Import: Importeren
+'Import Quiz from Excel': 'Importeer test vanuit Excel'
+'In Progress': Bezig
+Inactive: Inactief
+'Invalid label name': 'Ongeldige labelnaam'
+'Invalid season code': 'Ongeldige seizoencode'
+'Label added': 'Label toegevoegd'
+'Label removed': 'Label verwijderd'
+Labels: Labels
+Language: Taal
+'Language saved': 'Taal opgeslagen'
+'Load Prepared Elimination': 'Laad voorbereide eliminatie'
+'Locked (answers given)': 'Vergrendeld (antwoorden gegeven)'
+'Locks the quiz so it can no longer be edited and makes it ready for candidates to take.': 'Vergrendelt de test zodat deze niet meer bewerkt kan worden en maakt deze klaar voor deelnemers.'
+Logout: Uitloggen
+'Make active': 'Maak actief'
+Manage: Beheren
+'Manage Quiz': 'Beheer test'
+Name: Naam
+'New email address': 'Nieuw e-mailadres'
+'New label': 'Nieuw label'
+'New password': 'Nieuw wachtwoord'
+Next: Volgende
+'No': Nee
+'No active quiz': 'Geen actieve test'
+'No candidates': 'Geen kandidaten'
+'No questions have been added to this quiz yet.': 'Er zijn nog geen vragen aan deze test toegevoegd.'
+'No questions in the question bank yet': 'Nog geen vragen in de vragenbank'
+'No quizzes': 'Geen tests'
+'No results': 'Geen resultaten'
+'Not Started': 'Niet gestart'
+'Not confirmed': 'Niet bevestigd'
+'Number of dropouts:': 'Aantal afvallers:'
+'One candidate per line': 'Eén kandidaat per regel'
+Open: Openen
+'Order saved': 'Volgorde opgeslagen'
+Overview: Overzicht
+Owner(s): Eigenaar/Eigenaren
+Password: Wachtwoord
+Penalty: Straftijd
+'Please Confirm': 'Bevestig alsjeblieft'
+'Please Confirm your Email': 'Bevestig je e-mailadres alsjeblieft'
+'Please confirm your email address before downloading your data.': 'Bevestig eerst je e-mailadres voordat je je gegevens downloadt.'
+'Please confirm your email address before exporting a quiz.': 'Bevestig je e-mailadres voordat je een quiz exporteert.'
+'Please confirm your email address before exporting data.': 'Bevestig eerst je e-mailadres voordat je gegevens exporteert.'
+'Please select an answer': 'Selecteer een antwoorden alsjeblieft'
+'Please sign in': 'Log in aub'
+'Please upload a valid XLSX file': 'Upload een geldig XLSX-bestand'
+'Prepare Custom Elimination': 'Bereid aangepaste eliminatie voor'
+'Prepare Elimination': 'Bereid eliminatie voor'
+Previous: Vorige
+Question: Vraag
+'Question added to quiz %quiz%': 'Vraag toegevoegd aan test %quiz%'
+'Question added to the question bank': 'Vraag toegevoegd aan de vragenbank'
+'Question bank': Vragenbank
+'Question details': Vraagdetails
+'Question removed from quiz %quiz%': 'Vraag verwijderd uit quiz %quiz%'
+'Question removed from the question bank': 'Vraag verwijderd uit de vragenbank'
+'Question synced to quiz %quiz%': 'Vraag gesynchroniseerd naar quiz %quiz%'
+'Question updated': 'Vraag bijgewerkt'
+Questions: Vragen
+'Quick actions': 'Snelle acties'
+Quiz: Test
+'Quiz (xlsx)': 'Test (xlsx)'
+'Quiz Added!': 'Test toegevoegd!'
+'Quiz Status': Teststatus
+'Quiz cleared': 'Test leeggemaakt'
+'Quiz cleared and no longer finalized': 'Test leeggemaakt en niet langer afgerond'
+'Quiz completed': 'Test voltooid'
+'Quiz deleted': 'Test verwijderd'
+'Quiz finalized': 'Test afgerond'
+'Quiz is no longer finalized': 'Test is niet langer afgerond'
+'Quiz name': Testnaam
+Quizzes: Tests
+Randomize: Husselen
+'Re-opens the quiz for editing. Candidates will no longer be able to take the quiz until it is finalized again.': 'Heropent de test voor bewerking. Deelnemers kunnen de test niet meer afnemen totdat deze opnieuw is afgerond.'
+Ready: Voorbereid
+Red: Rood
+'Refresh the page to try again.': 'Ververs de pagina om het opnieuw te proberen.'
+'Regenerate season code': 'Seizoenscode opnieuw genereren'
+'Regenerate season code...': 'Seizoenscode opnieuw genereren...'
+Register: Registreren
+Releases: Releases
+'Remember me': 'Onthoud mij'
+'Remove label': 'Label verwijderen'
+Rename: Hernoemen
+'Rename candidate': 'Kandidaat hernoemen'
+'Repeat Password': 'Herhaal wachtwoord'
+'Resend confirmation email': 'Bevestigingsmail opnieuw versturen'
+'Reset password': 'Wachtwoord resetten'
+'Reset progress': 'Voortgang resetten'
+'Reset your password': 'Wachtwoord resetten'
+'Results & Elimination': 'Resultaat & Eliminatie'
+Reusable: Herbruikbaar
+Save: Opslaan
+'Save and start elimination': 'Opslaan en eliminatie starten'
+Score: Score
+Season: Seizoen
+'Season Code': Seizoencode
+'Season Name': Seizoennaam
+'Season code': Seizoenscode
+'Season code regenerated': 'Seizoenscode opnieuw gegenereerd'
+Seasons: Seizoenen
+'Send password reset email': 'Stuur reset-e-mail'
+Settings: Instellingen
+'Show Numbers': 'Toon nummers'
+'Sign in': 'Log in'
+Soon™: Soon™
+'Sort A–Z': 'Sorteer A-Z'
+Status: Status
+Submit: Verstuur
+'Sync latest changes to this quiz': 'Laatste wijzigingen synchroniseren naar deze quiz'
+'The candidate name must be between 1 and 16 characters': 'De naam van de kandidaat moet tussen de 1 en 16 tekens zijn'
+'The confirmation email could not be sent. Please try again later.': 'De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.'
+'The confirmation email could not be sent. Please use the resend button to try again.': 'De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.'
+'The password fields must match.': 'De wachtwoorden moeten overeen komen.'
+'The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.': 'De vraag is niet gesynchroniseerd naar afgeronde quiz(zes): %quizzes%. Gebruik de Synchroniseren-knop om ze bij te werken.'
+'The quiz cannot be finalized while it has errors': 'De test kan niet afgerond worden zolang er fouten zijn'
+'The quiz has already been filled in and can no longer be altered': 'De test is al ingevuld en kan niet meer aangepast worden'
+'The quiz is already finalized': 'De test is al afgerond'
+'The quiz must be finalized before it can be activated': 'De test moet afgerond zijn voordat deze geactiveerd kan worden'
+'The season code is used by candidates to join this season. Regenerating it invalidates the current code, so make sure to share the new one.': 'De seizoenscode wordt door kandidaten gebruikt om dit seizoen te vinden. Als je een nieuwe code genereert, werkt de oude niet meer, dus deel de nieuwe code opnieuw.'
+'There are no answers for this question': 'Er zijn geen antwoorden voor deze vraag'
+'There is already an account with this email': 'Er is al een account met dit e-mailadres'
+'There is no active quiz': 'Er is geen test actief'
+'This deletes your account and every season you are the only owner of. Enter your password to confirm.': 'Dit verwijdert je account en alle seizoenen waarvan jij de enige eigenaar bent. Vul je wachtwoord in om te bevestigen.'
+'This invalidates the current season code. Anyone using the old code will no longer be able to join this season.': 'Hiermee wordt de huidige seizoenscode ongeldig. Iedereen die de oude code gebruikt, kan dit seizoen niet meer vinden.'
+'This link will expire in {count}.': 'Deze link verloopt over {count}.'
+'This question cannot be deleted because it is used in a locked or active quiz': 'Deze vraag kan niet verwijderd worden omdat die gebruik wordt in een vergrendelde of actieve test'
+'This question has already been used': 'Deze vraag is al gebruikt'
+'This question has been used in a quiz. The copy in the quiz will not be affected.': 'Deze vraag is gebruikt in een test. De kopie in de test blijft ongewijzigd.'
+'This question is incomplete: it needs at least two answers and exactly one correct answer': 'Deze vraag is incompleet: er zijn tenminste twee antwoorden en precies één goed antwoord nodig'
+'This quiz can no longer be altered': 'Deze test kan niet meer aangepast worden'
+'This quiz has already been filled in and can no longer be altered': 'Deze quiz is al ingevuld en kan niet meer worden gewijzigd'
+'This quiz has no questions yet': 'Deze test heeft nog geen vragen'
+Time: Tijd
+'Toggle correct answer': 'Goed antwoord aan/uitzetten'
+Unassign: Ontkoppelen
+'Undo finalization': 'Afronden ongedaan maken'
+'Used in': 'Gebruikt in'
+View: Bekijken
+'View on GitHub': 'Bekijk op GitHub'
+White: Wit
+'Wrong password, your account has not been deleted.': 'Verkeerd wachtwoord, je account is niet verwijderd.'
+Yellow: Geel
+'Yes': Ja
+'You are not allowed to answer this quiz': 'Je mag deze test niet beantwoorden'
+'You cannot answer this question': 'Je kan deze vraag niet beantwoorden'
+'You have no seasons yet.': 'Je hebt nog geen seizoenen.'
+'Your Seasons': 'Jouw seizoenen'
+'Your data': 'Je gegevens'
+'Your email address has been changed.': 'Je e-mailadres is gewijzigd.'
+'Your email address has been changed. Please check your inbox to confirm it.': 'Je e-mailadres is gewijzigd. Check je inbox om het te bevestigen.'
+'Your email address has been verified.': 'Je e-mailadres is geverifieerd.'
+'Your email address is already confirmed.': 'Je e-mailadres is al bevestigd.'
+'Your password has been changed.': 'Je wachtwoord is gewijzigd.'
+'Your password reset request': 'Verzoek tot wachtwoordreset'
+'try again': 'probeer opnieuw'
