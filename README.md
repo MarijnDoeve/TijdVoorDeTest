@@ -146,6 +146,16 @@ IMAGE_TAG=<tag> docker compose -f compose.yaml -f compose.prod.yaml pull
 IMAGE_TAG=<tag> docker compose -f compose.yaml -f compose.prod.yaml up -d
 ```
 
+> **One-time step when first deploying an image built from the slim (non-root) Dockerfile:** the `caddy_data`
+> and `caddy_config` volumes may still be owned by `root` from earlier root-run containers, which stops the new
+> `www-data`-run container from writing its local TLS/PKI cache. Since that data is just regenerable, wipe the
+> two volumes once before starting the new image (not `database_data` or the app's `var` volume):
+> ```bash
+> docker compose -f compose.yaml -f compose.prod.yaml down
+> docker volume rm <project>_caddy_data <project>_caddy_config
+> IMAGE_TAG=<tag> docker compose -f compose.yaml -f compose.prod.yaml up -d
+> ```
+
 ### Required environment variables
 
 | Variable                   | Description                                 |
