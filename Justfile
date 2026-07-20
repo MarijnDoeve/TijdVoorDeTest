@@ -71,6 +71,9 @@ up *args: init
     set +a
     docker compose up -d {{ args }}
 
+compose *args:
+    docker compose {{ args }}
+
 down *args:
     docker compose down --remove-orphans {{ args }}
 
