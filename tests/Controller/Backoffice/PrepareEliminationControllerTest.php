@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\PrepareEliminationController;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\QuizCandidate;
@@ -72,6 +73,40 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('form');
+    }
+
+    public function testViewEliminationPageShowsScreenViewLog(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $candidate = $this->getCandidate('Tom');
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->persist(new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN));
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/elimination/%s', $elimination->id));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('table', 'Tom');
+        self::assertSelectorTextContains('table', 'Groen');
+    }
+
+    public function testViewEliminationPageHidesScreenViewLogWhenEmpty(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->flush();
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/elimination/%s', $elimination->id));
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('table');
     }
 
     public function testViewEliminationSavesUpdatedColours(): void

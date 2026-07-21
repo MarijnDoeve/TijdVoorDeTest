@@ -12,56 +12,84 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-12 col-md-6">
-            <form method="post">
-                <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
-                {%~ for candidate, colour in elimination.data %}
-                    <div class="row mb-3">
-                        <label for="colour-{{ candidate|lower }}" class="col-4 col-form-label">{{ candidate }}</label>
-                        <div class="col-4">
-                            <select id="colour-{{ candidate|lower }}" class="form-select"
-                                    name="colour-{{ candidate|lower }}">
-                                <option
-                                    value="green"{% if colour == 'green' %} selected{% endif %}>{{ 'Green'|trans }}</option>
-                                <option
-                                    value="red"{% if colour == 'red' %} selected{% endif %}>{{ 'Red'|trans }}</option>
-                            </select>
+    <div data-controller="bo--prepare-elimination">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <form method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
+                    {%~ for candidate, colour in elimination.data %}
+                        <div class="row mb-3">
+                            <label for="colour-{{ candidate|lower }}" class="col-4 col-form-label">{{ candidate }}</label>
+                            <div class="col-4">
+                                <select id="colour-{{ candidate|lower }}" class="form-select"
+                                        name="colour-{{ candidate|lower }}">
+                                    <option
+                                        value="green"{% if colour == 'green' %} selected{% endif %}>{{ 'Green'|trans }}</option>
+                                    <option
+                                        value="red"{% if colour == 'red' %} selected{% endif %}>{{ 'Red'|trans }}</option>
+                                </select>
+                            </div>
                         </div>
+                    {% endfor %}
+                    <div class="btn-group mb-3">
+                        <button type="submit" class="btn btn-primary" name="start" value="0">{{ 'Save'|trans }}</button>
+                        <button type="submit" class="btn btn-success" name="start"
+                                value="1">{{ 'Save and start elimination'|trans }}</button>
+                        <a href="{{ path('tvdt_backoffice_quiz', {seasonCode: elimination.quiz.season.seasonCode, quiz: elimination.quiz.id}) }}"
+                           class="btn btn-secondary">{{ 'Back'|trans }}</a>
+                        <button type="button" class="btn btn-danger"
+                                data-action="click->bo--prepare-elimination#deleteElimination">{{ 'Delete...'|trans }}</button>
                     </div>
-                {% endfor %}
-                <div class="btn-group mb-3">
-                    <button type="submit" class="btn btn-primary" name="start" value="0">{{ 'Save'|trans }}</button>
-                    <button type="submit" class="btn btn-success" name="start"
-                            value="1">{{ 'Save and start elimination'|trans }}</button>
-                    <a href="{{ path('tvdt_backoffice_quiz', {seasonCode: elimination.quiz.season.seasonCode, quiz: elimination.quiz.id}) }}"
-                       class="btn btn-secondary">{{ 'Back'|trans }}</a>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#deleteEliminationModal">{{ 'Delete...'|trans }}</button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="col-12 col-md-6">
+                {{ include('backoffice/help/prepare_elimination.html.twig') }}
+            </div>
         </div>
-        <div class="col-12 col-md-6">
-            {{ include('backoffice/help/prepare_elimination.html.twig') }}
-        </div>
-    </div>
 
-    <div class="modal fade" id="deleteEliminationModal" data-bs-backdrop="static"
-         tabindex="-1"
-         aria-labelledby="deleteEliminationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="deleteEliminationModalLabel">{{ 'Please Confirm'|trans }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% if not elimination.screenViews.empty %}
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <h4 class="mb-3">{{ 'Screens shown'|trans }}</h4>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">{{ 'Candidate'|trans }}</th>
+                            <th scope="col">{{ 'Colour'|trans }}</th>
+                            <th scope="col">{{ 'Shown at'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%~ for screenView in elimination.screenViews %}
+                            <tr>
+                                <td>{{ screenView.candidate.name }}</td>
+                                <td>{{ (screenView.colour == 'green' ? 'Green' : 'Red')|trans }}</td>
+                                <td>{{ screenView.created|format_datetime() }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="modal-body">{{ 'Are you sure you want to delete this elimination?'|trans }}</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
-                    <form action="{{ path('tvdt_prepare_elimination_delete', {elimination: elimination.id}) }}" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete_elimination') }}">
-                        <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
-                    </form>
+            </div>
+        {% endif %}
+
+        <div class="modal fade" data-bo--prepare-elimination-target="deleteModal" data-bs-backdrop="static"
+             tabindex="-1"
+             aria-labelledby="deleteEliminationModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteEliminationModalLabel">{{ 'Please Confirm'|trans }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">{{ 'Are you sure you want to delete this elimination?'|trans }}</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'No'|trans }}</button>
+                        <form action="{{ path('tvdt_prepare_elimination_delete', {elimination: elimination.id}) }}" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_elimination') }}">
+                            <button type="submit" class="btn btn-danger">{{ 'Yes'|trans }}</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

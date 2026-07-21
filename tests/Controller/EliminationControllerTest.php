@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\EliminationController;
 use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Helpers\Base64;
 
 #[CoversClass(EliminationController::class)]
@@ -82,5 +83,36 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists(\sprintf('#%s', Elimination::SCREEN_GREEN));
+    }
+
+    public function testCandidateScreenRecordsScreenView(): void
+    {
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
+
+        self::assertResponseIsSuccessful();
+
+        $this->entityManager->clear();
+        $eliminationId = $this->elimination->id;
+        $screenViews = $this->entityManager->getRepository(EliminationScreenView::class)->findBy(['elimination' => $eliminationId]);
+
+        $this->assertCount(1, $screenViews);
+        $this->assertSame('Tom', $screenViews[0]->candidate->name);
+        $this->assertSame(Elimination::SCREEN_GREEN, $screenViews[0]->colour);
+    }
+
+    public function testCandidateScreenRecordsScreenViewsInOrder(): void
+    {
+        $this->elimination->data = ['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED];
+        $this->entityManager->flush();
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Claudia')));
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
+
+        $this->entityManager->clear();
+        $elimination = $this->entityManager->getRepository(Elimination::class)->find($this->elimination->id);
+        $this->assertInstanceOf(Elimination::class, $elimination);
+        $names = array_map(static fn (EliminationScreenView $screenView): string => $screenView->candidate->name, $elimination->screenViews->toArray());
+
+        $this->assertSame(['Claudia', 'Tom'], $names);
     }
 }
