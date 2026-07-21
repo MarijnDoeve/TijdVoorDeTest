@@ -155,13 +155,13 @@ Penalty: Straftijd
 'Prepare Elimination': 'Bereid eliminatie voor'
 Previous: Vorige
 Question: Vraag
-'Question added to quiz %quiz%': 'Vraag toegevoegd aan test %quiz%'
+'Question added to quiz {quiz}': 'Vraag toegevoegd aan test {quiz}'
 'Question added to the question bank': 'Vraag toegevoegd aan de vragenbank'
 'Question bank': Vragenbank
 'Question details': Vraagdetails
-'Question removed from quiz %quiz%': 'Vraag verwijderd uit quiz %quiz%'
+'Question removed from quiz {quiz}': 'Vraag verwijderd uit quiz {quiz}'
 'Question removed from the question bank': 'Vraag verwijderd uit de vragenbank'
-'Question synced to quiz %quiz%': 'Vraag gesynchroniseerd naar quiz %quiz%'
+'Question synced to quiz {quiz}': 'Vraag gesynchroniseerd naar quiz {quiz}'
 'Question updated': 'Vraag bijgewerkt'
 Questions: Vragen
 'Quick actions': 'Snelle acties'
@@ -219,7 +219,7 @@ Submit: Verstuur
 'The confirmation email could not be sent. Please try again later.': 'De bevestigingsmail kon niet worden verzonden. Probeer het later opnieuw.'
 'The confirmation email could not be sent. Please use the resend button to try again.': 'De bevestigingsmail kon niet worden verzonden. Gebruik de knop om het opnieuw te proberen.'
 'The password fields must match.': 'De wachtwoorden moeten overeen komen.'
-'The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.': 'De vraag is niet gesynchroniseerd naar afgeronde quiz(zes): %quizzes%. Gebruik de Synchroniseren-knop om ze bij te werken.'
+'The question was not synced to finalized quiz(zes): {quizzes}. Use the Sync button to update them.': 'De vraag is niet gesynchroniseerd naar afgeronde quiz(zes): {quizzes}. Gebruik de Synchroniseren-knop om ze bij te werken.'
 'The quiz cannot be finalized while it has errors': 'De test kan niet afgerond worden zolang er fouten zijn'
 'The quiz has already been filled in and can no longer be altered': 'De test is al ingevuld en kan niet meer aangepast worden'
 'The quiz is already finalized': 'De test is al afgerond'

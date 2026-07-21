@@ -174,4 +174,4 @@ hosting on a different domain or using a different reverse proxy.
 
 ## License
 
-[MIT](LICENSE)
+[AGPL-3.0-or-later](LICENSE)

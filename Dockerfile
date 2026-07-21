@@ -166,8 +166,6 @@ ENV OPENSSL_CONF=/etc/ssl/openssl.cnf XDG_CONFIG_HOME=/config XDG_DATA_HOME=/dat
 RUN <<-EOF
 	mkdir -p /data/caddy /config/caddy
 	chown -R www-data:www-data /data /config
-	# Remove setuid/setgid bits
-	find / -xdev -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 EOF
 
 COPY --link --exclude=var --from=frankenphp_prod_builder /app /app
@@ -176,6 +174,9 @@ COPY --chown=www-data:0 --from=frankenphp_prod_builder /app/var /app/var
 RUN chmod g=u /app/var
 
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+
+# Remove setuid/setgid bits — runs after all COPYs so it also covers files brought in above.
+RUN find / -xdev -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 
 VOLUME /app/var/
 
