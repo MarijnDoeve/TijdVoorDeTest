@@ -3,12 +3,13 @@
 {% block title %}Log in{% endblock %}
 
 {% block body %}
-    <form method="post">
+    <form method="post" data-controller="forgot-password">
         <h3 class="mb-3">{{ 'Please sign in'|trans }}</h3>
         <div class="mb-3">
             <label for="username" class="form-label">{{ 'Email'|trans }}</label>
             <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control"
-                   autocomplete="email" required autofocus>
+                   autocomplete="email" required autofocus
+                   data-forgot-password-target="email" data-action="input->forgot-password#prefill">
         </div>
 
         <div class="mb-3">
@@ -32,6 +33,6 @@
         <a href="{{ path('tvdt_register') }}"
            class="btn btn-link">{{ 'Create an account'|trans }}</a>
         <a href="{{ path('tvdt_forgot_password_request') }}"
-           class="btn btn-link">{{ 'Forgot your password?'|trans }}</a>
+           class="btn btn-link" data-forgot-password-target="link">{{ 'Forgot your password?'|trans }}</a>
     </form>
 {% endblock %}
