@@ -33,6 +33,24 @@ final class Version20260713194340 extends AbstractMigration
                   CONSTRAINT FK_9AC61A301E27F6BF FOREIGN KEY (question_id) REFERENCES question (id) NOT DEFERRABLE
             SQL);
         $this->addSql('CREATE INDEX IDX_9AC61A301E27F6BF ON given_answer (question_id)');
+        // Legacy data can contain duplicate (candidate, question) answers predating this constraint;
+        // soft-delete all but the most recent per pair so the unique index below can be created.
+        $this->addSql(<<<'SQL'
+                UPDATE given_answer
+                SET deleted_at = NOW()
+                WHERE id IN (
+                    SELECT id
+                    FROM (
+                        SELECT id, ROW_NUMBER() OVER (
+                            PARTITION BY candidate_id, question_id
+                            ORDER BY created DESC, id DESC
+                        ) AS rn
+                        FROM given_answer
+                        WHERE deleted_at IS NULL
+                    ) ranked
+                    WHERE ranked.rn > 1
+                )
+            SQL);
         $this->addSql(<<<'SQL'
                 CREATE UNIQUE INDEX UNIQ_9AC61A3091BD87811E27F6BF ON given_answer (candidate_id, question_id)
                 WHERE
