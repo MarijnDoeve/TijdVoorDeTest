@@ -214,7 +214,7 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
         $this->assertCount(0, $remainingAnswers);
     }
 
-    public function testModifyCorrection(): void
+    public function testModifyResult(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $candidate = $this->getCandidate('Tom');
@@ -233,11 +233,12 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
 
         $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/result', $quiz->id));
         self::assertResponseIsSuccessful();
-        $token = (string) $crawler->filter(\sprintf('form[action*="%s/modify_correction"] input[name="_token"]', $candidate->id))->first()->attr('value');
+        $token = (string) $crawler->filter(\sprintf('form[action*="%s/modify_result"] input[name="_token"]', $candidate->id))->first()->attr('value');
 
-        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/candidate/%s/modify_correction', $quiz->id, $candidate->id), [
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/candidate/%s/modify_result', $quiz->id, $candidate->id), [
             '_token' => $token,
             'corrections' => '1.5',
+            'penalty' => '30',
         ]);
 
         self::assertResponseRedirects();
@@ -249,42 +250,25 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
         ]);
         $this->assertInstanceOf(QuizCandidate::class, $updated);
         $this->assertEqualsWithDelta(1.5, $updated->corrections, \PHP_FLOAT_EPSILON);
+        $this->assertSame(30, $updated->penaltySeconds);
     }
 
-    public function testModifyPenalty(): void
+    public function testModifyDropouts(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
-        $candidate = $this->getCandidate('Claudia');
 
-        $quizCandidate = new QuizCandidate($quiz, $candidate);
-        $quizCandidate->started = new DateTimeImmutable();
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/season/krtek/quiz/%s/result', $quiz->id), '/modify_dropouts');
 
-        $this->entityManager->persist($quizCandidate);
-        $firstQuestion = $quiz->questions->first();
-        $this->assertInstanceOf(Question::class, $firstQuestion);
-        $answer = $firstQuestion->answers->first();
-        $this->assertInstanceOf(Answer::class, $answer);
-        $this->entityManager->persist(new GivenAnswer($candidate, $quiz, $answer));
-        $this->entityManager->flush();
-
-        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/result', $quiz->id));
-        self::assertResponseIsSuccessful();
-        $token = (string) $crawler->filter(\sprintf('form[action*="%s/modify_penalty"] input[name="_token"]', $candidate->id))->first()->attr('value');
-
-        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/candidate/%s/modify_penalty', $quiz->id, $candidate->id), [
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/modify_dropouts', $quiz->id), [
             '_token' => $token,
-            'penalty' => '30',
+            'dropouts' => '2',
         ]);
 
         self::assertResponseRedirects();
         $this->entityManager->clear();
 
-        $updated = $this->entityManager->getRepository(QuizCandidate::class)->findOneBy([
-            'quiz' => $this->getQuizByName('Quiz 1'),
-            'candidate' => $this->getCandidate('Claudia'),
-        ]);
-        $this->assertInstanceOf(QuizCandidate::class, $updated);
-        $this->assertSame(30, $updated->penaltySeconds);
+        $updated = $this->getQuizByName('Quiz 1');
+        $this->assertSame(2, $updated->dropouts);
     }
 
     public function testDeleteQuiz(): void

@@ -349,38 +349,38 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
-    #[IsCsrfTokenValid('candidate_correction')]
+    #[IsCsrfTokenValid('candidate_result')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
-        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
-        name: 'tvdt_backoffice_modify_correction',
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_result',
+        name: 'tvdt_backoffice_modify_result',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
+    public function modifyResult(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
         $corrections = (float) $request->request->get('corrections');
-
-        $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
-
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
-    }
-
-    #[IsCsrfTokenValid('candidate_penalty')]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
-    #[Route(
-        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
-        name: 'tvdt_backoffice_modify_penalty',
-        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
-        methods: ['POST'],
-    )]
-    public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
-    {
         $penalty = (int) $request->request->get('penalty');
 
-        $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
+        $this->quizCandidateRepository->setResultForCandidate($quiz, $candidate, $corrections, $penalty);
 
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz_result', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsCsrfTokenValid('quiz_dropouts')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/modify_dropouts',
+        name: 'tvdt_backoffice_modify_dropouts',
+        requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function modifyDropouts(Quiz $quiz, Request $request): RedirectResponse
+    {
+        $quiz->dropouts = max(1, $request->request->getInt('dropouts'));
+        $this->em->flush();
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_result', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
     #[IsCsrfTokenValid('toggle_candidate')]

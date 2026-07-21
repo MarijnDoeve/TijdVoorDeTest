@@ -47,7 +47,7 @@ class QuizCandidateRepository extends ServiceEntityRepository
         return true;
     }
 
-    public function setCorrectionsForCandidate(Quiz $quiz, Candidate $candidate, float $corrections): void
+    public function setResultForCandidate(Quiz $quiz, Candidate $candidate, float $corrections, int $penalty): void
     {
         $quizCandidate = $this->findOneBy(['candidate' => $candidate, 'quiz' => $quiz]);
         if (!$quizCandidate instanceof QuizCandidate) {
@@ -55,16 +55,6 @@ class QuizCandidateRepository extends ServiceEntityRepository
         }
 
         $quizCandidate->corrections = $corrections;
-        $this->getEntityManager()->flush();
-    }
-
-    public function setPenaltyForCandidate(Quiz $quiz, Candidate $candidate, int $penalty): void
-    {
-        $quizCandidate = $this->findOneBy(['candidate' => $candidate, 'quiz' => $quiz]);
-        if (!$quizCandidate instanceof QuizCandidate) {
-            throw new \InvalidArgumentException('Quiz candidate not found');
-        }
-
         $quizCandidate->penaltySeconds = $penalty;
         $this->getEntityManager()->flush();
     }
