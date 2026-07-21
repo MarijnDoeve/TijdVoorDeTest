@@ -67,4 +67,24 @@ final class PrepareEliminationController extends AbstractController
             'elimination' => $elimination,
         ]);
     }
+
+    #[IsCsrfTokenValid('delete_elimination')]
+    #[IsGranted(SeasonVoter::DELETE, 'elimination')]
+    #[Route(
+        '/backoffice/elimination/{elimination}/delete',
+        name: 'tvdt_prepare_elimination_delete',
+        requirements: ['elimination' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function deleteElimination(Elimination $elimination): RedirectResponse
+    {
+        $quiz = $elimination->quiz;
+
+        $this->em->remove($elimination);
+        $this->em->flush();
+
+        $this->addFlash(FlashType::Success, 'Elimination deleted');
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
 }

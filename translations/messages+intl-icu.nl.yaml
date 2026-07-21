@@ -24,6 +24,7 @@ All: Alle
 'Answer Mapping': 'Antwoord-kandidaat koppeling'
 'Are you sure you want to clear all the results? This will also delete all the eliminations.': 'Weet je zeker dat je de resultaten wilt leegmaken? Dit gooit ook alle eliminaties weg.'
 'Are you sure you want to delete this candidate? All their answers will be lost.': 'Weet je zeker dat je deze kandidaat wilt verwijderen? Alle gegeven antwoorden gaan dan verloren.'
+'Are you sure you want to delete this elimination?': 'Weet je zeker dat je deze eliminatie wilt verwijderen?'
 'Are you sure you want to delete this question from the question bank?': 'Weet je zeker dat je deze vraag uit de vragenbank wilt verwijderen?'
 'Are you sure you want to delete this quiz?': 'Weet je zeker dat je deze test wilt verwijderen?'
 'Are you sure you want to reset progress for this candidate? Their given answers for this quiz will be deleted.': 'Weet je zeker dat je de voortgang van deze kandidaat wilt resetten? De ingevulde antwoorden voor deze test worden verwijderd.'
@@ -74,6 +75,7 @@ Delete: Verwijderen
 'Delete Quiz...': 'Test verwijderen...'
 'Delete account': 'Account verwijderen'
 'Delete account...': 'Account verwijderen...'
+Delete...: Verwijderen...
 'Deleting your account also deletes every season you are the only owner of. This cannot be undone.': 'Als je je account verwijdert, worden ook alle seizoenen verwijderd waarvan jij de enige eigenaar bent. Dit kan niet ongedaan worden gemaakt.'
 'Download Template': 'Download sjabloon'
 'Download an archive of everything stored under your account: your profile, the seasons you own, their quizzes, results and candidates.': 'Download een archief met alles wat onder je account is opgeslagen: je profiel, de seizoenen die je bezit, met de bijbehorende testen, resultaten en kandidaten.'

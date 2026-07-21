@@ -118,6 +118,49 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         self::assertResponseRedirects(\sprintf('/elimination/%s', $elimination->id));
     }
 
+    public function testDeleteEliminationRemovesEliminationAndRedirectsToQuiz(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->flush();
+
+        $eliminationId = $elimination->id;
+
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/elimination/%s', $elimination->id), \sprintf('/backoffice/elimination/%s/delete', $elimination->id));
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/elimination/%s/delete', $elimination->id), [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects(\sprintf('/backoffice/season/krtek/quiz/%s', $quiz->id));
+        $this->entityManager->clear();
+
+        $this->assertNotInstanceOf(Elimination::class, $this->entityManager->getRepository(Elimination::class)->find($eliminationId));
+    }
+
+    public function testDeleteEliminationIsDeniedForNonOwner(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->flush();
+
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/elimination/%s', $elimination->id), \sprintf('/backoffice/elimination/%s/delete', $elimination->id));
+
+        $this->loginAs('test@example.org');
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/elimination/%s/delete', $elimination->id), [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
     public function testIndexIsDeniedForNonOwner(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
