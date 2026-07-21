@@ -17,16 +17,24 @@
             <div class="col-12 col-md-6">
                 <form method="post">
                     <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
-                    {%~ for candidate, colour in elimination.data %}
-                        <div class="row mb-3">
-                            <label for="colour-{{ candidate|lower }}" class="col-4 col-form-label">{{ candidate }}</label>
+                    <div class="row mb-2 fw-bold">
+                        <div class="col-4">{{ 'Candidate'|trans }}</div>
+                        <div class="col-2">{{ 'Score'|trans }}</div>
+                        <div class="col-2">{{ 'Time'|trans }}</div>
+                        <div class="col-4">{{ 'Colour'|trans }}</div>
+                    </div>
+                    {%~ for name, result in candidates %}
+                        <div class="row mb-3 align-items-center">
+                            <label for="colour-{{ name|lower }}" class="col-4 col-form-label">{{ name }}</label>
+                            <div class="col-2">{{ result ? result.score : '-' }}</div>
+                            <div class="col-2">{{ result ? result.time.format('%i:%S') : '-' }}</div>
                             <div class="col-4">
-                                <select id="colour-{{ candidate|lower }}" class="form-select"
-                                        name="colour-{{ candidate|lower }}">
+                                <select id="colour-{{ name|lower }}" class="form-select colour-select"
+                                        name="colour-{{ name|lower }}">
                                     <option
-                                        value="green"{% if colour == 'green' %} selected{% endif %}>{{ 'Green'|trans }}</option>
+                                        value="green"{% if elimination.data[name] == 'green' %} selected{% endif %}>{{ 'Green'|trans }}</option>
                                     <option
-                                        value="red"{% if colour == 'red' %} selected{% endif %}>{{ 'Red'|trans }}</option>
+                                        value="red"{% if elimination.data[name] == 'red' %} selected{% endif %}>{{ 'Red'|trans }}</option>
                                 </select>
                             </div>
                         </div>

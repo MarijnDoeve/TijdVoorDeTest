@@ -13,16 +13,22 @@ use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Tvdt\Controller\AbstractController;
+use Tvdt\Dto\Result;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Factory\EliminationFactory;
+use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 
 final class PrepareEliminationController extends AbstractController
 {
-    public function __construct(private readonly EliminationFactory $eliminationFactory, private readonly EntityManagerInterface $em) {}
+    public function __construct(
+        private readonly EliminationFactory $eliminationFactory,
+        private readonly EntityManagerInterface $em,
+        private readonly QuizRepository $quizRepository,
+    ) {}
 
     #[IsCsrfTokenValid('prepare_elimination')]
     #[IsGranted(SeasonVoter::ELIMINATION, 'quiz')]
@@ -65,7 +71,33 @@ final class PrepareEliminationController extends AbstractController
         return $this->render('backoffice/prepare_elimination/index.html.twig', [
             'controller_name' => 'PrepareEliminationController',
             'elimination' => $elimination,
+            'candidates' => $this->getOrderedCandidates($elimination),
         ]);
+    }
+
+    /**
+     * The candidates in an elimination (name => colour), ordered like the results list (score desc, time asc), each
+     * paired with their live score/time so both can be shown while preparing the elimination. A candidate can be
+     * missing a result if their given answers were reset after the elimination was prepared.
+     *
+     * @return array<string, ?Result>
+     */
+    private function getOrderedCandidates(Elimination $elimination): array
+    {
+        $resultsByName = [];
+        foreach ($this->quizRepository->getScores($elimination->quiz) as $result) {
+            $resultsByName[$result->name] = $result;
+        }
+
+        $candidates = array_intersect_key($resultsByName, $elimination->data);
+
+        foreach (array_keys($elimination->data) as $name) {
+            if (!\array_key_exists($name, $candidates)) {
+                $candidates[$name] = null;
+            }
+        }
+
+        return $candidates;
     }
 
     #[IsCsrfTokenValid('delete_elimination')]

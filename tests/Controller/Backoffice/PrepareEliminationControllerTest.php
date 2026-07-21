@@ -109,6 +109,49 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         self::assertSelectorNotExists('table');
     }
 
+    public function testViewEliminationShowsCandidatesOrderedByScoreWithTime(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+        $tom = $this->getCandidate('Tom');
+        $claudia = $this->getCandidate('Claudia');
+
+        $questions = $quiz->questions;
+        $firstQuestion = $questions->first();
+        $secondQuestion = $questions->get(1);
+        $this->assertInstanceOf(Question::class, $firstQuestion);
+        $this->assertInstanceOf(Question::class, $secondQuestion);
+        $firstAnswer = $firstQuestion->answers->first();
+        $secondAnswer = $secondQuestion->answers->first();
+        $this->assertInstanceOf(Answer::class, $firstAnswer);
+        $this->assertInstanceOf(Answer::class, $secondAnswer);
+
+        // Tom answers both questions correctly, Claudia only the first: Tom should score higher and rank first.
+        $tomQuizCandidate = new QuizCandidate($quiz, $tom);
+        $tomQuizCandidate->started = new DateTimeImmutable();
+
+        $this->entityManager->persist($tomQuizCandidate);
+        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $firstAnswer));
+        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $secondAnswer));
+
+        $claudiaQuizCandidate = new QuizCandidate($quiz, $claudia);
+        $claudiaQuizCandidate->started = new DateTimeImmutable();
+
+        $this->entityManager->persist($claudiaQuizCandidate);
+        $this->entityManager->persist(new GivenAnswer($claudia, $quiz, $firstAnswer));
+
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Claudia' => Elimination::SCREEN_GREEN, 'Tom' => Elimination::SCREEN_GREEN];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/elimination/%s', $elimination->id));
+
+        self::assertResponseIsSuccessful();
+        $labels = $crawler->filter('label')->each(static fn ($node): string => mb_trim((string) $node->text()));
+        $this->assertSame(['Tom', 'Claudia'], $labels);
+    }
+
     public function testViewEliminationSavesUpdatedColours(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
