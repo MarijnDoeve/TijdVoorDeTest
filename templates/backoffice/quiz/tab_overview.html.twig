@@ -23,7 +23,7 @@
 {% endmacro %}
 
 <div class="row">
-<div class="col-md-8 col-12" data-controller="bo--quiz">
+<div class="col-xl-8 col-12" data-controller="bo--quiz">
     <h4 class="mb-3">
         {{ 'Quick actions'|trans }}
         {% if quiz.isFinalized %}
@@ -176,7 +176,7 @@
         csrf_token('delete_quiz'),
     ) }}
 </div>
-<div class="col-md-4 col-12">
+<div class="col-xl-4 col-12">
     {{ include('backoffice/help/quiz_overview.html.twig') }}
 </div>
 </div>
