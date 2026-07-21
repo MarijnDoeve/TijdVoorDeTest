@@ -148,11 +148,26 @@ class QuizController extends AbstractController
     )]
     public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
     {
+        // Eager-load answers' candidates in one query to avoid an N+1 when the
+        // template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
+        $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
+
+        $fetchedQuestion = null;
+        foreach ($fetchedQuiz->questions as $candidateQuestion) {
+            if ($candidateQuestion->id->equals($question->id)) {
+                $fetchedQuestion = $candidateQuestion;
+
+                break;
+            }
+        }
+
+        \assert($fetchedQuestion instanceof Question);
+
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
-            'question' => $question,
-            'candidates' => $season->candidates,
+            'question' => $fetchedQuestion,
+            'candidates' => $fetchedQuiz->season->candidates,
             'activeTab' => 'answers',
             'template' => 'backoffice/quiz/tab_candidates.html.twig',
         ]);
