@@ -38,7 +38,9 @@ final class ResetPasswordController extends AbstractController
     #[Route('/reset-password', name: 'tvdt_forgot_password_request')]
     public function request(Request $request): Response
     {
-        $form = $this->createForm(ResetPasswordRequestFormType::class);
+        $form = $this->createForm(ResetPasswordRequestFormType::class, [
+            'email' => $request->query->get('email', ''),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

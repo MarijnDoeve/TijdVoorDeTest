@@ -23,6 +23,15 @@ final class ResetPasswordControllerTest extends AbstractControllerWebTestCase
         $this->assertSelectorExists('form');
     }
 
+    public function testRequestPagePrefillsEmailFromQueryParameter(): void
+    {
+        $this->client->request(Request::METHOD_GET, '/reset-password?email=test@example.org');
+
+        $this->assertResponseIsSuccessful();
+        $emailInput = $this->client->getCrawler()->filter('input[name="reset_password_request_form[email]"]');
+        $this->assertSame('test@example.org', $emailInput->attr('value'));
+    }
+
     /** @return iterable<string, array{string}> */
     public static function emailProvider(): iterable
     {
