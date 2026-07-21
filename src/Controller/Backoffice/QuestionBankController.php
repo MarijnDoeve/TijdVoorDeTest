@@ -225,7 +225,7 @@ class QuestionBankController extends AbstractController
 
         try {
             $this->questionBankService->assignToQuiz($bankQuestion, $quiz);
-            $this->addFlash(FlashType::Success, $this->translator->trans('Question added to quiz %quiz%', ['%quiz%' => $quiz->name]));
+            $this->addFlash(FlashType::Success, $this->translator->trans('Question added to quiz {quiz}', ['quiz' => $quiz->name]));
         } catch (QuizLockedException) {
             $this->addFlash(FlashType::Danger, $this->translator->trans('This quiz can no longer be altered'));
         } catch (BankQuestionAlreadyUsedException) {
@@ -335,7 +335,7 @@ class QuestionBankController extends AbstractController
         }
 
         $this->questionBankService->unassignFromQuiz($usage);
-        $this->addFlash(FlashType::Success, $this->translator->trans('Question removed from quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
+        $this->addFlash(FlashType::Success, $this->translator->trans('Question removed from quiz {quiz}', ['quiz' => $usage->quiz->name]));
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
     }
@@ -365,7 +365,7 @@ class QuestionBankController extends AbstractController
 
         $this->questionBankService->syncToQuiz($bankQuestion, $usage);
         $this->em->flush();
-        $this->addFlash(FlashType::Success, $this->translator->trans('Question synced to quiz %quiz%', ['%quiz%' => $usage->quiz->name]));
+        $this->addFlash(FlashType::Success, $this->translator->trans('Question synced to quiz {quiz}', ['quiz' => $usage->quiz->name]));
 
         return $this->redirectToRoute('tvdt_backoffice_question_bank', ['seasonCode' => $season->seasonCode]);
     }
@@ -391,8 +391,8 @@ class QuestionBankController extends AbstractController
             $this->addFlash(
                 FlashType::Warning,
                 $this->translator->trans(
-                    'The question was not synced to finalized quiz(zes): %quizzes%. Use the Sync button to update them.',
-                    ['%quizzes%' => implode(', ', $pendingNames)],
+                    'The question was not synced to finalized quiz(zes): {quizzes}. Use the Sync button to update them.',
+                    ['quizzes' => implode(', ', $pendingNames)],
                 ),
             );
         }

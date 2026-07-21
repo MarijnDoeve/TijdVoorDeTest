@@ -6,6 +6,7 @@
     <h3 class="mb-3">{{ 'Reset your password'|trans }}</h3>
 
     {{ form_start(resetForm) }}
+    <input type="hidden" name="email" autocomplete="username" value="{{ email }}">
     {{ form_row(resetForm.plainPassword) }}
     <button class="btn btn-primary" type="submit">{{ 'Reset password'|trans }}</button>
     {{ form_end(resetForm) }}

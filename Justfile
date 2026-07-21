@@ -113,7 +113,7 @@ fixtures:
     docker compose exec php bin/console doctrine:fixtures:load --purge-with-truncate --no-interaction --group=dev
 
 translations:
-    docker compose exec php bin/console translation:extract --force --format=xliff --sort=asc nl
+    docker compose exec php bin/console translation:extract --force --format=yaml --sort=asc --domain=messages nl
 
 fix-cs:
     docker compose exec php vendor/bin/php-cs-fixer fix
