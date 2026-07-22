@@ -10,11 +10,14 @@ use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tvdt\Entity\Answer;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\User;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Service\DataExportService;
 use Tvdt\Tests\Repository\DatabaseTestCase;
 
@@ -77,7 +80,7 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
-        $this->assertSame(['Quiz info', 'Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
+        $this->assertSame(['Quiz info', 'Questions', 'Raw answers', 'Results', 'Eliminations', 'Elimination screen views'], $this->sheetNames($quizContent));
 
         $candidatesContent = $zip->getFromName('krtek-Krtek-Weekend/candidates.xlsx');
         $this->assertIsString($candidatesContent);
@@ -107,7 +110,7 @@ final class DataExportServiceTest extends DatabaseTestCase
         $labelsIndex = array_search('Labels', $header, true);
         $usedInQuizzesIndex = array_search('Used in quizzes', $header, true);
 
-        $reusableRow = current(array_filter($dataRows, static fn (array $row): bool => 'Wie is de Krtek?' === $row[$questionIndex]));
+        $reusableRow = current(array_filter($dataRows, static fn (array $row): bool => 'Wat is de bijnaam van de Krtek?' === $row[$questionIndex]));
         $this->assertIsArray($reusableRow);
         $this->assertSame('Yes', $reusableRow[$reusableIndex]);
         $this->assertSame('Finale', $reusableRow[$labelsIndex]);
@@ -282,6 +285,43 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $this->assertTrue($sheet->getStyle($column.$correctRowNumber)->getFont()->getBold(), 'Expected the correct answer to be bold');
         $this->assertFalse($sheet->getStyle($column.$wrongRowNumber)->getFont()->getBold(), 'Expected the wrong answer to not be bold');
+    }
+
+    public function testEliminationScreenViewsSheetShowsCandidateColourAndOrder(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $tom = $this->getCandidateBySeasonAndName($season, 'Tom');
+        $claudia = $this->getCandidateBySeasonAndName($season, 'Claudia');
+
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => ScreenColour::Green->value, 'Claudia' => ScreenColour::Red->value];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->persist(new EliminationScreenView($elimination, $tom, ScreenColour::Green));
+        $this->entityManager->persist(new EliminationScreenView($elimination, $claudia, ScreenColour::Red));
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $rows = $this->loadSheet($quizContent, 'Elimination screen views')->toArray();
+        $header = $rows[0];
+        $dataRows = \array_slice($rows, 1);
+
+        $candidateIndex = array_search('Candidate', $header, true);
+        $colourIndex = array_search('Colour', $header, true);
+        $this->assertIsInt($candidateIndex);
+        $this->assertIsInt($colourIndex);
+
+        $this->assertSame('Tom', $dataRows[0][$candidateIndex]);
+        $this->assertSame('green', $dataRows[0][$colourIndex]);
+        $this->assertSame('Claudia', $dataRows[1][$candidateIndex]);
+        $this->assertSame('red', $dataRows[1][$colourIndex]);
     }
 
     public function testQuizInfoSheetShowsDropoutsFinalizationAndDisabledQuestions(): void

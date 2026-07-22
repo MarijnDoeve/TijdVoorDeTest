@@ -26,6 +26,7 @@ use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Exception\ErrorClearingQuizException;
 use Tvdt\Repository\GivenAnswerRepository;
+use Tvdt\Repository\QuestionRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -39,6 +40,7 @@ class QuizController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly QuizCandidateRepository $quizCandidateRepository,
         private readonly GivenAnswerRepository $givenAnswerRepository,
+        private readonly QuestionRepository $questionRepository,
         private readonly EntityManagerInterface $em,
     ) {}
 
@@ -63,13 +65,10 @@ class QuizController extends AbstractController
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
 
-        $candidateData = $this->buildCandidateData($season, $quiz, $fetchedQuiz->candidateData);
-
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $fetchedQuiz,
             'questionErrors' => $fetchedQuiz->getQuestionErrors(),
-            'candidateData' => $candidateData,
             'activeTab' => 'overview',
             'template' => 'backoffice/quiz/tab_overview.html.twig',
         ]);
@@ -148,26 +147,20 @@ class QuizController extends AbstractController
     )]
     public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
     {
-        // Eager-load answers' candidates in one query to avoid an N+1 when the
-        // template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
-        $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
-
-        $fetchedQuestion = null;
-        foreach ($fetchedQuiz->questions as $candidateQuestion) {
-            if ($candidateQuestion->id->equals($question->id)) {
-                $fetchedQuestion = $candidateQuestion;
-
-                break;
-            }
+        if (false === $season->quizzes->contains($quiz)
+            || false === $quiz->questions->contains($question)) {
+            throw new BadRequestHttpException('Invalid quiz or question');
         }
 
-        \assert($fetchedQuestion instanceof Question);
+        // Eager-load this question's answers + candidates in one query to avoid an N+1
+        // when the template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
+        $fetchedQuestion = $this->questionRepository->fetchWithAnswerCandidates($question->id);
 
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
             'question' => $fetchedQuestion,
-            'candidates' => $fetchedQuiz->season->candidates,
+            'candidates' => $season->candidates,
             'activeTab' => 'answers',
             'template' => 'backoffice/quiz/tab_candidates.html.twig',
         ]);
@@ -349,38 +342,38 @@ class QuizController extends AbstractController
         return $this->redirectToRoute('tvdt_backoffice_season', ['seasonCode' => $quiz->season->seasonCode]);
     }
 
-    #[IsCsrfTokenValid('candidate_correction')]
+    #[IsCsrfTokenValid('candidate_result')]
     #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
     #[Route(
-        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_correction',
-        name: 'tvdt_backoffice_modify_correction',
+        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_result',
+        name: 'tvdt_backoffice_modify_result',
         requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
         methods: ['POST'],
     )]
-    public function modifyCorrection(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
+    public function modifyResult(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
     {
         $corrections = (float) $request->request->get('corrections');
-
-        $this->quizCandidateRepository->setCorrectionsForCandidate($quiz, $candidate, $corrections);
-
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
-    }
-
-    #[IsCsrfTokenValid('candidate_penalty')]
-    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
-    #[Route(
-        '/backoffice/quiz/{quiz}/candidate/{candidate}/modify_penalty',
-        name: 'tvdt_backoffice_modify_penalty',
-        requirements: ['quiz' => Requirement::UUID, 'candidate' => Requirement::UUID],
-        methods: ['POST'],
-    )]
-    public function modifyPenalty(Quiz $quiz, Candidate $candidate, Request $request): RedirectResponse
-    {
         $penalty = (int) $request->request->get('penalty');
 
-        $this->quizCandidateRepository->setPenaltyForCandidate($quiz, $candidate, $penalty);
+        $this->quizCandidateRepository->setResultForCandidate($quiz, $candidate, $corrections, $penalty);
 
-        return $this->redirectToRoute('tvdt_backoffice_quiz', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+        return $this->redirectToRoute('tvdt_backoffice_quiz_result', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
+    }
+
+    #[IsCsrfTokenValid('quiz_dropouts')]
+    #[IsGranted(SeasonVoter::EDIT, subject: 'quiz')]
+    #[Route(
+        '/backoffice/quiz/{quiz}/modify_dropouts',
+        name: 'tvdt_backoffice_modify_dropouts',
+        requirements: ['quiz' => Requirement::UUID],
+        methods: ['POST'],
+    )]
+    public function modifyDropouts(Quiz $quiz, Request $request): RedirectResponse
+    {
+        $quiz->dropouts = max(1, $request->request->getInt('dropouts'));
+        $this->em->flush();
+
+        return $this->redirectToRoute('tvdt_backoffice_quiz_result', ['seasonCode' => $quiz->season->seasonCode, 'quiz' => $quiz->id]);
     }
 
     #[IsCsrfTokenValid('toggle_candidate')]

@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
+use Tvdt\Enum\ScreenColour;
 
 #[CoversClass(Elimination::class)]
 final class EliminationTest extends TestCase
@@ -17,44 +18,62 @@ final class EliminationTest extends TestCase
     {
         $elimination = new Elimination(new Quiz());
 
-        $this->assertNull($elimination->getScreenColour(null));
+        $this->assertNotInstanceOf(ScreenColour::class, $elimination->getScreenColour(null));
     }
 
     public function testGetScreenColourReturnsNullForUnknownName(): void
     {
         $elimination = new Elimination(new Quiz());
-        $elimination->data = $this->colours(['Tom' => Elimination::SCREEN_GREEN]);
+        $elimination->data = $this->colours(['Tom' => ScreenColour::Green]);
 
-        $this->assertNull($elimination->getScreenColour('Claudia'));
+        $this->assertNotInstanceOf(ScreenColour::class, $elimination->getScreenColour('Claudia'));
     }
 
     public function testGetScreenColourReturnsColourForKnownName(): void
     {
         $elimination = new Elimination(new Quiz());
-        $elimination->data = $this->colours(['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED]);
+        $elimination->data = $this->colours(['Tom' => ScreenColour::Green, 'Claudia' => ScreenColour::Red]);
 
-        $this->assertSame(Elimination::SCREEN_RED, $elimination->getScreenColour('Claudia'));
+        $this->assertSame(ScreenColour::Red, $elimination->getScreenColour('Claudia'));
+    }
+
+    public function testGetScreenColourReturnsNullForInvalidStoredValue(): void
+    {
+        $elimination = new Elimination(new Quiz());
+        $elimination->data = ['Tom' => 'not-a-colour'];
+
+        $this->assertNotInstanceOf(ScreenColour::class, $elimination->getScreenColour('Tom'));
     }
 
     public function testUpdateFromInputBagUpdatesKnownColours(): void
     {
         $elimination = new Elimination(new Quiz());
-        $elimination->data = $this->colours(['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED]);
+        $elimination->data = $this->colours(['Tom' => ScreenColour::Green, 'Claudia' => ScreenColour::Red]);
 
-        $elimination->updateFromInputBag($this->inputBag(['colour-tom' => Elimination::SCREEN_RED]));
+        $elimination->updateFromInputBag($this->inputBag(['colour-tom' => ScreenColour::Red->value]));
 
-        $this->assertSame(Elimination::SCREEN_RED, $elimination->data['Tom']);
-        $this->assertSame(Elimination::SCREEN_RED, $elimination->data['Claudia']);
+        $this->assertSame(ScreenColour::Red->value, $elimination->data['Tom']);
+        $this->assertSame(ScreenColour::Red->value, $elimination->data['Claudia']);
     }
 
     public function testUpdateFromInputBagIgnoresMissingInput(): void
     {
         $elimination = new Elimination(new Quiz());
-        $elimination->data = $this->colours(['Tom' => Elimination::SCREEN_GREEN]);
+        $elimination->data = $this->colours(['Tom' => ScreenColour::Green]);
 
         $elimination->updateFromInputBag($this->inputBag([]));
 
-        $this->assertSame(Elimination::SCREEN_GREEN, $elimination->data['Tom']);
+        $this->assertSame(ScreenColour::Green->value, $elimination->data['Tom']);
+    }
+
+    public function testUpdateFromInputBagIgnoresInvalidColour(): void
+    {
+        $elimination = new Elimination(new Quiz());
+        $elimination->data = $this->colours(['Tom' => ScreenColour::Green]);
+
+        $elimination->updateFromInputBag($this->inputBag(['colour-tom' => 'purple']));
+
+        $this->assertSame(ScreenColour::Green->value, $elimination->data['Tom']);
     }
 
     public function testUpdateFromInputBagReturnsSelf(): void
@@ -65,13 +84,13 @@ final class EliminationTest extends TestCase
     }
 
     /**
-     * @param array<string, string> $colours
+     * @param array<string, ScreenColour> $colours
      *
      * @return array<string, string>
      */
     private function colours(array $colours): array
     {
-        return $colours;
+        return array_map(static fn (ScreenColour $colour): string => $colour->value, $colours);
     }
 
     /**

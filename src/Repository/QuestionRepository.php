@@ -6,6 +6,7 @@ namespace Tvdt\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Question;
 
@@ -15,6 +16,17 @@ class QuestionRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Question::class);
+    }
+
+    /** Fetch a single question with its answers and each answer's candidates eager-loaded. */
+    public function fetchWithAnswerCandidates(Uuid $id): Question
+    {
+        return $this->getEntityManager()->createQuery(<<<dql
+            select q, a, ac from Tvdt\Entity\Question q
+            left join q.answers a
+            left join a.candidates ac
+            where q.id = :id
+            dql)->setParameter('id', $id)->getSingleResult();
     }
 
     public function findNextQuestionForCandidate(Candidate $candidate): ?Question

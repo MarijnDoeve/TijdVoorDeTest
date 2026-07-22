@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Enum\FlashType;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Form\EliminationEnterNameType;
 use Tvdt\Helpers\Base64;
 use Tvdt\Repository\CandidateRepository;
@@ -26,7 +29,11 @@ use function Symfony\Component\Translation\t;
 #[IsGranted('IS_AUTHENTICATED')]
 final class EliminationController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly CandidateRepository $candidateRepository) {}
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+        private readonly CandidateRepository $candidateRepository,
+        private readonly EntityManagerInterface $em,
+    ) {}
 
     #[IsGranted(SeasonVoter::ELIMINATION, 'elimination')]
     #[Route('/elimination/{elimination}', name: 'tvdt_elimination', requirements: ['elimination' => Requirement::UUID])]
@@ -63,15 +70,18 @@ final class EliminationController extends AbstractController
 
         $screenColour = $elimination->getScreenColour($candidate->name);
 
-        if (null === $screenColour) {
+        if (!$screenColour instanceof ScreenColour) {
             $this->addFlash(FlashType::Warning, $this->translator->trans('Could not find candidate with name {name} in elimination.', ['name' => $candidate->name]));
 
             return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
         }
 
+        $this->em->persist(new EliminationScreenView($elimination, $candidate, $screenColour));
+        $this->em->flush();
+
         return $this->render('quiz/elimination/candidate.html.twig', [
             'candidate' => $candidate,
-            'colour' => $screenColour,
+            'colour' => $screenColour->value,
         ]);
     }
 }

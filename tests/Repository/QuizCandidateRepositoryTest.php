@@ -33,7 +33,7 @@ final class QuizCandidateRepositoryTest extends DatabaseTestCase
         $this->assertFalse($result);
     }
 
-    public function testSetCorrectionsForCandidateUpdatesCandidateCorrectly(): void
+    public function testSetResultForCandidateUpdatesCandidateCorrectly(): void
     {
         $krtekSeason = $this->getSeasonByCode('krtek');
         $candidate = $this->getCandidateBySeasonAndName($krtekSeason, 'Myrthe');
@@ -42,8 +42,8 @@ final class QuizCandidateRepositoryTest extends DatabaseTestCase
 
         $this->quizCandidateRepository->createIfNotExist($quiz, $candidate);
 
-        $this->quizCandidateRepository->setCorrectionsForCandidate(
-            $quiz, $candidate, 3.5,
+        $this->quizCandidateRepository->setResultForCandidate(
+            $quiz, $candidate, 3.5, 30,
         );
 
         $quizCandidate = $this->quizCandidateRepository->findOneBy([
@@ -54,9 +54,10 @@ final class QuizCandidateRepositoryTest extends DatabaseTestCase
         $this->assertInstanceOf(QuizCandidate::class, $quizCandidate);
 
         $this->assertEqualsWithDelta(3.5, $quizCandidate->corrections, 0.1);
+        $this->assertSame(30, $quizCandidate->penaltySeconds);
     }
 
-    public function testCannotGiveCorrectionsToCandidateWithoutResult(): void
+    public function testCannotGiveResultToCandidateWithoutResult(): void
     {
         $krtekSeason = $this->getSeasonByCode('krtek');
         $candidate = $this->getCandidateBySeasonAndName($krtekSeason, 'Myrthe');
@@ -65,8 +66,8 @@ final class QuizCandidateRepositoryTest extends DatabaseTestCase
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->quizCandidateRepository->setCorrectionsForCandidate(
-            $quiz, $candidate, 3.5,
+        $this->quizCandidateRepository->setResultForCandidate(
+            $quiz, $candidate, 3.5, 30,
         );
     }
 }

@@ -4,6 +4,18 @@
 
 .modal-content > turbo-frame { display: contents; }
 
+.colour-select {
+  &:has(option[value="green"]:checked) {
+    background-color: var(--bs-success);
+    color: #fff;
+  }
+
+  &:has(option[value="red"]:checked) {
+    background-color: var(--bs-danger);
+    color: #fff;
+  }
+}
+
 .release-notes {
   overflow-wrap: break-word;
 

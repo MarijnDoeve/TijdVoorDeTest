@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Repository;
 
+use Doctrine\ORM\PersistentCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Clock\ClockInterface;
 use Symfony\Component\Clock\MockClock;
 use Tvdt\Entity\Answer;
+use Tvdt\Entity\Candidate;
 use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
@@ -46,7 +48,7 @@ final class QuizRepositoryTest extends DatabaseTestCase
 
         $this->entityManager->refresh($krtekSeason);
 
-        $this->assertCount(1, $krtekSeason->quizzes);
+        $this->assertCount(4, $krtekSeason->quizzes);
     }
 
     public function testTimeForCandidate(): void
@@ -172,6 +174,43 @@ final class QuizRepositoryTest extends DatabaseTestCase
         $result = $this->quizRepository->getScores($quiz);
 
         $this->assertEqualsWithDelta(7.0, $result[0]->score, \PHP_FLOAT_EPSILON);
+    }
+
+    public function testFetchWithQuestionsAndCandidatesEagerLoadsAllBranches(): void
+    {
+        $krtekSeason = $this->getSeasonByCode('krtek');
+        $quiz = $krtekSeason->quizzes->first();
+        $this->assertInstanceOf(Quiz::class, $quiz);
+
+        $candidate = $this->getCandidateBySeasonAndName($krtekSeason, 'Iris');
+        $candidateId = $candidate->id->toString();
+        $question = $quiz->questions->first();
+        $this->assertInstanceOf(Question::class, $question);
+        $answer = $question->answers->first();
+        $this->assertInstanceOf(Answer::class, $answer);
+        $answer->addCandidate($candidate);
+
+        $quizCandidate = new QuizCandidate($quiz, $candidate);
+        $this->entityManager->persist($quizCandidate);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $fetched = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
+
+        $this->assertInstanceOf(PersistentCollection::class, $fetched->questions);
+        $this->assertTrue($fetched->questions->isInitialized());
+
+        $fetchedAnswer = $fetched->questions->first()->answers->first();
+        $this->assertInstanceOf(PersistentCollection::class, $fetchedAnswer->candidates);
+        $this->assertTrue($fetchedAnswer->candidates->isInitialized());
+        $this->assertTrue($fetchedAnswer->candidates->exists(
+            static fn (int $key, Candidate $c): bool => $c->id->toString() === $candidateId,
+        ));
+
+        $this->assertInstanceOf(PersistentCollection::class, $fetched->candidateData);
+        $this->assertTrue($fetched->candidateData->isInitialized());
+        $this->assertCount(1, $fetched->candidateData);
+        $this->assertSame($candidateId, $fetched->candidateData->first()->candidate->id->toString());
     }
 
     public function testCandidatesWithSameScoreAreSortedCorrectlyByTime(): void

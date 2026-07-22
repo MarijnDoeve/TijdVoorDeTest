@@ -8,6 +8,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\EliminationController;
 use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Helpers\Base64;
 
 #[CoversClass(EliminationController::class)]
@@ -22,7 +24,7 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
         $quiz = $this->getQuizByName('Quiz 1');
 
         $this->elimination = new Elimination($quiz);
-        $this->elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $this->elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($this->elimination);
         $this->entityManager->flush();
@@ -81,6 +83,37 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
         $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(\sprintf('#%s', Elimination::SCREEN_GREEN));
+        self::assertSelectorExists(\sprintf('#%s', ScreenColour::Green->value));
+    }
+
+    public function testCandidateScreenRecordsScreenView(): void
+    {
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
+
+        self::assertResponseIsSuccessful();
+
+        $this->entityManager->clear();
+        $eliminationId = $this->elimination->id;
+        $screenViews = $this->entityManager->getRepository(EliminationScreenView::class)->findBy(['elimination' => $eliminationId]);
+
+        $this->assertCount(1, $screenViews);
+        $this->assertSame('Tom', $screenViews[0]->candidate->name);
+        $this->assertSame(ScreenColour::Green, $screenViews[0]->colour);
+    }
+
+    public function testCandidateScreenRecordsScreenViewsInOrder(): void
+    {
+        $this->elimination->data = ['Tom' => ScreenColour::Green->value, 'Claudia' => ScreenColour::Red->value];
+        $this->entityManager->flush();
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Claudia')));
+        $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
+
+        $this->entityManager->clear();
+        $elimination = $this->entityManager->getRepository(Elimination::class)->find($this->elimination->id);
+        $this->assertInstanceOf(Elimination::class, $elimination);
+        $names = array_map(static fn (EliminationScreenView $screenView): string => $screenView->candidate->name, $elimination->screenViews->toArray());
+
+        $this->assertSame(['Claudia', 'Tom'], $names);
     }
 }

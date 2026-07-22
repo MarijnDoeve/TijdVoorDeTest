@@ -67,12 +67,22 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $quiz2 = $this->createQuiz2($season);
         $season->addQuiz($quiz2);
 
+        $quiz3 = $this->createQuiz3($season);
+        $season->addQuiz($quiz3);
+
+        $quiz4 = $this->createQuiz4($season);
+        $season->addQuiz($quiz4);
+
+        $quiz5 = $this->createQuiz5($season);
+        $season->addQuiz($quiz5);
+
         \assert($season->settings instanceof SeasonSettings);
 
         $season->settings->confirmAnswers = true;
         $season->settings->showNumbers = true;
 
         $this->createQuestionBank($season, $quiz2);
+        $this->bindQuizQuestionsToBank($season);
 
         $manager->flush();
 
@@ -93,7 +103,7 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $season->addQuestionLabel($finale);
 
         $reusable = new BankQuestion();
-        $reusable->question = 'Wie is de Krtek?';
+        $reusable->question = 'Wat is de bijnaam van de Krtek?';
         $reusable->reusable = true;
         $reusable->addLabel($finale);
         $reusable->addAnswer(new BankAnswer('Claudia', true));
@@ -124,6 +134,41 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $this->addReference(self::BANK_QUESTION_REUSABLE, $reusable);
         $this->addReference(self::BANK_QUESTION_USED, $used);
         $this->addReference(self::BANK_QUESTION_UNUSED, $unused);
+    }
+
+    /**
+     * Mirrors every quiz question into the question bank, so the bank reflects what was actually
+     * asked. A question text reused across quizzes (e.g. the recurring "man of vrouw"/"wie is de
+     * Krtek" questions) becomes a single reusable bank question with one usage per quiz it appears
+     * in, instead of a separate bank question per occurrence.
+     */
+    private function bindQuizQuestionsToBank(Season $season): void
+    {
+        /** @var array<string, BankQuestion> $bankQuestionsByText */
+        $bankQuestionsByText = [];
+
+        foreach ($season->quizzes as $quiz) {
+            foreach ($quiz->questions as $question) {
+                $bankQuestion = $bankQuestionsByText[$question->question] ?? null;
+
+                if (null === $bankQuestion) {
+                    $bankQuestion = new BankQuestion();
+                    $bankQuestion->question = $question->question;
+                    foreach ($question->answers as $answer) {
+                        $bankQuestion->addAnswer(new BankAnswer($answer->text, $answer->isRightAnswer));
+                    }
+
+                    $season->addBankQuestion($bankQuestion);
+                    $bankQuestionsByText[$question->question] = $bankQuestion;
+                } else {
+                    $bankQuestion->reusable = true;
+                }
+
+                $usage = new BankQuestionUsage($bankQuestion, $quiz);
+                $usage->question = $question;
+                $bankQuestion->addUsage($usage);
+            }
+        }
     }
 
     private function createQuiz1(Season $season): Quiz
@@ -450,6 +495,519 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
           ->addAnswer(new Answer('Philine'))
           ->addAnswer(new Answer('Remy'))
           ->addAnswer(new Answer('Robbert'))
+          ->addAnswer(new Answer('Tom'));
+        $q->ordering = 15;
+        $quiz->addQuestion($q);
+
+        return $quiz;
+    }
+
+    private function createQuiz3(Season $season): Quiz
+    {
+        $quiz = new Quiz();
+        $quiz->name = 'Quiz 3';
+        $quiz->season = $season;
+
+        $q = new Question();
+        $q->question = 'Is de Krtek een man of een vrouw?';
+        $q->addAnswer(new Answer('Man'))
+          ->addAnswer(new Answer('Vrouw', true));
+        $q->ordering = 1;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Bij welk onderdeel zat de Krtek bij de opdracht "Blind vertrouwen"?';
+        // No answer was marked correct in the source spreadsheet for this question; "Beweging" was
+        // chosen arbitrarily on import and is not necessarily correct for the real situation.
+        $q->addAnswer(new Answer('Beweging', true))
+          ->addAnswer(new Answer('Precisie'))
+          ->addAnswer(new Answer('Oog voor Detail'))
+          ->addAnswer(new Answer('Ruimtelijk Inzicht'))
+          ->addAnswer(new Answer('Diepte'))
+          ->addAnswer(new Answer('Nattigheid'))
+          ->addAnswer(new Answer('Overzicht'));
+        $q->ordering = 2;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Snurkt de Krtek?';
+        $q->addAnswer(new Answer('Ja'))
+          ->addAnswer(new Answer('Nee', true))
+          ->addAnswer(new Answer('Nee?'));
+        $q->ordering = 3;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat kon de Krtek bij de opdracht "Blind Vertrouwen" niet?';
+        // No answer was marked correct in the source spreadsheet for this question; "Zien" was
+        // chosen arbitrarily on import and is not necessarily correct for the real situation.
+        $q->addAnswer(new Answer('Zien', true))
+          ->addAnswer(new Answer('De handen gebruiken'));
+        $q->ordering = 4;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek vanmorgen gedoucht?';
+        // No answer was marked correct in the source spreadsheet for this question; "Ja" was
+        // chosen arbitrarily on import and is not necessarily correct for the real situation.
+        $q->addAnswer(new Answer('Ja', true))
+          ->addAnswer(new Answer('Nee'));
+        $q->ordering = 5;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'In welke ruimte keek de Krtek gisteren de video?';
+        $q->addAnswer(new Answer('In de kleine keuken', true))
+          ->addAnswer(new Answer('In de organisatie-huiskamer'));
+        $q->ordering = 6;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Welke kleur drinken dronk de Krtek bij de cupcakes?';
+        $q->addAnswer(new Answer('Kleurloos', true))
+          ->addAnswer(new Answer('Groen'))
+          ->addAnswer(new Answer('Rood'));
+        $q->ordering = 7;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Hoe oud is de Krtek?';
+        $q->addAnswer(new Answer('20'))
+          ->addAnswer(new Answer('22'))
+          ->addAnswer(new Answer('23'))
+          ->addAnswer(new Answer('25'))
+          ->addAnswer(new Answer('26'))
+          ->addAnswer(new Answer('27'))
+          ->addAnswer(new Answer('29', true))
+          ->addAnswer(new Answer('30'))
+          ->addAnswer(new Answer('31'))
+          ->addAnswer(new Answer('32'))
+          ->addAnswer(new Answer('33'));
+        $q->ordering = 8;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Bespeelt de Krtek een muziekinstrument en zo ja, welke?';
+        $q->addAnswer(new Answer('Ja, piano'))
+          ->addAnswer(new Answer('Ja, gitaar'))
+          ->addAnswer(new Answer('Ja, gitaar en een beetje mondharmonica'))
+          ->addAnswer(new Answer('Ja, een beetje ukulele'))
+          ->addAnswer(new Answer('Nee', true));
+        $q->ordering = 9;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Hoeveel geld is er verdiend met het onderdeel van de Krtek bij de opdracht "Blind Vertrouwen"?';
+        // No answer was marked correct in the source spreadsheet for this question; "€ 0,-" was
+        // chosen arbitrarily on import and is not necessarily correct for the real situation.
+        $q->addAnswer(new Answer('€ 0,-', true))
+          ->addAnswer(new Answer('€ 10,-'))
+          ->addAnswer(new Answer('€ 15,-'))
+          ->addAnswer(new Answer('€ 20,-'))
+          ->addAnswer(new Answer('€ 30,-'));
+        $q->ordering = 10;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat is de schoenmaat van de Krtek?';
+        $q->addAnswer(new Answer('37'))
+          ->addAnswer(new Answer('39'))
+          ->addAnswer(new Answer('39'))
+          ->addAnswer(new Answer('40', true))
+          ->addAnswer(new Answer('42'))
+          ->addAnswer(new Answer('42.5'))
+          ->addAnswer(new Answer('43'))
+          ->addAnswer(new Answer('46'));
+        $q->ordering = 11;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Op welk huisnummer woont de Krtek?';
+        $q->addAnswer(new Answer('12'))
+          ->addAnswer(new Answer('16'))
+          ->addAnswer(new Answer('20'))
+          ->addAnswer(new Answer('21'))
+          ->addAnswer(new Answer('51'))
+          ->addAnswer(new Answer('58-2', true))
+          ->addAnswer(new Answer('73'))
+          ->addAnswer(new Answer('350'));
+        $q->ordering = 12;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Via wie kwam de Krtek er achter dat Sinterklaas niet bestond?';
+        $q->addAnswer(new Answer('Moeder', true))
+          ->addAnswer(new Answer('Vader'))
+          ->addAnswer(new Answer('Beide ouders'))
+          ->addAnswer(new Answer('Vriendin'))
+          ->addAnswer(new Answer('De Krtek heeft geen idee'))
+          ->addAnswer(new Answer('De Krtek vertelde het zelf aan zijn ouders'));
+        $q->ordering = 13;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek gisteravond gebiecht?';
+        $q->addAnswer(new Answer('Ja'))
+          ->addAnswer(new Answer('Nee', true));
+        $q->ordering = 14;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wie is de Krtek?';
+        $q->addAnswer(new Answer('Claudia', true))
+          ->addAnswer(new Answer('Eelco'))
+          ->addAnswer(new Answer('Elise'))
+          ->addAnswer(new Answer('Gert-Jan'))
+          ->addAnswer(new Answer('Iris'))
+          ->addAnswer(new Answer('Jari'))
+          ->addAnswer(new Answer('Lara'))
+          ->addAnswer(new Answer('Lotte'))
+          ->addAnswer(new Answer('Myrthe'))
+          ->addAnswer(new Answer('Philine'))
+          ->addAnswer(new Answer('Remy'))
+          ->addAnswer(new Answer('Robbert'))
+          ->addAnswer(new Answer('Tom'));
+        $q->ordering = 15;
+        $quiz->addQuestion($q);
+
+        return $quiz;
+    }
+
+    private function createQuiz4(Season $season): Quiz
+    {
+        $quiz = new Quiz();
+        $quiz->name = 'Quiz 4';
+        $quiz->season = $season;
+
+        $q = new Question();
+        $q->question = 'Is de Krtek een man of een vrouw?';
+        $q->addAnswer(new Answer('Man'))
+          ->addAnswer(new Answer('Vrouw', true));
+        $q->ordering = 1;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Waar zat de Krtek vanmiddag aan tafel tijdens de lunch?';
+        $q->addAnswer(new Answer('Aan de kant van de buitenmuur'))
+          ->addAnswer(new Answer('Aan de kant van de ingang', true));
+        $q->ordering = 2;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat dronk de Krtek tijdens de lunch?';
+        $q->addAnswer(new Answer('Thee'))
+          ->addAnswer(new Answer('Chocomel'))
+          ->addAnswer(new Answer('Bier'))
+          ->addAnswer(new Answer('Appelsap'))
+          ->addAnswer(new Answer('Ice tea green'))
+          ->addAnswer(new Answer('Pepsi', true))
+          ->addAnswer(new Answer('Pepsi max'))
+          ->addAnswer(new Answer('Fristi'))
+          ->addAnswer(new Answer('Cappuccino'))
+          ->addAnswer(new Answer("Jus d'orange"));
+        $q->ordering = 3;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Is er iets dat de Krtek graag viert?';
+        $q->addAnswer(new Answer('Nee'))
+          ->addAnswer(new Answer("Nee, gezellige avonden hoeven voor de Krtek niet samen te vallen met 'bijzondere' momenten."))
+          ->addAnswer(new Answer('Sinterklaas'))
+          ->addAnswer(new Answer('Kerst'))
+          ->addAnswer(new Answer('Oud en Nieuw'))
+          ->addAnswer(new Answer('Gay Pride', true))
+          ->addAnswer(new Answer('Bevrijdingsdag, want dat vier ik meteen mijn verjaardag'))
+          ->addAnswer(new Answer('Het leven'));
+        $q->ordering = 4;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek nog opa’s/oma’s? Zo ja, wat zijn de namen?';
+        $q->addAnswer(new Answer('Ja, Oma Toos', true))
+          ->addAnswer(new Answer('Ja, Opa Piet en Oma Door'))
+          ->addAnswer(new Answer('Ja, Oma Greet, Opa Wim en Oma Bep'))
+          ->addAnswer(new Answer('Ja, Opa Cor (Eigenlijk Cornelis), Oma Grada en Oma Willy'))
+          ->addAnswer(new Answer('Nee'));
+        $q->ordering = 5;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat is het eerste dat de Krtek zou doen als hij een dag van geslacht veranderd?';
+        $q->addAnswer(new Answer('Plassen'))
+          ->addAnswer(new Answer('Wildplassen', true))
+          ->addAnswer(new Answer('Staand plassen'))
+          ->addAnswer(new Answer('in de spiegel kijken'))
+          ->addAnswer(new Answer('Een geslachtelijk onderzoek'))
+          ->addAnswer(new Answer('Heel de dag voor de spiegel staan'))
+          ->addAnswer(new Answer('Testen hoe goed een beha werkt als telefoonhouder'))
+          ->addAnswer(new Answer('Een dag werken en kijken hoe de wereld je anders behandeld'));
+        $q->ordering = 6;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek vanmorgen een geheim bericht gevonden op het toilet?';
+        $q->addAnswer(new Answer('Ja'))
+          ->addAnswer(new Answer('Nee', true));
+        $q->ordering = 7;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek gebeld met de ontvoerde kandidaten tijdens de opdracht Happen, Trappen en Ontsnappen?';
+        // No answer was marked correct in the source spreadsheet for this question; "Ja" was
+        // chosen arbitrarily on import and is not necessarily correct for the real situation.
+        $q->addAnswer(new Answer('Ja', true))
+          ->addAnswer(new Answer('Nee'))
+          ->addAnswer(new Answer('De Krtek was zelf één van de ontvoerde kandidaten'));
+        $q->ordering = 8;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'In welke groep zat de Krtek tijdens de opdracht Happen, Trappen en Ontsnappen?';
+        $q->addAnswer(new Answer('De langzame fietsgroep'))
+          ->addAnswer(new Answer('De gemiddelde fietsgroep', true))
+          ->addAnswer(new Answer('De snelle fietsgroep'))
+          ->addAnswer(new Answer('De ontvoerde kandidaten'));
+        $q->ordering = 9;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Als hoeveelste was het groepje van de Krtek op de Grebbeberg?';
+        $q->addAnswer(new Answer('Als eerste'))
+          ->addAnswer(new Answer('Als tweede'))
+          ->addAnswer(new Answer('Het groepje van de Krtek kwam niet bij de Grebbeberg', true));
+        $q->ordering = 10;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat is het favoriete muzieknummer allertijden van de Krtek?';
+        $q->addAnswer(new Answer('Taylor Swift - Long Live'))
+          ->addAnswer(new Answer('Kiefer Sutherland - Something you love'))
+          ->addAnswer(new Answer('Yes-R - Hey Schatje'))
+          ->addAnswer(new Answer('Bronsku Beat - Smalltown Boy', true))
+          ->addAnswer(new Answer('Queen - Bohemian Rhapsody'))
+          ->addAnswer(new Answer('Imagine Dragons - Birds'))
+          ->addAnswer(new Answer('Chipz - 1001 Arabian Nights'))
+          ->addAnswer(new Answer('Nightwish - Ghost Love Score'));
+        $q->ordering = 11;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Aan welk gerecht heeft de Krtek de grootste bijdrage geleverd bij het koken?';
+        $q->addAnswer(new Answer('Voorgerecht'))
+          ->addAnswer(new Answer('Hoodgerecht', true))
+          ->addAnswer(new Answer('Nagerecht'))
+          ->addAnswer(new Answer('Geen bijdrage'));
+        $q->ordering = 12;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek de fruitliedjesopdracht op de juiste GPS-locatie uitgevoerd?';
+        $q->addAnswer(new Answer('Ja', true))
+          ->addAnswer(new Answer('Nee'))
+          ->addAnswer(new Answer('De Krtek heeft deze opdracht niet uitgevoerd'));
+        $q->ordering = 13;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Als hoeveelste ging de Krtek vanmiddag biechten?';
+        $q->addAnswer(new Answer('Eerste'))
+          ->addAnswer(new Answer('Tweede'))
+          ->addAnswer(new Answer('Derde'))
+          ->addAnswer(new Answer('Vierde', true))
+          ->addAnswer(new Answer('Vijfde'))
+          ->addAnswer(new Answer('Zesde'))
+          ->addAnswer(new Answer('Zevende'))
+          ->addAnswer(new Answer('Achtste'))
+          ->addAnswer(new Answer('Negende'))
+          ->addAnswer(new Answer('Tiende'))
+          ->addAnswer(new Answer('Elfde'))
+          ->addAnswer(new Answer('Twaalfde'))
+          ->addAnswer(new Answer('Dertiende'));
+        $q->ordering = 14;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wie is de Krtek?';
+        $q->addAnswer(new Answer('Claudia', true))
+          ->addAnswer(new Answer('Eelco'))
+          ->addAnswer(new Answer('Elise'))
+          ->addAnswer(new Answer('Gert-Jan'))
+          ->addAnswer(new Answer('Iris'))
+          ->addAnswer(new Answer('Jari'))
+          ->addAnswer(new Answer('Lara'))
+          ->addAnswer(new Answer('Lotte'))
+          ->addAnswer(new Answer('Myrthe'))
+          ->addAnswer(new Answer('Philine'))
+          ->addAnswer(new Answer('Remy'))
+          ->addAnswer(new Answer('Robbert'))
+          ->addAnswer(new Answer('Tom'));
+        $q->ordering = 15;
+        $quiz->addQuestion($q);
+
+        return $quiz;
+    }
+
+    private function createQuiz5(Season $season): Quiz
+    {
+        $quiz = new Quiz();
+        $quiz->name = 'Quiz 5';
+        $quiz->season = $season;
+
+        $q = new Question();
+        $q->question = 'Is de Krtek een man of een vrouw?';
+        $q->addAnswer(new Answer('Man'))
+          ->addAnswer(new Answer('Vrouw', true));
+        $q->ordering = 1;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Bij welk team hoorde de Krtek tijdens de opdracht "Pyjamaparty"?';
+        $q->addAnswer(new Answer('Team Groen'))
+          ->addAnswer(new Answer('Team Rood', true));
+        $q->ordering = 2;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = "Is de Krtek een 80's, 90's of 00's -kid?";
+        $q->addAnswer(new Answer("80's"))
+          ->addAnswer(new Answer("90's", true))
+          ->addAnswer(new Answer("00's"));
+        $q->ordering = 3;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat is de lievelingsgeur van de Krtek?';
+        $q->addAnswer(new Answer('Banaan'))
+          ->addAnswer(new Answer('Blauw'))
+          ->addAnswer(new Answer('De zee'))
+          ->addAnswer(new Answer('Verse appeltaart'))
+          ->addAnswer(new Answer('Glow van JLO'))
+          ->addAnswer(new Answer('Lavendel'))
+          ->addAnswer(new Answer('Vanille', true));
+        $q->ordering = 4;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Aan welke tafel zat de Krtek bij het avondeten?';
+        $q->addAnswer(new Answer('Aan de tafel het dichtst bij het terras'))
+          ->addAnswer(new Answer('Aan de tafel in het midden'))
+          ->addAnswer(new Answer('Aan de tafel het dichtst bij het fornuis', true));
+        $q->ordering = 5;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heeft de Krtek iets in een wijnglas gegoten bij de poging om een rood bruisend drankje te maken?';
+        $q->addAnswer(new Answer('Ja'))
+          ->addAnswer(new Answer('Nee', true));
+        $q->ordering = 6;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wie was de kamergenoot van de Krtek tijdens de trust Nobody-Reis in Tsjechië?';
+        $q->addAnswer(new Answer('Daniëlle'))
+          ->addAnswer(new Answer('Edwin'))
+          ->addAnswer(new Answer('Eelco'))
+          ->addAnswer(new Answer('Elise'))
+          ->addAnswer(new Answer('Gerry'))
+          ->addAnswer(new Answer('Gert-Jan'))
+          ->addAnswer(new Answer('Joelle'))
+          ->addAnswer(new Answer('Lara'))
+          ->addAnswer(new Answer('Lotte'))
+          ->addAnswer(new Answer('Myrthe'))
+          ->addAnswer(new Answer('Niemand', true));
+        $q->ordering = 7;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Met welke bekende persoon zou de Krtek wel eens een beschuitje willen eten?';
+        $q->addAnswer(new Answer('Art Rooijakkers'))
+          ->addAnswer(new Answer('Emma Watson', true))
+          ->addAnswer(new Answer('India de Beaufort'))
+          ->addAnswer(new Answer('Jennifer Aniston'))
+          ->addAnswer(new Answer('Lewis Hamilton'))
+          ->addAnswer(new Answer('Sara Bereilles'));
+        $q->ordering = 8;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Heb de Krtek wel eens iets gestolen? Zo ja, wat?';
+        $q->addAnswer(new Answer('Nee'))
+          ->addAnswer(new Answer('Ja, snoep'))
+          ->addAnswer(new Answer('Ja, een stripboek', true))
+          ->addAnswer(new Answer('Hooguit wat koeken uit de keukenkastjes'))
+          ->addAnswer(new Answer('Ja, meermaals onbewust niet gescande boodschappen, met opzet een een sleutelhanger in Disneyland Parijs, een Gamecube spel van een klasgenoot en pins in de Super Panda Circus'));
+        $q->ordering = 9;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat dronk de Krtek tijdens de opdracht "Pyjamaparty"?';
+        $q->addAnswer(new Answer('Water', true))
+          ->addAnswer(new Answer('Chocomel'))
+          ->addAnswer(new Answer('Bier'))
+          ->addAnswer(new Answer('Fanta'))
+          ->addAnswer(new Answer('Cola'))
+          ->addAnswer(new Answer('Cola zero'))
+          ->addAnswer(new Answer('Rode wijn'))
+          ->addAnswer(new Answer('Witte wijn'));
+        $q->ordering = 10;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wat is het lievelingsdrankje van de Krtek?';
+        $q->addAnswer(new Answer('Cola zero'))
+          ->addAnswer(new Answer('Dubbelfris Appel/Perzik'))
+          ->addAnswer(new Answer('IPA bier'))
+          ->addAnswer(new Answer('Lindemans biertje'))
+          ->addAnswer(new Answer('Moijto'))
+          ->addAnswer(new Answer('Rode wijn'))
+          ->addAnswer(new Answer('Sgroppino', true))
+          ->addAnswer(new Answer('Virgin mojito'));
+        $q->ordering = 11;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'In welke huiskamer zat de Krtek tijdens het kijken van de aflevering in de opdracht "Pyjamaparty"?';
+        $q->addAnswer(new Answer('Bellefleur', true))
+          ->addAnswer(new Answer('Juttepeer'));
+        $q->ordering = 12;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Waar zat de Krtek op tijdens de opdracht "Pyjamaparty"?';
+        $q->addAnswer(new Answer('Een stoel'))
+          ->addAnswer(new Answer('Een bank', true))
+          ->addAnswer(new Answer('Een krukje'))
+          ->addAnswer(new Answer('De grond'));
+        $q->ordering = 13;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Welke bekende persoon kan de Krtek echt niet uitstaan?';
+        $q->addAnswer(new Answer('Chantal Janzen', true))
+          ->addAnswer(new Answer('Gordon'))
+          ->addAnswer(new Answer('Linda de Mol'))
+          ->addAnswer(new Answer('Maurice de Hond'))
+          ->addAnswer(new Answer('Sjaak Zwart'))
+          ->addAnswer(new Answer('Thierry Baudet'));
+        $q->ordering = 14;
+        $quiz->addQuestion($q);
+
+        $q = new Question();
+        $q->question = 'Wie is de Krtek?';
+        $q->addAnswer(new Answer('Claudia', true))
+          ->addAnswer(new Answer('Eelco'))
+          ->addAnswer(new Answer('Elise'))
+          ->addAnswer(new Answer('Gert-Jan'))
+          ->addAnswer(new Answer('Iris'))
+          ->addAnswer(new Answer('Jari'))
+          ->addAnswer(new Answer('Lara'))
+          ->addAnswer(new Answer('Lotte'))
+          ->addAnswer(new Answer('Myrthe'))
+          ->addAnswer(new Answer('Philine'))
+          ->addAnswer(new Answer('Remy'))
+          ->addAnswer(new Answer('Rianne'))
+          ->addAnswer(new Answer('Robbert'))
+          ->addAnswer(new Answer('Rowan'))
           ->addAnswer(new Answer('Tom'));
         $q->ordering = 15;
         $quiz->addQuestion($q);

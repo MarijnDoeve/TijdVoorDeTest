@@ -158,19 +158,30 @@ class QuizRepository extends ServiceEntityRepository
     }
 
     /**
-     * Fetch quiz with all relations needed for error checking.
-     * This includes: questions, answers, answer candidates, and season candidates.
+     * Fetch quiz with all relations needed for error checking (questions, answers, answer
+     * candidates, and candidate data). Split into two queries: joining season.candidates into
+     * the same query as the questions/answers tree would cross-multiply two independent
+     * to-many collections into a cartesian product, which is expensive to hydrate for a quiz
+     * with many questions and candidates.
      */
     public function fetchWithQuestionsAndCandidates(Uuid $id): Quiz
     {
-        return $this->getEntityManager()->createQuery(<<<dql
-            select q, qz, a, ac, s, sc, qc from Tvdt\Entity\Quiz q
+        $em = $this->getEntityManager();
+
+        $em->createQuery(<<<dql
+            select q, qz, a, ac from Tvdt\Entity\Quiz q
             left join q.questions qz
             left join qz.answers a
             left join a.candidates ac
-            join q.season s
-            left join s.candidates sc
+            where q.id = :id
+            order by qz.ordering asc, a.ordering asc, a.id asc
+            dql)->setParameter('id', $id)->getSingleResult();
+
+        /* @var Quiz */
+        return $em->createQuery(<<<dql
+            select q, qc, c from Tvdt\Entity\Quiz q
             left join q.candidateData qc
+            left join qc.candidate c
             where q.id = :id
             dql)->setParameter('id', $id)->getSingleResult();
     }
