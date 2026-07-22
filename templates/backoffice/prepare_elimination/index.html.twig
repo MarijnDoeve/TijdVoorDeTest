@@ -14,7 +14,7 @@
 {% block body %}
     <div data-controller="bo--prepare-elimination">
         <div class="row">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-6 order-1">
                 <form method="post">
                     <input type="hidden" name="_token" value="{{ csrf_token('prepare_elimination') }}">
                     <div class="row mb-2 fw-bold">
@@ -50,14 +50,9 @@
                     </div>
                 </form>
             </div>
-            <div class="col-12 col-md-6">
-                {{ include('backoffice/help/prepare_elimination.html.twig') }}
-            </div>
-        </div>
 
-        {% if not elimination.screenViews.empty %}
-            <div class="row">
-                <div class="col-12 col-md-6">
+            {% if not elimination.screenViews.empty %}
+                <div class="col-12 col-md-6 order-2 order-md-3 offset-md-6">
                     <h4 class="mb-3">{{ 'Screens shown'|trans }}</h4>
                     <table class="table table-hover">
                         <thead>
@@ -78,8 +73,12 @@
                         </tbody>
                     </table>
                 </div>
+            {% endif %}
+
+            <div class="col-12 col-md-6 order-3 order-md-2">
+                {{ include('backoffice/help/prepare_elimination.html.twig') }}
             </div>
-        {% endif %}
+        </div>
 
         <div class="modal fade" data-bo--prepare-elimination-target="deleteModal" data-bs-backdrop="static"
              tabindex="-1"
