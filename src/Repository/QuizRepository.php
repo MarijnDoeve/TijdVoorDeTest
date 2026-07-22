@@ -174,6 +174,7 @@ class QuizRepository extends ServiceEntityRepository
             left join qz.answers a
             left join a.candidates ac
             where q.id = :id
+            order by qz.ordering asc, a.ordering asc, a.id asc
             dql)->setParameter('id', $id)->getSingleResult();
 
         /* @var Quiz */
