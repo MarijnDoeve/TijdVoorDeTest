@@ -19,6 +19,7 @@ use Tvdt\Entity\QuestionLabel;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Entity\User;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Helpers\FilenameSanitizer;
 use Tvdt\Helpers\FormulaInjectionSafeValueBinder;
 use Tvdt\Repository\QuizRepository;
@@ -310,7 +311,8 @@ class DataExportService
             ];
 
             foreach ($candidates as $candidate) {
-                $line[] = $elimination->getScreenColour($candidate->name) ?? '';
+                $screenColour = $elimination->getScreenColour($candidate->name);
+                $line[] = $screenColour instanceof ScreenColour ? $screenColour->value : '';
             }
 
             $sheet->fromArray($line, null, 'A'.$row);
@@ -334,7 +336,7 @@ class DataExportService
                 $sheet->fromArray([
                     $elimination->getCreatedAt()?->format(\DateTimeInterface::ATOM) ?? '',
                     $screenView->candidate->name,
-                    $screenView->colour,
+                    $screenView->colour->value,
                     $screenView->created->format(\DateTimeInterface::ATOM),
                 ], null, 'A'.$row);
                 ++$row;

@@ -17,6 +17,7 @@ use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
 use Tvdt\Entity\User;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Service\DataExportService;
 use Tvdt\Tests\Repository\DatabaseTestCase;
 
@@ -295,11 +296,11 @@ final class DataExportServiceTest extends DatabaseTestCase
         $claudia = $this->getCandidateBySeasonAndName($season, 'Claudia');
 
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED];
+        $elimination->data = ['Tom' => ScreenColour::Green->value, 'Claudia' => ScreenColour::Red->value];
 
         $this->entityManager->persist($elimination);
-        $this->entityManager->persist(new EliminationScreenView($elimination, $tom, Elimination::SCREEN_GREEN));
-        $this->entityManager->persist(new EliminationScreenView($elimination, $claudia, Elimination::SCREEN_RED));
+        $this->entityManager->persist(new EliminationScreenView($elimination, $tom, ScreenColour::Green));
+        $this->entityManager->persist(new EliminationScreenView($elimination, $claudia, ScreenColour::Red));
         $this->entityManager->flush();
         $this->entityManager->clear();
 

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Repository\EliminationScreenViewRepository;
 
 #[ORM\Entity(repositoryClass: EliminationScreenViewRepository::class)]
@@ -33,7 +34,7 @@ class EliminationScreenView
         #[ORM\ManyToOne]
         public Candidate $candidate,
 
-        #[ORM\Column]
-        public string $colour,
+        #[ORM\Column(enumType: ScreenColour::class)]
+        public ScreenColour $colour,
     ) {}
 }

@@ -17,6 +17,7 @@ use Tvdt\Entity\Candidate;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Enum\FlashType;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Form\EliminationEnterNameType;
 use Tvdt\Helpers\Base64;
 use Tvdt\Repository\CandidateRepository;
@@ -69,7 +70,7 @@ final class EliminationController extends AbstractController
 
         $screenColour = $elimination->getScreenColour($candidate->name);
 
-        if (null === $screenColour) {
+        if (!$screenColour instanceof ScreenColour) {
             $this->addFlash(FlashType::Warning, $this->translator->trans('Could not find candidate with name {name} in elimination.', ['name' => $candidate->name]));
 
             return $this->redirectToRoute('tvdt_elimination', ['elimination' => $elimination->id]);
@@ -80,7 +81,7 @@ final class EliminationController extends AbstractController
 
         return $this->render('quiz/elimination/candidate.html.twig', [
             'candidate' => $candidate,
-            'colour' => $screenColour,
+            'colour' => $screenColour->value,
         ]);
     }
 }

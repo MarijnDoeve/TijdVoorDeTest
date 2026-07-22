@@ -73,7 +73,7 @@
                         {%~ for screenView in elimination.screenViews %}
                             <tr>
                                 <td>{{ screenView.candidate.name }}</td>
-                                <td>{{ (screenView.colour == 'green' ? 'Green' : 'Red')|trans }}</td>
+                                <td>{{ screenView.colour.label|trans }}</td>
                                 <td>{{ screenView.created|format_datetime() }}</td>
                             </tr>
                         {% endfor %}

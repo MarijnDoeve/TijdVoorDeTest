@@ -14,6 +14,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\Uid\Uuid;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Repository\EliminationRepository;
 
 #[Gedmo\SoftDeleteable]
@@ -23,17 +24,13 @@ class Elimination
     use SoftDeleteableEntity;
     use TimestampableEntity;
 
-    public const string SCREEN_GREEN = 'green';
-
-    public const string SCREEN_RED = 'red';
-
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Id]
     public private(set) Uuid $id;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     #[ORM\Column(type: Types::JSONB)]
     public array $data = [];
 
@@ -60,20 +57,21 @@ class Elimination
     {
         foreach (array_keys($this->data) as $name) {
             $newColour = $inputBag->get('colour-'.mb_strtolower($name));
-            if (\is_string($newColour)) {
-                $this->data[$name] = $inputBag->get('colour-'.mb_strtolower($name));
+            $screenColour = \is_string($newColour) ? ScreenColour::tryFrom($newColour) : null;
+            if ($screenColour instanceof ScreenColour) {
+                $this->data[$name] = $screenColour->value;
             }
         }
 
         return $this;
     }
 
-    public function getScreenColour(?string $name): ?string
+    public function getScreenColour(?string $name): ?ScreenColour
     {
         if (null === $name) {
             return null;
         }
 
-        return $this->data[$name] ?? null;
+        return isset($this->data[$name]) ? ScreenColour::tryFrom($this->data[$name]) : null;
     }
 }

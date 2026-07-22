@@ -12,6 +12,7 @@ use Tvdt\Entity\Elimination;
 use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(SeasonController::class)]
@@ -115,9 +116,9 @@ final class SeasonControllerTest extends AbstractControllerWebTestCase
         $this->assertInstanceOf(Quiz::class, $quiz);
 
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
-        $screenView = new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN);
+        $screenView = new EliminationScreenView($elimination, $candidate, ScreenColour::Green);
 
         $this->entityManager->persist($elimination);
         $this->entityManager->persist($screenView);

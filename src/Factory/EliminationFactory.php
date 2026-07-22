@@ -7,6 +7,7 @@ namespace Tvdt\Factory;
 use Doctrine\ORM\EntityManagerInterface;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\Quiz;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Repository\QuizRepository;
 
 final readonly class EliminationFactory
@@ -26,7 +27,7 @@ final readonly class EliminationFactory
         $simpleScores = [];
 
         foreach (array_reverse($scores) as $i => $score) {
-            $simpleScores[$score->name] = $i < $quiz->dropouts ? Elimination::SCREEN_RED : Elimination::SCREEN_GREEN;
+            $simpleScores[$score->name] = ($i < $quiz->dropouts ? ScreenColour::Red : ScreenColour::Green)->value;
         }
 
         $elimination->data = $simpleScores;

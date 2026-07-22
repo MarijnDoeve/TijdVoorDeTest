@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\EliminationController;
 use Tvdt\Entity\Elimination;
 use Tvdt\Entity\EliminationScreenView;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Helpers\Base64;
 
 #[CoversClass(EliminationController::class)]
@@ -23,7 +24,7 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
         $quiz = $this->getQuizByName('Quiz 1');
 
         $this->elimination = new Elimination($quiz);
-        $this->elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $this->elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($this->elimination);
         $this->entityManager->flush();
@@ -82,7 +83,7 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
         $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Tom')));
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorExists(\sprintf('#%s', Elimination::SCREEN_GREEN));
+        self::assertSelectorExists(\sprintf('#%s', ScreenColour::Green->value));
     }
 
     public function testCandidateScreenRecordsScreenView(): void
@@ -97,12 +98,12 @@ final class EliminationControllerTest extends AbstractControllerWebTestCase
 
         $this->assertCount(1, $screenViews);
         $this->assertSame('Tom', $screenViews[0]->candidate->name);
-        $this->assertSame(Elimination::SCREEN_GREEN, $screenViews[0]->colour);
+        $this->assertSame(ScreenColour::Green, $screenViews[0]->colour);
     }
 
     public function testCandidateScreenRecordsScreenViewsInOrder(): void
     {
-        $this->elimination->data = ['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED];
+        $this->elimination->data = ['Tom' => ScreenColour::Green->value, 'Claudia' => ScreenColour::Red->value];
         $this->entityManager->flush();
 
         $this->client->request(Request::METHOD_GET, \sprintf('/elimination/%s/%s', $this->elimination->id, Base64::base64UrlEncode('Claudia')));

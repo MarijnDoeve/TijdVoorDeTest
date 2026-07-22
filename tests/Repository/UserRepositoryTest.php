@@ -13,6 +13,7 @@ use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
 use Tvdt\Entity\QuizCandidate;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Repository\UserRepository;
 
 use function PHPUnit\Framework\assertEmpty;
@@ -78,7 +79,7 @@ final class UserRepositoryTest extends DatabaseTestCase
         $this->entityManager->persist($givenAnswer);
 
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Vera' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Vera' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
 

@@ -14,6 +14,7 @@ use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\QuizCandidate;
+use Tvdt\Enum\ScreenColour;
 use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
 #[CoversClass(PrepareEliminationController::class)]
@@ -64,7 +65,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -82,10 +83,10 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $elimination = new Elimination($quiz);
         // Elimination's current colour is red, but the logged screen view was green: the log must show the
         // historical view colour, not whatever the elimination happens to say now.
-        $elimination->data = ['Tom' => Elimination::SCREEN_RED];
+        $elimination->data = ['Tom' => ScreenColour::Red->value];
 
         $this->entityManager->persist($elimination);
-        $this->entityManager->persist(new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN));
+        $this->entityManager->persist(new EliminationScreenView($elimination, $candidate, ScreenColour::Green));
         $this->entityManager->flush();
         $this->entityManager->clear();
 
@@ -100,7 +101,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -158,7 +159,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $this->entityManager->persist(new GivenAnswer($iris, $quiz, $firstAnswer));
 
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Claudia' => Elimination::SCREEN_GREEN, 'Tom' => Elimination::SCREEN_GREEN, 'Iris' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Claudia' => ScreenColour::Green->value, 'Tom' => ScreenColour::Green->value, 'Iris' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -174,7 +175,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -183,7 +184,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
 
         $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/elimination/%s', $elimination->id), [
             '_token' => $token,
-            'colour-tom' => Elimination::SCREEN_RED,
+            'colour-tom' => ScreenColour::Red->value,
             'start' => '0',
         ]);
 
@@ -192,14 +193,14 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
 
         $updated = $this->entityManager->getRepository(Elimination::class)->find($elimination->id);
         $this->assertInstanceOf(Elimination::class, $updated);
-        $this->assertSame(Elimination::SCREEN_RED, $updated->data['Tom']);
+        $this->assertSame(ScreenColour::Red->value, $updated->data['Tom']);
     }
 
     public function testViewEliminationWithStartRedirectsToPublicElimination(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -219,10 +220,10 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $quiz = $this->getQuizByName('Quiz 1');
         $candidate = $this->getCandidate('Tom');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
-        $screenView = new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN);
+        $screenView = new EliminationScreenView($elimination, $candidate, ScreenColour::Green);
         $this->entityManager->persist($screenView);
         $this->entityManager->flush();
 
@@ -246,7 +247,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -280,7 +281,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     {
         $quiz = $this->getQuizByName('Quiz 1');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Tom' => ScreenColour::Green->value];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
