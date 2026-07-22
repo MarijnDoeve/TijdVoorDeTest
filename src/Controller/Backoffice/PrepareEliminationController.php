@@ -19,6 +19,7 @@ use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Factory\EliminationFactory;
+use Tvdt\Repository\EliminationRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
 
@@ -28,6 +29,7 @@ final class PrepareEliminationController extends AbstractController
         private readonly EliminationFactory $eliminationFactory,
         private readonly EntityManagerInterface $em,
         private readonly QuizRepository $quizRepository,
+        private readonly EliminationRepository $eliminationRepository,
     ) {}
 
     #[IsCsrfTokenValid('prepare_elimination')]
@@ -67,6 +69,9 @@ final class PrepareEliminationController extends AbstractController
 
             return $this->redirectToRoute('tvdt_prepare_elimination_view', ['elimination' => $elimination->id]);
         }
+
+        // Eager-load screenViews.candidate in one query to avoid an N+1 when the screen-view log table renders.
+        $this->eliminationRepository->fetchWithScreenViewCandidates($elimination->id);
 
         return $this->render('backoffice/prepare_elimination/index.html.twig', [
             'controller_name' => 'PrepareEliminationController',

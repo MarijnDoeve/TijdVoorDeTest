@@ -22,7 +22,7 @@ final class Version20260721193523 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_7CC14118A862750D ON elimination_screen_view (elimination_id)');
         $this->addSql('CREATE INDEX IDX_7CC1411891BD8781 ON elimination_screen_view (candidate_id)');
         $this->addSql('ALTER TABLE elimination_screen_view ADD CONSTRAINT FK_7CC14118A862750D FOREIGN KEY (elimination_id) REFERENCES elimination (id) ON DELETE CASCADE NOT DEFERRABLE');
-        $this->addSql('ALTER TABLE elimination_screen_view ADD CONSTRAINT FK_7CC1411891BD8781 FOREIGN KEY (candidate_id) REFERENCES candidate (id) NOT DEFERRABLE');
+        $this->addSql('ALTER TABLE elimination_screen_view ADD CONSTRAINT FK_7CC1411891BD8781 FOREIGN KEY (candidate_id) REFERENCES candidate (id) ON DELETE CASCADE NOT DEFERRABLE');
     }
 
     #[\Override]

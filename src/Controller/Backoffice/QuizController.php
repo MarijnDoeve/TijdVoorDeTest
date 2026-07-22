@@ -147,6 +147,11 @@ class QuizController extends AbstractController
     )]
     public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
     {
+        if (false === $season->quizzes->contains($quiz)
+            || false === $quiz->questions->contains($question)) {
+            throw new BadRequestHttpException('Invalid quiz or question');
+        }
+
         // Eager-load this question's answers + candidates in one query to avoid an N+1
         // when the template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
         $fetchedQuestion = $this->questionRepository->fetchWithAnswerCandidates($question->id);

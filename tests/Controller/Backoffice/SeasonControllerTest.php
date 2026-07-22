@@ -8,6 +8,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
 use Tvdt\Controller\Backoffice\SeasonController;
 use Tvdt\Entity\Candidate;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
+use Tvdt\Entity\Quiz;
 use Tvdt\Entity\Season;
 use Tvdt\Tests\Controller\AbstractControllerWebTestCase;
 
@@ -102,6 +105,37 @@ final class SeasonControllerTest extends AbstractControllerWebTestCase
         $this->entityManager->clear();
 
         $this->assertNotInstanceOf(Candidate::class, $this->entityManager->getRepository(Candidate::class)->find($candidateId));
+    }
+
+    public function testDeleteCandidateCascadesEliminationScreenViews(): void
+    {
+        $candidate = $this->getCandidate('Tom');
+        $candidateId = $candidate->id;
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1']);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+
+        $screenView = new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN);
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->persist($screenView);
+        $this->entityManager->flush();
+
+        $screenViewId = $screenView->id;
+
+        $token = $this->getCsrfTokenFromPage('/backoffice/season/krtek/candidates', \sprintf('/candidate/%s/delete', $candidate->id));
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/season/krtek/candidate/%s/delete', $candidate->id), [
+            '_token' => $token,
+        ]);
+
+        self::assertResponseRedirects('/backoffice/season/krtek/candidates');
+        $this->entityManager->clear();
+
+        $this->assertNotInstanceOf(Candidate::class, $this->entityManager->getRepository(Candidate::class)->find($candidateId));
+        $this->assertNotInstanceOf(EliminationScreenView::class, $this->entityManager->getRepository(EliminationScreenView::class)->find($screenViewId));
     }
 
     public function testAddCandidates(): void

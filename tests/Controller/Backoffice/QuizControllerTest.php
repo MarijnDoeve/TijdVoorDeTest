@@ -89,6 +89,20 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
         self::assertResponseIsSuccessful();
     }
 
+    public function testCandidatesQuestionRejectsQuestionFromAnotherQuiz(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+
+        $otherQuiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Doomed Quiz']);
+        $this->assertInstanceOf(Quiz::class, $otherQuiz);
+        $otherQuestion = $otherQuiz->questions->first();
+        $this->assertInstanceOf(Question::class, $otherQuestion);
+
+        $this->client->request(Request::METHOD_GET, \sprintf('/backoffice/season/krtek/quiz/%s/candidates/%s', $quiz->id, $otherQuestion->id));
+
+        self::assertResponseStatusCodeSame(400);
+    }
+
     public function testSaveCandidateAnswersPersistsSelection(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
@@ -269,6 +283,24 @@ final class QuizControllerTest extends AbstractControllerWebTestCase
 
         $updated = $this->getQuizByName('Quiz 1');
         $this->assertSame(2, $updated->dropouts);
+    }
+
+    public function testModifyDropoutsClampsToOne(): void
+    {
+        $quiz = $this->getQuizByName('Quiz 1');
+
+        $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/season/krtek/quiz/%s/result', $quiz->id), '/modify_dropouts');
+
+        $this->client->request(Request::METHOD_POST, \sprintf('/backoffice/quiz/%s/modify_dropouts', $quiz->id), [
+            '_token' => $token,
+            'dropouts' => '0',
+        ]);
+
+        self::assertResponseRedirects();
+        $this->entityManager->clear();
+
+        $updated = $this->getQuizByName('Quiz 1');
+        $this->assertSame(1, $updated->dropouts);
     }
 
     public function testDeleteQuiz(): void

@@ -29,7 +29,7 @@ class EliminationScreenView
         #[ORM\ManyToOne(inversedBy: 'screenViews')]
         public Elimination $elimination,
 
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
         #[ORM\ManyToOne]
         public Candidate $candidate,
 

@@ -80,7 +80,9 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $quiz = $this->getQuizByName('Quiz 1');
         $candidate = $this->getCandidate('Tom');
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
+        // Elimination's current colour is red, but the logged screen view was green: the log must show the
+        // historical view colour, not whatever the elimination happens to say now.
+        $elimination->data = ['Tom' => Elimination::SCREEN_RED];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->persist(new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN));
@@ -120,8 +122,8 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $secondQuestion = $questions->get(1);
         $this->assertInstanceOf(Question::class, $firstQuestion);
         $this->assertInstanceOf(Question::class, $secondQuestion);
-        $firstAnswer = $firstQuestion->answers->first();
-        $secondAnswer = $secondQuestion->answers->first();
+        $firstAnswer = $firstQuestion->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->first();
+        $secondAnswer = $secondQuestion->answers->filter(static fn (Answer $answer): bool => $answer->isRightAnswer)->first();
         $this->assertInstanceOf(Answer::class, $firstAnswer);
         $this->assertInstanceOf(Answer::class, $secondAnswer);
 
@@ -199,13 +201,17 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
     public function testDeleteEliminationRemovesEliminationAndRedirectsToQuiz(): void
     {
         $quiz = $this->getQuizByName('Quiz 1');
+        $candidate = $this->getCandidate('Tom');
         $elimination = new Elimination($quiz);
         $elimination->data = ['Tom' => Elimination::SCREEN_GREEN];
 
         $this->entityManager->persist($elimination);
+        $screenView = new EliminationScreenView($elimination, $candidate, Elimination::SCREEN_GREEN);
+        $this->entityManager->persist($screenView);
         $this->entityManager->flush();
 
         $eliminationId = $elimination->id;
+        $screenViewId = $screenView->id;
 
         $token = $this->getCsrfTokenFromPage(\sprintf('/backoffice/elimination/%s', $elimination->id), \sprintf('/backoffice/elimination/%s/delete', $elimination->id));
 
@@ -217,6 +223,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $this->entityManager->clear();
 
         $this->assertNotInstanceOf(Elimination::class, $this->entityManager->getRepository(Elimination::class)->find($eliminationId));
+        $this->assertNotInstanceOf(EliminationScreenView::class, $this->entityManager->getRepository(EliminationScreenView::class)->find($screenViewId));
     }
 
     public function testDeleteEliminationIsDeniedForNonOwner(): void
