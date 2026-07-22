@@ -26,7 +26,7 @@ final class BankQuestionRepositoryTest extends DatabaseTestCase
 
         $bankQuestions = $this->bankQuestionRepository->findBySeason($season);
 
-        $this->assertCount(3, $bankQuestions);
+        $this->assertCount(70, $bankQuestions);
     }
 
     public function testFindBySeasonFiltersByLabel(): void

@@ -82,6 +82,7 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $season->settings->showNumbers = true;
 
         $this->createQuestionBank($season, $quiz2);
+        $this->bindQuizQuestionsToBank($season);
 
         $manager->flush();
 
@@ -102,7 +103,7 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $season->addQuestionLabel($finale);
 
         $reusable = new BankQuestion();
-        $reusable->question = 'Wie is de Krtek?';
+        $reusable->question = 'Wat is de bijnaam van de Krtek?';
         $reusable->reusable = true;
         $reusable->addLabel($finale);
         $reusable->addAnswer(new BankAnswer('Claudia', true));
@@ -133,6 +134,41 @@ final class KrtekFixtures extends Fixture implements FixtureGroupInterface
         $this->addReference(self::BANK_QUESTION_REUSABLE, $reusable);
         $this->addReference(self::BANK_QUESTION_USED, $used);
         $this->addReference(self::BANK_QUESTION_UNUSED, $unused);
+    }
+
+    /**
+     * Mirrors every quiz question into the question bank, so the bank reflects what was actually
+     * asked. A question text reused across quizzes (e.g. the recurring "man of vrouw"/"wie is de
+     * Krtek" questions) becomes a single reusable bank question with one usage per quiz it appears
+     * in, instead of a separate bank question per occurrence.
+     */
+    private function bindQuizQuestionsToBank(Season $season): void
+    {
+        /** @var array<string, BankQuestion> $bankQuestionsByText */
+        $bankQuestionsByText = [];
+
+        foreach ($season->quizzes as $quiz) {
+            foreach ($quiz->questions as $question) {
+                $bankQuestion = $bankQuestionsByText[$question->question] ?? null;
+
+                if (null === $bankQuestion) {
+                    $bankQuestion = new BankQuestion();
+                    $bankQuestion->question = $question->question;
+                    foreach ($question->answers as $answer) {
+                        $bankQuestion->addAnswer(new BankAnswer($answer->text, $answer->isRightAnswer));
+                    }
+
+                    $season->addBankQuestion($bankQuestion);
+                    $bankQuestionsByText[$question->question] = $bankQuestion;
+                } else {
+                    $bankQuestion->reusable = true;
+                }
+
+                $usage = new BankQuestionUsage($bankQuestion, $quiz);
+                $usage->question = $question;
+                $bankQuestion->addUsage($usage);
+            }
+        }
     }
 
     private function createQuiz1(Season $season): Quiz

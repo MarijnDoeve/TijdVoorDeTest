@@ -109,7 +109,7 @@ final class DataExportServiceTest extends DatabaseTestCase
         $labelsIndex = array_search('Labels', $header, true);
         $usedInQuizzesIndex = array_search('Used in quizzes', $header, true);
 
-        $reusableRow = current(array_filter($dataRows, static fn (array $row): bool => 'Wie is de Krtek?' === $row[$questionIndex]));
+        $reusableRow = current(array_filter($dataRows, static fn (array $row): bool => 'Wat is de bijnaam van de Krtek?' === $row[$questionIndex]));
         $this->assertIsArray($reusableRow);
         $this->assertSame('Yes', $reusableRow[$reusableIndex]);
         $this->assertSame('Finale', $reusableRow[$labelsIndex]);

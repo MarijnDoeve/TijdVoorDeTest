@@ -224,7 +224,7 @@ final class QuestionBankControllerTest extends AbstractControllerWebTestCase
     public function testAssignSameReusableQuestionTwiceToSameQuizIsRefused(): void
     {
         $this->loginAs('krtek-admin@example.org');
-        $bankQuestion = $this->getBankQuestion('Wie is de Krtek?');
+        $bankQuestion = $this->getBankQuestion('Wat is de bijnaam van de Krtek?');
         $quiz = $this->getQuizByName('Quiz 2');
         $questionCount = $quiz->questions->count();
 
