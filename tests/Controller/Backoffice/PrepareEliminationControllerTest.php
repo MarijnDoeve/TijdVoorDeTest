@@ -116,6 +116,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $quiz = $this->getQuizByName('Quiz 1');
         $tom = $this->getCandidate('Tom');
         $claudia = $this->getCandidate('Claudia');
+        $iris = $this->getCandidate('Iris');
 
         $questions = $quiz->questions;
         $firstQuestion = $questions->first();
@@ -127,22 +128,37 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
         $this->assertInstanceOf(Answer::class, $firstAnswer);
         $this->assertInstanceOf(Answer::class, $secondAnswer);
 
-        // Tom answers both questions correctly, Claudia only the first: Tom should score higher and rank first.
+        // Tom answers both questions correctly: highest score, ranks first.
+        // Claudia and Iris both answer only the first question correctly (tied score), but Claudia's answer is
+        // persisted a full second before Iris's: the tie must be broken by elapsed time, not insertion order.
+        // A real sleep (rather than a mocked clock) is used because `given_answer.created` is TIMESTAMP(0) —
+        // second precision — and the container's clock is already initialised by client/login by this point.
+        $started = new DateTimeImmutable();
         $tomQuizCandidate = new QuizCandidate($quiz, $tom);
-        $tomQuizCandidate->started = new DateTimeImmutable();
+        $tomQuizCandidate->started = $started;
 
         $this->entityManager->persist($tomQuizCandidate);
-        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $firstAnswer));
-        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $secondAnswer));
 
         $claudiaQuizCandidate = new QuizCandidate($quiz, $claudia);
-        $claudiaQuizCandidate->started = new DateTimeImmutable();
+        $claudiaQuizCandidate->started = $started;
 
         $this->entityManager->persist($claudiaQuizCandidate);
+
+        $irisQuizCandidate = new QuizCandidate($quiz, $iris);
+        $irisQuizCandidate->started = $started;
+
+        $this->entityManager->persist($irisQuizCandidate);
+
+        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $firstAnswer));
+        $this->entityManager->persist(new GivenAnswer($tom, $quiz, $secondAnswer));
         $this->entityManager->persist(new GivenAnswer($claudia, $quiz, $firstAnswer));
+        $this->entityManager->flush();
+
+        sleep(1);
+        $this->entityManager->persist(new GivenAnswer($iris, $quiz, $firstAnswer));
 
         $elimination = new Elimination($quiz);
-        $elimination->data = ['Claudia' => Elimination::SCREEN_GREEN, 'Tom' => Elimination::SCREEN_GREEN];
+        $elimination->data = ['Claudia' => Elimination::SCREEN_GREEN, 'Tom' => Elimination::SCREEN_GREEN, 'Iris' => Elimination::SCREEN_GREEN];
 
         $this->entityManager->persist($elimination);
         $this->entityManager->flush();
@@ -151,7 +167,7 @@ final class PrepareEliminationControllerTest extends AbstractControllerWebTestCa
 
         self::assertResponseIsSuccessful();
         $labels = $crawler->filter('label')->each(static fn ($node): string => mb_trim((string) $node->text()));
-        $this->assertSame(['Tom', 'Claudia'], $labels);
+        $this->assertSame(['Tom', 'Claudia', 'Iris'], $labels);
     }
 
     public function testViewEliminationSavesUpdatedColours(): void
