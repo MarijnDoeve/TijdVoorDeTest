@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tvdt\Tests\Repository;
 
+use Doctrine\ORM\PersistentCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tvdt\Entity\Answer;
 use Tvdt\Entity\Candidate;
@@ -71,6 +72,34 @@ final class QuestionRepositoryTest extends DatabaseTestCase
         $question = $this->questionRepository->findNextQuestionForCandidate($candidate);
 
         $this->assertNotInstanceOf(Question::class, $question);
+    }
+
+    public function testFetchWithAnswerCandidatesEagerLoadsCandidates(): void
+    {
+        $krtekSeason = $this->getSeasonByCode('krtek');
+        $quiz = $krtekSeason->quizzes->first();
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $question = $quiz->questions->first();
+        $this->assertInstanceOf(Question::class, $question);
+        $answer = $question->answers->first();
+        $this->assertInstanceOf(Answer::class, $answer);
+        $candidate = $this->getCandidateBySeasonAndName($krtekSeason, 'Iris');
+        $candidateId = $candidate->id->toString();
+        $answer->addCandidate($candidate);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $fetched = $this->questionRepository->fetchWithAnswerCandidates($question->id);
+
+        $this->assertInstanceOf(PersistentCollection::class, $fetched->answers);
+        $this->assertTrue($fetched->answers->isInitialized());
+        $fetchedAnswer = $fetched->answers->first();
+        $this->assertInstanceOf(Answer::class, $fetchedAnswer);
+        $this->assertInstanceOf(PersistentCollection::class, $fetchedAnswer->candidates);
+        $this->assertTrue($fetchedAnswer->candidates->isInitialized());
+        $this->assertTrue($fetchedAnswer->candidates->exists(
+            static fn (int $key, Candidate $c): bool => $c->id->toString() === $candidateId,
+        ));
     }
 
     private function answerQuestion(Question $question, Candidate $candidate): void

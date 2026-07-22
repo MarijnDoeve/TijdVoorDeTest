@@ -26,6 +26,7 @@ use Tvdt\Entity\Season;
 use Tvdt\Enum\FlashType;
 use Tvdt\Exception\ErrorClearingQuizException;
 use Tvdt\Repository\GivenAnswerRepository;
+use Tvdt\Repository\QuestionRepository;
 use Tvdt\Repository\QuizCandidateRepository;
 use Tvdt\Repository\QuizRepository;
 use Tvdt\Security\Voter\SeasonVoter;
@@ -39,6 +40,7 @@ class QuizController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly QuizCandidateRepository $quizCandidateRepository,
         private readonly GivenAnswerRepository $givenAnswerRepository,
+        private readonly QuestionRepository $questionRepository,
         private readonly EntityManagerInterface $em,
     ) {}
 
@@ -63,13 +65,10 @@ class QuizController extends AbstractController
     {
         $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
 
-        $candidateData = $this->buildCandidateData($season, $quiz, $fetchedQuiz->candidateData);
-
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $fetchedQuiz,
             'questionErrors' => $fetchedQuiz->getQuestionErrors(),
-            'candidateData' => $candidateData,
             'activeTab' => 'overview',
             'template' => 'backoffice/quiz/tab_overview.html.twig',
         ]);
@@ -148,26 +147,15 @@ class QuizController extends AbstractController
     )]
     public function candidates_question(Season $season, Quiz $quiz, Question $question): Response
     {
-        // Eager-load answers' candidates in one query to avoid an N+1 when the
-        // template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
-        $fetchedQuiz = $this->quizRepository->fetchWithQuestionsAndCandidates($quiz->id);
-
-        $fetchedQuestion = null;
-        foreach ($fetchedQuiz->questions as $candidateQuestion) {
-            if ($candidateQuestion->id->equals($question->id)) {
-                $fetchedQuestion = $candidateQuestion;
-
-                break;
-            }
-        }
-
-        \assert($fetchedQuestion instanceof Question);
+        // Eager-load this question's answers + candidates in one query to avoid an N+1
+        // when the template checks `answer.candidates.contains(candidate)` per answer/candidate pair.
+        $fetchedQuestion = $this->questionRepository->fetchWithAnswerCandidates($question->id);
 
         return $this->render('backoffice/quiz.html.twig', [
             'season' => $season,
             'quiz' => $quiz,
             'question' => $fetchedQuestion,
-            'candidates' => $fetchedQuiz->season->candidates,
+            'candidates' => $season->candidates,
             'activeTab' => 'answers',
             'template' => 'backoffice/quiz/tab_candidates.html.twig',
         ]);
