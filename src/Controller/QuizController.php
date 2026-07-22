@@ -6,6 +6,7 @@ namespace Tvdt\Controller;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -33,7 +34,7 @@ use Tvdt\Repository\SeasonRepository;
 #[AsController]
 final class QuizController extends AbstractController
 {
-    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository, private readonly RateLimiterFactoryInterface $seasonCodeLimiter) {}
+    public function __construct(private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly SeasonRepository $seasonRepository, private readonly CandidateRepository $candidateRepository, private readonly QuestionRepository $questionRepository, private readonly AnswerRepository $answerRepository, private readonly QuizCandidateRepository $quizCandidateRepository, #[Target('season_code')] private readonly RateLimiterFactoryInterface $seasonCodeLimiter) {}
 
     #[Route(path: '/', name: 'tvdt_quiz_select_season', methods: ['GET', 'POST'])]
     public function selectSeason(Request $request): Response
