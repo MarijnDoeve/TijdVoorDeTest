@@ -10,6 +10,8 @@ use PhpOffice\PhpSpreadsheet\Reader;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tvdt\Entity\Answer;
+use Tvdt\Entity\Elimination;
+use Tvdt\Entity\EliminationScreenView;
 use Tvdt\Entity\GivenAnswer;
 use Tvdt\Entity\Question;
 use Tvdt\Entity\Quiz;
@@ -77,7 +79,7 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
         $this->assertIsString($quizContent);
-        $this->assertSame(['Quiz info', 'Questions', 'Raw answers', 'Results', 'Eliminations'], $this->sheetNames($quizContent));
+        $this->assertSame(['Quiz info', 'Questions', 'Raw answers', 'Results', 'Eliminations', 'Elimination screen views'], $this->sheetNames($quizContent));
 
         $candidatesContent = $zip->getFromName('krtek-Krtek-Weekend/candidates.xlsx');
         $this->assertIsString($candidatesContent);
@@ -282,6 +284,43 @@ final class DataExportServiceTest extends DatabaseTestCase
 
         $this->assertTrue($sheet->getStyle($column.$correctRowNumber)->getFont()->getBold(), 'Expected the correct answer to be bold');
         $this->assertFalse($sheet->getStyle($column.$wrongRowNumber)->getFont()->getBold(), 'Expected the wrong answer to not be bold');
+    }
+
+    public function testEliminationScreenViewsSheetShowsCandidateColourAndOrder(): void
+    {
+        $season = $this->getSeasonByCode('krtek');
+        $quiz = $this->entityManager->getRepository(Quiz::class)->findOneBy(['name' => 'Quiz 1', 'season' => $season]);
+        $this->assertInstanceOf(Quiz::class, $quiz);
+        $tom = $this->getCandidateBySeasonAndName($season, 'Tom');
+        $claudia = $this->getCandidateBySeasonAndName($season, 'Claudia');
+
+        $elimination = new Elimination($quiz);
+        $elimination->data = ['Tom' => Elimination::SCREEN_GREEN, 'Claudia' => Elimination::SCREEN_RED];
+
+        $this->entityManager->persist($elimination);
+        $this->entityManager->persist(new EliminationScreenView($elimination, $tom, Elimination::SCREEN_GREEN));
+        $this->entityManager->persist(new EliminationScreenView($elimination, $claudia, Elimination::SCREEN_RED));
+        $this->entityManager->flush();
+        $this->entityManager->clear();
+
+        $zip = $this->openZip($this->getUserByEmail('user2@example.org'));
+        $quizContent = $zip->getFromName('krtek-Krtek-Weekend/Quiz-1.xlsx');
+        $this->assertIsString($quizContent);
+        $zip->close();
+
+        $rows = $this->loadSheet($quizContent, 'Elimination screen views')->toArray();
+        $header = $rows[0];
+        $dataRows = \array_slice($rows, 1);
+
+        $candidateIndex = array_search('Candidate', $header, true);
+        $colourIndex = array_search('Colour', $header, true);
+        $this->assertIsInt($candidateIndex);
+        $this->assertIsInt($colourIndex);
+
+        $this->assertSame('Tom', $dataRows[0][$candidateIndex]);
+        $this->assertSame('green', $dataRows[0][$colourIndex]);
+        $this->assertSame('Claudia', $dataRows[1][$candidateIndex]);
+        $this->assertSame('red', $dataRows[1][$colourIndex]);
     }
 
     public function testQuizInfoSheetShowsDropoutsFinalizationAndDisabledQuestions(): void

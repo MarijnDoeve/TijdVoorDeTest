@@ -168,6 +168,10 @@ class DataExportService
         $eliminations->setTitle('Eliminations');
         $this->fillEliminationsSheet($eliminations, $quiz);
 
+        $eliminationScreenViews = $spreadsheet->createSheet();
+        $eliminationScreenViews->setTitle('Elimination screen views');
+        $this->fillEliminationScreenViewsSheet($eliminationScreenViews, $quiz);
+
         $spreadsheet->setActiveSheetIndex(0);
 
         return $spreadsheet;
@@ -314,6 +318,30 @@ class DataExportService
         }
 
         foreach ($this->columnLetters(2 + \count($candidates)) as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+    }
+
+    /** One row per screen shown during an elimination, in the order they were shown. */
+    private function fillEliminationScreenViewsSheet(Worksheet $sheet, Quiz $quiz): void
+    {
+        $sheet->fromArray(['Elimination prepared at', 'Candidate', 'Colour', 'Shown at'], null, 'A1');
+        $sheet->getStyle('1:1')->getFont()->setBold(true);
+
+        $row = 2;
+        foreach ($quiz->eliminations as $elimination) {
+            foreach ($elimination->screenViews as $screenView) {
+                $sheet->fromArray([
+                    $elimination->getCreatedAt()?->format(\DateTimeInterface::ATOM) ?? '',
+                    $screenView->candidate->name,
+                    $screenView->colour,
+                    $screenView->created->format(\DateTimeInterface::ATOM),
+                ], null, 'A'.$row);
+                ++$row;
+            }
+        }
+
+        foreach (['A', 'B', 'C', 'D'] as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
     }
