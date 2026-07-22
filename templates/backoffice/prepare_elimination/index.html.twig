@@ -1,5 +1,7 @@
 {% extends 'backoffice/base.html.twig' %}
 
+{% block title %}{{ parent() }}{{ 'Prepare Elimination'|trans }}{% endblock %}
+
 {% block breadcrumbs %}
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
@@ -13,6 +15,7 @@
 
 {% block body %}
     <div data-controller="bo--prepare-elimination">
+        <h2 class="mb-3">{{ 'Prepare Elimination'|trans }}: {{ elimination.quiz.season.name }} - {{ elimination.quiz.name }}</h2>
         <div class="row">
             <div class="col-12 col-md-6 order-1">
                 <form method="post">
@@ -52,7 +55,7 @@
             </div>
 
             {% if not elimination.screenViews.empty %}
-                <div class="col-12 col-md-6 order-2 order-md-3 offset-md-6">
+                <div class="col-12 col-md-6 order-2">
                     <h4 class="mb-3">{{ 'Screens shown'|trans }}</h4>
                     <table class="table table-hover">
                         <thead>
@@ -75,7 +78,7 @@
                 </div>
             {% endif %}
 
-            <div class="col-12 col-md-6 order-3 order-md-2">
+            <div class="col-12 col-md-6 order-3">
                 {{ include('backoffice/help/prepare_elimination.html.twig') }}
             </div>
         </div>
